@@ -1,0 +1,20 @@
+{
+  "name": "@flurrux/math-layout",
+  "version": "1.0.0",
+  "description": "math-layout-engine like katex but simpler and primarily for canvas.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Christian Hoffmann <christianhoffmann@outlook.com>",
+  "license": "ISC",
+  "dependencies": {
+    "@flurrux/array-vector-2d": "^1.0.2",
+    "opentype.js": "^1.1.0",
+    "ramda": "^0.26.1"
+  },
+  "devDependencies": {},
+  "browserslist": [
+    "chrome 70"
+  ]
+}
