@@ -1,11 +1,4 @@
 
-/*
-	fonts:
-	baseurl: https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/fonts/
-	KaTeX_Main-Regular.ttf:   + - ( ,
-	KaTeX_Math-Italic.ttf:    x f 
-*/
-
 //type setting ###
 
 /*
@@ -14,10 +7,10 @@
 	binary operator (+ - * \)
 	unary operator (+ - negation)
 	nucleus, subscript, superscript
-
 	delimiter (( { [ )
-	cramped style
+
 	roots
+	cramped style
 	integrals, summation, limits	
 	matrix
 	manual spaces
@@ -119,7 +112,14 @@ import * as R from 'ramda';
 import { 
 	getGlyphByName, getCharByName, getGlyphIndexByName, loadFontsAsync, pathContours
 } from './opentype-util.js';
-import { addFontFaces, pickList, sum } from './util.js';
+import { addFontFaces, pickList, accumSum } from './util.js';
+
+const clamp = (min, max, val) => {
+	if (val < min) return min;
+	if (val > max) return max;
+	return val;
+};
+const isDefined = obj => obj !== undefined;
 
 const emToPx = (style, em) => style.fontSize * em / 1000;
 
@@ -183,18 +183,23 @@ const getRightBoundOfCharNode = (style, node) => {
 };
 
 const styleTypes = ["D", "T", "S", "SS"];
-const styleTypeToIndex = type => styleTypes.indexOf(type);
-const getSmallerStyleType = styleType => styleTypes[Math.min(styleTypes.length - 1, Math.max(1, styleTypeToIndex(styleType)) + 1)];
 const styleTypeToFontScale = [1, 1, 0.7, 0.5];
+const styleTypeToIndex = type => styleTypes.indexOf(type);
+const getRelativeStyleType = (styleType, stride) => styleTypes[clamp(0, styleTypes.length - 1, styleTypeToIndex(styleType) + stride)];
+const getSmallerStyleType = styleType => ["D", "T"].includes(styleType) ? "S" : "SS";
 const getFontSizeOfStyleType = (defaultFontSize, styleType) => defaultFontSize * styleTypeToFontScale[styleTypeToIndex(styleType)];
 const getSmallerStyle = (style) => {
 	const nextStyleType = getSmallerStyleType(style.type);
+	return switchStyleType(style, nextStyleType);
+};
+const switchStyleType = (style, nextStyleType) => {
 	return {
 		...style,
 		type: nextStyleType,
 		fontSize: getFontSizeOfStyleType(style.baseFontSize, nextStyleType)
 	};
 };
+const incrementStyleType = (style) => switchStyleType(style, getRelativeStyleType(style.type, 1));
 
 
 
@@ -203,12 +208,13 @@ const getTotalHeightOfDimensions = dimensions => dimensions.yMax - dimensions.yM
 const createDimensions = (width, yMin, yMax) => {
 	return { width, yMin, yMax }
 };
-const getBoundingDimensions = objs => createDimensions(
-	Math.max(...objs.map(obj => obj.position[0] + obj.dimensions.width)),
-	Math.max(...objs.map(obj => obj.position[1] + obj.dimensions.yMax)),
-	Math.min(...objs.map(obj => obj.position[1] + obj.dimensions.yMin)),
-);
-const accumSum = (nums) => nums.reduce((accum, num) => [...accum, accum[accum.length - 1] + num], [0]);
+const getBoundingDimensions = objs => {
+	return {
+		width: Math.max(...objs.map(obj => obj.position[0] + obj.dimensions.width)),
+		yMin: Math.min(...objs.map(obj => obj.position[1] + obj.dimensions.yMin)),
+		yMax: Math.max(...objs.map(obj => obj.position[1] + obj.dimensions.yMax)),
+	}
+};
 
 const withPosition = (layoutNode, position) => R.assoc("position", position, layoutNode);
 const calcCentering = (size, availableSize) => (availableSize - size) / 2;
@@ -250,6 +256,8 @@ const getChildNodes = node => {
 	return [];
 };
 
+
+
 const layoutMathList = (style, mathList) => {
 	const items = mathList.items;
 	const layoutItems = items.map((item, ind) => layoutNode(style, item));
@@ -271,33 +279,27 @@ const layoutMathList = (style, mathList) => {
 		}
 	}
 
-	const dimensions = {
-		width: curX,
-		yMax: Math.max(0, ...layoutItems.map(layoutItem => layoutItem.dimensions.yMax)),
-		yMin: Math.min(0, ...layoutItems.map(layoutItem => layoutItem.dimensions.yMin))
-	};
+	const positionedItems = layoutItems.map((layoutItem, index) => {
+		return { ...layoutItem, position: positions[index] }
+	});
 
 	return {
 		type: "mathlist",
-		dimensions,
-		items: layoutItems.map((layoutItem, index) => {
-			return {
-				...layoutItem,
-				position: positions[index],
-			}
-		})
+		dimensions: getBoundingDimensions(positionedItems),
+		items: positionedItems
 	};
 };
 
 const layoutFraction = (style, fraction) => {
-	const [num, denom] = [fraction.numerator, fraction.denominator].map(n => layoutNode(style, n));
+	const subStyle = incrementStyleType(style);
+	const [num, denom] = [fraction.numerator, fraction.denominator].map(layoutWithStyle(subStyle));
 	const width = Math.max(...[num, denom].map(n => n.dimensions.width));
-	const ruleThickness = getRuleThickness(style);
+	
+	const ruleThickness = getRuleThickness(subStyle);
 	const halfRuleThickness = ruleThickness / 2;
+	const topSpacing = ruleThickness * 4;
+	const bottomSpacing = ruleThickness * 2;
 
-	const spacingScale = ruleThickness * 6;
-	const bottomSpacing = spacingScale;
-	const topSpacing = spacingScale;
 	const yMax = halfRuleThickness + topSpacing + getTotalHeightOfDimensions(num.dimensions);
 	const yMin = -(halfRuleThickness + bottomSpacing + getTotalHeightOfDimensions(denom.dimensions));
 
@@ -414,7 +416,7 @@ const layoutScript = (style, script) => {
 
 const layoutDelimiter = (style, delim) => {
 	//from em space
-	const fontSize = style.fontSize * delim.sizeRatio;
+	const fontSize = style.fontSize * (delim.sizeRatio ||1);
 	const dimensions = R.map(val => val * fontSize  / 1000, delim.metrics);
 	if (delim.type === "char"){
 		return {
@@ -491,9 +493,21 @@ const layoutNode = (style, node) => {
 		return layoutCharNode(style, node);
 	}
 };
+const layoutWithStyle = (style) => (node => layoutNode(style, node));
 
 
-const isDefined = obj => obj !== undefined;
+const renderAxisLine = (ctx, node) => {
+	ctx.save();
+	ctx.beginPath();
+	const axisHeight = getAxisHeight(node.style);
+	ctx.translate(0, axisHeight);
+	ctx.moveTo(0, 0);
+	ctx.lineTo(node.width, 0);
+	ctx.setTransform(1, 0, 0, 1, 0, 0);
+	Object.assign(ctx, { lineWidth: 1, strokeStyle: "red" });
+	ctx.stroke();
+	ctx.restore();
+};
 const renderBoundingBox = (ctx, node) => {
 	ctx.save();
 	const dim = node.dimensions;
@@ -514,7 +528,6 @@ const renderFormula = (canvas, ctx, renderData) => {
 		ctx.save();
 		ctx.translate(node.position[0], -node.position[1]);
 
-		//bounding box
 		//renderBoundingBox(ctx, node);
 
 		const nodeType = node.type;
@@ -526,6 +539,7 @@ const renderFormula = (canvas, ctx, renderData) => {
 		else if (nodeType === "contours"){
 			ctx.save();
 			ctx.scale(...[0, 1].map(n => (node.style.fontSize / 1000)));
+			ctx.scale(1, -1);
 			pathContours(ctx, node.contours);
 			ctx.restore();
 			ctx.fillStyle = "black";
@@ -586,15 +600,24 @@ async function main(){
 
 	let formulaData = {
 		root: {
-			type: "script",
-			nucleus: { type: "ord", value: "alpha" },
-			sup: {
-				type: "delimited",
-				leftDelim: { type: "open", value: "parenleft" },
-				delimited: { 
-					type: "ord", value: "pi"
-				},
-				rightDelim: { type: "close", value: "parenright" }
+			type: "delimited",
+			leftDelim: { type: "open", value: "parenleft" },
+			rightDelim: { type: "close", value: "parenright" },
+			delimited: {
+				type: "mathlist",
+				items: [
+					{ type: "ord", value: "beta" },
+					{ type: "bin", value: "plus" },
+					{ 
+						type: "fraction", 
+						numerator: { type: "ord", value: "one" },
+						denominator: { 
+							type: "fraction",
+							numerator: { type: "ord", value: "gamma" },
+							denominator: { type: "ord", value: "beta" }	
+						}
+					}
+				]
 			}
 		}
 	};

@@ -67,8 +67,9 @@ const getFontFittingHeight = (fontMap, glyphName, height, depth) => {
 };
 
 export const getDelimiterForHeightAndDepth = (fontMap, delimName, height, depth, extendFunc, margin=0) => {
-    const { fontKey, sizeRatio } = getFontFittingHeight(fontMap, delimName, height + margin, depth - margin);
-    if (fontKey){
+    const fittingData = getFontFittingHeight(fontMap, delimName, height + margin, depth - margin);
+    if (fittingData){
+        const { fontKey, sizeRatio } = fittingData;
         return {
             type: "char",
             char: getCharByName(fontMap[fontKey], delimName),
@@ -81,7 +82,7 @@ export const getDelimiterForHeightAndDepth = (fontMap, delimName, height, depth,
         const glyph = getGlyphByName(maxFont, delimName);
         const heightToFit = Math.max(...[height, depth].map(Math.abs));
         const defaultHeight = getHeightOfDelimiter(maxFont, delimName);
-        const extension = heightToFit - defaultHeight;
+        const extension = heightToFit - defaultHeight + margin;
         const origContour = getGlyphContours(glyph)[0];
         const extendedContour = extendFunc(origContour, extension);
         const metrics = getGlyphMetrics(maxFont, delimName);

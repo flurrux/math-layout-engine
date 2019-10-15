@@ -10,3 +10,6 @@ export const addFontFaces = async fontMap => {
 		await katexFace.load();
 	}
 };
+
+//this function sums up all the numbers and records the intermediate sums along the way
+export const accumSum = (nums) => nums.reduce((accum, num) => [...accum, accum[accum.length - 1] + num], [0]);
