@@ -7,6 +7,7 @@ import { addFontFaces } from './util.js';
 import {
 	createDelimiter
 } from './delimiter-util.js';
+import { createRoot } from './root-util.js';
 
 const createRangeIndexArray = (min, max) => {
 	const length = max - min;
@@ -276,4 +277,94 @@ const testDelimFitting = async () => {
 
 	render();
 };
-testDelimFitting();
+
+const testRootFitting = async () => {
+	const fonts = await loadFonts();
+
+	document.body.insertAdjacentHTML("beforeend", `
+		<div>
+			<div style="display: flex; flex-direction: column;">
+				<input 
+					type="range" min="0" max="5000" value="100" step="0.01" 
+					style="display: inline-block; width: 400px;" 
+				/>
+				<input 
+					type="range" min="0" max="5000" value="40" step="0.01" 
+					style="display: inline-block; width: 400px;" 
+				/>
+			</div>
+			<canvas width="1000" height="500"></canvas>
+		</div>
+	`);
+
+	Array.from(document.querySelectorAll("input")).forEach((inp, index) => {
+		const props = ["width", "height"];
+		inp.addEventListener("input", e => {
+			fitDim[props[index]] = parseFloat(e.srcElement.value);
+			render();
+		});
+	});
+
+	const canvas = document.querySelector("canvas");
+	const ctx = canvas.getContext("2d");
+
+	const fontSize = 50;
+	const scale = fontSize / 1000;
+	
+	let fitDim = {
+		width: 100,
+		height: 50
+	};
+
+	const render = () => {
+
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		ctx.save();
+		ctx.translate(canvas.width / 2, canvas.height / 2);
+		ctx.scale(scale, -scale);
+		
+		//axes
+		{
+			ctx.beginPath();
+			ctx.moveTo(-1000000, 0);
+			ctx.lineTo(1000000, 0);
+			ctx.moveTo(0, -1000000);
+			ctx.lineTo(0, 1000000);
+			ctx.lineWidth = 40;
+			ctx.stroke();
+		}
+		
+		//fit rects
+		ctx.fillStyle = "blue";
+		ctx.fillRect(0, 0, fitDim.width, fitDim.height);
+
+		const root = createRoot(fonts, fitDim.width, fitDim.height, 200);
+		const translation = [
+			-root.innerStartX,
+			-root.metrics.yMin - (root.metrics.yMax - root.metrics.yMin - fitDim.height) / 2
+		];
+
+		ctx.translate(...translation);
+		pathContours(ctx, root.contours);
+		ctx.fill();
+
+		ctx.fillRect(...root.indexCorner, 40, 40);
+
+		// if (parenthesis.type === "char"){
+		// 	ctx.font = `${fontSize}px ${parenthesis.fontName}`;
+		// 	const char = glyphNameToChar(fonts[parenthesis.fontName], delimName);
+		// 	ctx.fillText(char, 0, (fontSize * axisHeight) / 1000);
+		// }
+		// else {
+		// 	ctx.scale(scale, scale);
+		// 	ctx.translate(0, -axisHeight);
+		// 	pathContours(ctx, parenthesis.contours);
+		// 	ctx.fill();
+		// }
+
+		ctx.restore();
+	};
+
+	render();
+};
+testRootFitting();

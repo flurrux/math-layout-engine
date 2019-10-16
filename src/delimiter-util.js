@@ -10,18 +10,14 @@
 
 
 import {
-    getGlyphByName, getGlyphMetrics, getCharByName
+    getGlyphByName, getGlyphMetrics, getCharByName, getGlyphContours
 } from './opentype-util.js';
 
 const axisHeight = 250;
 const getHeightAndDepthByGlyphName = (font, name) => getHeightAndDepthOfGlyph(getGlyphByName(font, name));
 const getHeightOfGlyph = (glyph) => glyph.yMax - glyph.yMin;
 const getHeightAndDepthOfGlyph = (glyph) => [glyph.yMax, glyph.yMin];
-const getGlyphContours = (glyph) => {
-    //this has to be called to make contours available strangely
-    glyph.getPath();
-    return glyph.getContours();
-};
+
 
 
 

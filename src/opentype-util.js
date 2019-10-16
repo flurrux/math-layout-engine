@@ -106,6 +106,20 @@ export const transformContour = (matrix, contour) => contour.map(pointData => {
 		y: transformedPoint[1]
 	};
 });
+export const translateContours = (translation, contours) => contours.map(contour => contour.map(pointData => {
+	return {
+		...pointData,
+		x: pointData.x + translation[0],
+		y: pointData.y + translation[1]
+	}
+}));
+export const scaleContours = (scale, contours) => contours.map(contour => contour.map(pointData => {
+	return {
+		...pointData,
+		x: pointData.x * scale,
+		y: pointData.y * scale
+	}
+}));
 
 export const getGlyphMetrics = (font, glyphName) => {
     const glyph = getGlyphByName(font, glyphName);
@@ -113,4 +127,10 @@ export const getGlyphMetrics = (font, glyphName) => {
         width: glyph.advanceWidth,
         yMin: glyph.yMin, yMax: glyph.yMax
     };
+};
+
+export const getGlyphContours = (glyph) => {
+    //this has to be called to make contours available strangely
+    glyph.getPath();
+    return glyph.getContours();
 };

@@ -110,7 +110,7 @@
 
 import * as R from 'ramda';
 import { 
-	getGlyphByName, getCharByName, getGlyphIndexByName, loadFontsAsync, pathContours
+	getGlyphByName, getCharByName, getGlyphIndexByName, loadFontsAsync, pathContours, translateContours, scaleContours
 } from './opentype-util.js';
 import { addFontFaces, pickList, accumSum } from './util.js';
 
@@ -141,6 +141,7 @@ const isFormulaNodeInner = node => innerTypes.includes(node.type);
 //style ###
 import fontMetrics from './fontMetricsData.js';
 import { createDelimiter } from './delimiter-util.js';
+import { createRoot } from './root-util.js';
 const getItalicCorrection = (style, node) => {
 	const entry = fontMetrics["Main-Italic"];
 	const font = lookupFont(node.type, node.value);
@@ -215,6 +216,19 @@ const getBoundingDimensions = objs => {
 		yMax: Math.max(...objs.map(obj => obj.position[1] + obj.dimensions.yMax)),
 	}
 };
+const offsetDimensionsVertically = (dimensions, offset) => {
+	return {
+		...dimensions,
+		yMin: dimensions.yMin + offset,
+		yMax: dimensions.yMax + offset
+	}
+};
+const toEmSpace = (fontSize) => 1000 / fontSize;
+const fromEmSpace = (fontSize) => fontSize / 1000;
+
+const dimensionsToEmSpace = (dimensions, fontSize) => R.map(val => val * 1000 / fontSize, dimensions);
+const dimensionsFromEmSpace = (dimensions, fontSize) => R.map(val => val * fontSize / 1000, dimensions);
+const scaleMetrics = (metrics, scale) => R.map(val => val * scale, metrics);
 
 const withPosition = (layoutNode, position) => R.assoc("position", position, layoutNode);
 const calcCentering = (size, availableSize) => (availableSize - size) / 2;
@@ -239,7 +253,8 @@ const getHorizontalSpacingBetweenNodes = (typeA, typeB) => {
 };
 const isNodeOfAnyType = (node, types) => types.includes(node.type);
 const isNodeAlignedToBaseline = (node) => isNodeOfAnyType(node, ["mathlist", "script"]) || isFormulaNodeGlyph(node);
-const isNodeAlignedToAxis = (node) => isNodeOfAnyType(node, ["fraction"]);
+const isNodeAlignedToAxis = (node) => isNodeOfAnyType(node, ["fraction", "root"]);
+const getAxisAlignment = (style, node) => isNodeAlignedToAxis(node) ? getAxisHeight(style) : 0;
 const getHeightAndDepthFromAxis = (node, dim, axisHeight) => {
 	return isNodeAlignedToBaseline(node) ? [ dim.yMax - axisHeight, dim.yMin - axisHeight ] : [dim.yMax, dim.yMin];
 };
@@ -268,7 +283,7 @@ const layoutMathList = (style, mathList) => {
 	for (let i = 0; i < items.length; i++) {
 		const item = items[i];
 		const layoutItem = layoutItems[i];
-		const y = item.type === "fraction" ? axisHeight : 0;
+		const y = getAxisAlignment(style, item);
 
 		positions.push([curX, y]);
 		curX += layoutItem.dimensions.width;
@@ -458,7 +473,7 @@ const layoutDelimited = (style, delimNode) => {
 		withPosition(leftDelim, [itemXs[0], delimYs[0]]),
 		withPosition(delimitedLayouted, [
 			itemXs[1], 
-			delimited.type === "fraction" ? getAxisHeight(style) : 0
+			getAxisAlignment(style, delimited)
 		]),
 		withPosition(rightDelim, [itemXs[2], delimYs[1]])
 	];
@@ -469,11 +484,48 @@ const layoutDelimited = (style, delimNode) => {
 	};
 };
 
+
+const layoutRoot = (style, root) => {
+	const radicandLayouted = layoutNode(style, root.radicand);
+	
+	const radicamDimEm = dimensionsToEmSpace(radicandLayouted.dimensions, style.fontSize);
+	const [radicandWidth, radicandHeight] = [
+		radicamDimEm.width, 
+		getTotalHeightOfDimensions(radicamDimEm)
+	];
+
+	const genRoot = createRoot(opentypeFonts, radicandWidth, radicandHeight, style.fontSize * 0.5);
+
+	const rootMetrics = dimensionsFromEmSpace(genRoot.metrics, style.fontSize);
+	const rootHeight = getTotalHeightOfDimensions(rootMetrics);
+	const contoursOffset = [
+		0, radicandLayouted.dimensions.yMax - rootMetrics.yMax + (rootHeight - getTotalHeightOfDimensions(radicandLayouted.dimensions)) / 2
+	];
+	const rootContours = genRoot.contours;// translateContours(genRoot.contours);
+
+	return {
+		type: "root",
+		dimensions: offsetDimensionsVertically(rootMetrics, contoursOffset[1]),
+		radical: {
+			type: "contours", style,
+			contours: rootContours,
+			position: contoursOffset,
+			dimensions: rootMetrics
+		},
+		radicand: {
+			...radicandLayouted,
+			position: [fromEmSpace(style.fontSize) * genRoot.innerStartX, 0]
+		}
+	}
+};
+
+
 const nodeLayoutFuncMap = {
 	"mathlist": layoutMathList,
 	"fraction": layoutFraction,
 	"script": layoutScript,
-	"delimited": layoutDelimited
+	"delimited": layoutDelimited,
+	"root": layoutRoot
 };
 const layoutCharNode = (style, node) => {
 	const fontName = lookupFontName(node.type, node.value);
@@ -563,6 +615,9 @@ const renderFormula = (canvas, ctx, renderData) => {
 		else if (nodeType === "script"){
 			pickList(["nucleus", "sup", "sub"], node).filter(isDefined).forEach(renderNode);
 		}
+		else if (nodeType === "root"){
+			pickList(["radical", "radicand"], node).forEach(renderNode);
+		}
 		
 		ctx.restore();
 	};
@@ -595,40 +650,38 @@ async function main(){
 	//font loading ###
 	const fontData = await loadFonts();
 	opentypeFonts = fontData;
+	window.opentypeFonts = opentypeFonts;
 
 
 
 	let formulaData = {
 		root: {
-			type: "delimited",
-			leftDelim: { type: "open", value: "parenleft" },
-			rightDelim: { type: "close", value: "parenright" },
-			delimited: {
-				type: "mathlist",
-				items: [
-					{ type: "ord", value: "beta" },
-					{ type: "bin", value: "plus" },
-					{ 
-						type: "fraction", 
+			type: "mathlist", 
+			items: [
+				{
+					type: "root",
+					radicand: {
+						type: "fraction",
 						numerator: { type: "ord", value: "one" },
-						denominator: { 
-							type: "fraction",
-							numerator: { type: "ord", value: "gamma" },
-							denominator: { type: "ord", value: "beta" }	
-						}
+						denominator: { type: "ord", value: "pi" }
 					}
-				]
-			}
+				},
+				{ type: "bin", value: "plus" },
+				{ type: "ord", value: "alpha" }
+			]
 		}
 	};
 
 	
 	const layoutData = layoutNode({
 		type: "D", 
-		baseFontSize: 40,
-		fontSize: 40
+		baseFontSize: 30,
+		fontSize: 30
 	}, formulaData.root);
 	
+	document.body.insertAdjacentHTML("beforeend", `
+		<canvas width=800 height=400></canvas>
+	`);
 	const canvas = document.querySelector("canvas");
 	const ctx = canvas.getContext("2d");
 	renderFormula(canvas, ctx, layoutData);
