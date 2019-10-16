@@ -123,6 +123,8 @@ const isDefined = obj => obj !== undefined;
 
 const emToPx = (style, em) => style.fontSize * em / 1000;
 
+const scaleMap = scale => (num => num * scale);
+
 //formula description ###
 
 const formulaNodeTypes = [
@@ -226,7 +228,7 @@ const offsetDimensionsVertically = (dimensions, offset) => {
 const toEmSpace = (fontSize) => 1000 / fontSize;
 const fromEmSpace = (fontSize) => fontSize / 1000;
 
-const dimensionsToEmSpace = (dimensions, fontSize) => R.map(val => val * 1000 / fontSize, dimensions);
+const dimensionsToEmSpace = (dimensions, fontSize) => R.map(scaleMap(1000 / fontSize), dimensions);
 const dimensionsFromEmSpace = (dimensions, fontSize) => R.map(val => val * fontSize / 1000, dimensions);
 const scaleMetrics = (metrics, scale) => R.map(val => val * scale, metrics);
 
@@ -312,8 +314,8 @@ const layoutFraction = (style, fraction) => {
 	
 	const ruleThickness = getRuleThickness(subStyle);
 	const halfRuleThickness = ruleThickness / 2;
-	const topSpacing = ruleThickness * 4;
-	const bottomSpacing = ruleThickness * 2;
+	const topSpacing = ruleThickness * 6;
+	const bottomSpacing = ruleThickness * 6;
 
 	const yMax = halfRuleThickness + topSpacing + getTotalHeightOfDimensions(num.dimensions);
 	const yMin = -(halfRuleThickness + bottomSpacing + getTotalHeightOfDimensions(denom.dimensions));
@@ -494,7 +496,8 @@ const layoutRoot = (style, root) => {
 		getTotalHeightOfDimensions(radicamDimEm)
 	];
 
-	const genRoot = createRoot(opentypeFonts, radicandWidth, radicandHeight, style.fontSize * 0.5);
+	const genRoot = createRoot(opentypeFonts, radicandWidth, radicandHeight, style.fontSize * 2);
+	const fromEm = fromEmSpace(style.fontSize);
 
 	const rootMetrics = dimensionsFromEmSpace(genRoot.metrics, style.fontSize);
 	const rootHeight = getTotalHeightOfDimensions(rootMetrics);
@@ -503,19 +506,40 @@ const layoutRoot = (style, root) => {
 	];
 	const rootContours = genRoot.contours;// translateContours(genRoot.contours);
 
+	const radicandPosition = [fromEm * genRoot.innerStartX, 0];
+	Object.assign(radicandLayouted, { position: radicandPosition });
+
+	const radicalLayouted = {
+		type: "contours", style,
+		contours: rootContours,
+		position: contoursOffset,
+		dimensions: rootMetrics
+	};
+
+
+	//index
+	const indexLayouted = root.index ? (function(){
+		const indexStyle = switchStyleType(style, "SS");
+		const indexLayouted = layoutNode(indexStyle, root.index);
+		const scaledCorner = genRoot.indexCorner.map(scaleMap(fromEm));
+		const rightBottomPosition = [
+			contoursOffset[0] + scaledCorner[0],
+			contoursOffset[1] + scaledCorner[1]
+		];
+		const indexPosition = [
+			rightBottomPosition[0] - indexLayouted.dimensions.width,
+			rightBottomPosition[1] - indexLayouted.dimensions.yMin
+		];
+		return withPosition(indexLayouted, indexPosition);
+	})() : undefined;
+
+	const dimensions = getBoundingDimensions([radicalLayouted, indexLayouted].filter(isDefined));
+
 	return {
-		type: "root",
-		dimensions: offsetDimensionsVertically(rootMetrics, contoursOffset[1]),
-		radical: {
-			type: "contours", style,
-			contours: rootContours,
-			position: contoursOffset,
-			dimensions: rootMetrics
-		},
-		radicand: {
-			...radicandLayouted,
-			position: [fromEmSpace(style.fontSize) * genRoot.innerStartX, 0]
-		}
+		type: "root", dimensions,
+		radical: radicalLayouted,
+		radicand: radicandLayouted,
+		...(indexLayouted ? { index: indexLayouted } : {})
 	}
 };
 
@@ -575,6 +599,9 @@ const renderFormula = (canvas, ctx, renderData) => {
 	const color = "black";
 	ctx.fillStyle = color;
 	ctx.strokeStyle = color;
+
+	const renderPropNodes = (node, props) => pickList(props, node).filter(isDefined).forEach(renderNode);
+
 	const renderNode = node => {
 		
 		ctx.save();
@@ -616,7 +643,7 @@ const renderFormula = (canvas, ctx, renderData) => {
 			pickList(["nucleus", "sup", "sub"], node).filter(isDefined).forEach(renderNode);
 		}
 		else if (nodeType === "root"){
-			pickList(["radical", "radicand"], node).forEach(renderNode);
+			renderPropNodes(node, ["radical", "radicand", "index"]);
 		}
 		
 		ctx.restore();
@@ -664,6 +691,16 @@ async function main(){
 						type: "fraction",
 						numerator: { type: "ord", value: "one" },
 						denominator: { type: "ord", value: "pi" }
+					},
+					index: { 
+						type: "delimited", 
+						leftDelim: { type: "open", value: "parenleft" },
+						rightDelim: { type: "open", value: "parenright" },
+						delimited: {
+							type: "fraction",
+							numerator: { type: "ord", value: "seven" },
+							denominator: { type: "ord", value: "delta" }
+						}
 					}
 				},
 				{ type: "bin", value: "plus" },
@@ -672,12 +709,14 @@ async function main(){
 		}
 	};
 
+
 	
 	const layoutData = layoutNode({
 		type: "D", 
 		baseFontSize: 30,
 		fontSize: 30
 	}, formulaData.root);
+	console.log(layoutData);
 	
 	document.body.insertAdjacentHTML("beforeend", `
 		<canvas width=800 height=400></canvas>
