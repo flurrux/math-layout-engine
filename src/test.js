@@ -3,19 +3,19 @@
 
 /*
 	sorted by personal rating of prioritiy of implementation:
-	relation operator (equal to, greater than, includes, ...)
-	binary operator (+ - * \)
-	unary operator (+ - negation)
+
+	mathlist
 	nucleus, subscript, superscript
 	delimiter (( { [ )
-
 	roots
-	cramped style
+
 	integrals, summation, limits	
-	matrix
-	manual spaces
 	binomials 
+	matrix
+	cramped style
+	ellipsis
 	accents (dot, hat, ...)
+	manual spaces
 	text
 */
 
@@ -112,7 +112,7 @@ import * as R from 'ramda';
 import { 
 	getGlyphByName, getCharByName, getGlyphIndexByName, loadFontsAsync, pathContours, translateContours, scaleContours
 } from './opentype-util.js';
-import { addFontFaces, pickList, accumSum } from './util.js';
+import { addFontFaces, pickList, accumSum, sum } from './util.js';
 
 const clamp = (min, max, val) => {
 	if (val < min) return min;
@@ -138,12 +138,26 @@ const getIndexOfFormulaNodeType = (nodeType) => {
 };
 const isFormulaNodeGlyph = node => [0, 1, 2, 3, 4, 5, 6].includes(getIndexOfFormulaNodeType(node.type));
 const isFormulaNodeInner = node => innerTypes.includes(node.type);
-
+const isNodeNumeric = (nodeType, nodeValue) => nodeType === "ord" && ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"].includes(nodeValue);
 
 //style ###
 import fontMetrics from './fontMetricsData.js';
 import { createDelimiter } from './delimiter-util.js';
 import { createRoot } from './root-util.js';
+const getGlyphMetrics = (node) => {
+	const fontName = formulaNodeIndexToFontName[getIndexOfFormulaNodeType(node.type)].replace("KaTeX_", "");
+	const entry = fontMetrics[`${fontName}-Regular`];
+	const font = lookupFont(node.type, node.value);
+	const glyph = getGlyphByName(font, node.value);
+	const metrics = entry[glyph.unicode];
+	return {
+		depth: metrics[0], 
+		height: metrics[1],
+		italicCorrection: metrics[2],
+		skew: metrics[3],
+		width: metrics[4]
+	};
+}
 const getItalicCorrection = (style, node) => {
 	const entry = fontMetrics["Main-Italic"];
 	const font = lookupFont(node.type, node.value);
@@ -154,16 +168,33 @@ let opentypeFonts = {};
 const katexFontNames = {
 	Main: "KaTeX_Main", Math: "KaTeX_Math"
 };
+const fontNamesBySize = [
+	"KaTeX_Math", 
+	"KaTeX_Size1",
+	"KaTeX_Size2",
+	"KaTeX_Size3",
+	"KaTeX_Size4"
+];
+
+//example: how much bigger is a glyph in "KaTeX_Size3" compared to "KaTeX_Math"
+const getFontTierSize = (fontName) => {
+	const index = fontNamesBySize.indexOf(fontName);
+	if (index < 0){
+		return -1;
+	}
+	return sizeFontScales[index];
+};
+
+
 const formulaNodeIndexToFontName = [
 	katexFontNames.Math,
-	"",
+	"KaTeX_Size2",
 	katexFontNames.Main, katexFontNames.Main, katexFontNames.Main, katexFontNames.Main, katexFontNames.Main,
 	"",
 	""
 ];
 const lookupFontName = (nodeType, glyphName) => {
-	const arr = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
-	if (arr.includes(glyphName)) {
+	if (isNodeNumeric(nodeType, glyphName)) {
 		return katexFontNames.Main;
 	}
 	return formulaNodeIndexToFontName[getIndexOfFormulaNodeType(nodeType)];
@@ -335,6 +366,9 @@ const layoutFraction = (style, fraction) => {
 	};
 };
 
+
+//script ###
+
 const getRightBoundOfNode = (formNode, layNode) => {
 	if (isFormulaNodeGlyph(formNode)){
 		return getRightBoundOfCharNode(layNode.style, formNode);
@@ -344,42 +378,55 @@ const getRightBoundOfNode = (formNode, layNode) => {
 const getSubOrSupStyle = (scriptStyle, subOrSupNode) => {
 	return subOrSupNode.type === "fraction" ? getSmallerStyle(getSmallerStyle(scriptStyle)) : getSmallerStyle(scriptStyle);
 };
-const layoutScript = (style, script) => {
+const getSupSubTargetYNoLimits = (style, script, nucleusDim) => {
+	const { nucleus } = script;
+	const nucleusType = nucleus.type;
+	const isNucleusBigOp = nucleus.type === "op";
+	const isNucleusGlyph = isFormulaNodeGlyph(nucleus);
+	const { fontSize } = style;
+	if (isNucleusGlyph && !isNucleusBigOp){
+		return [
+			fontSize * 0.42,
+			fontSize * -0.2
+		]
+	}
+	else {
+		return [
+			nucleusDim.yMax, 
+			nucleusDim.yMin - fontSize * 0.06
+		]
+	}
+};
+const layoutScript = (style, script, layoutOptions={}) => {
 	/*
 		supscript: 
 		there is a style-dependent target-height, if the superscript is a char, 
 		simply raise it to that height. if it's not a char, try to raise it to that height,
 		but there has to be a gap between the bottom of the supscript and the baseline of the nucleus.
-
 	*/
-	
+
+	layoutOptions = {
+		limitPositions: false,
+		...layoutOptions
+	};
+
 	const { nucleus, sup, sub } = script;
-	const nucleusLay = withPosition(layoutNode(style, nucleus), [0, 0]);
-	const nucleusLayRightX = getRightBoundOfNode(nucleus, nucleusLay);
+	const nucleusLayouted = withPosition(layoutNode(style, nucleus), [0, 0]);
 	const isNucleusGlyph = isFormulaNodeGlyph(nucleus);
 	const fontSize = style.fontSize;
 
 	const scriptLayouted = {
-		nucleus: nucleusLay
+		nucleus: nucleusLayouted
 	};
 
-	const scriptStyle = getSmallerStyle(style);
+	const nucleusRight = getRightBoundOfNode(nucleus, nucleusLayouted);
+	const supSubTargetY = getSupSubTargetYNoLimits(style, script, nucleusLayouted.dimensions);
+
 	if (sup){
 		const supStyle = getSubOrSupStyle(style, sup);
 		const supLayouted = layoutNode(supStyle, sup);
 		const targetY = (function(){
-			let y = 0;
-			if (isNucleusGlyph){
-				y = fontSize * 0.42;
-			}
-			else {
-				//try to align the (axis of the) superscript at the top edge of the nucleus.
-				//if the superscript is a node that is naturally aligned along the baseline, 
-				//i can only think of single characters and mathlists, then shift them down so
-				//that their axis is aligned to the top edge.
-				const axisShift = ["mathlist", "ord"].includes(sup.type) ? -getAxisHeight(supStyle) : 0;
-				y = nucleusLay.dimensions.yMax + axisShift;
-			}
+			let y = supSubTargetY[0] - getAxisAlignment(style, sup);
 			
 			//if bottom of superscript is too close to baseline, shift it up
 			const minBottomToBaselineGap = fontSize * 0.3;
@@ -388,7 +435,7 @@ const layoutScript = (style, script) => {
 			return y;
 		})();
 		//add a small spacing
-		const supX = nucleusLayRightX + (fontSize * 0.08);
+		const supX = nucleusRight + (fontSize * 0.08);
 		supLayouted.position = [supX, targetY];
 		scriptLayouted.sup = supLayouted;
 	}
@@ -397,17 +444,9 @@ const layoutScript = (style, script) => {
 		const subStyle = getSubOrSupStyle(style, sub);
 		const subLayouted = layoutNode(subStyle, sub);
 		const targetY = (function(){
-			let y = 0;
-			if (isNucleusGlyph){
-				y = -fontSize * 0.2;
-			}
-			else {
-				return nucleusLay.dimensions.yMin - fontSize * 0.06;
-			}
+			let y = supSubTargetY[1];
 
-			if(sup){
-				y -= fontSize * 0.08;
-			}
+			if(sup) y -= fontSize * 0.08;
 
 			//if top of subscript is too close to the axis, shift it down
 			const nucleusAxisY = getAxisHeight(style);
@@ -417,7 +456,11 @@ const layoutScript = (style, script) => {
 
 			return y;
 		})();
-		const subX = nucleusLayRightX + (isNucleusGlyph ? getItalicCorrection(style, nucleus) : 0);
+
+		const subX = isNucleusGlyph ? (function(){
+			const metrics = getGlyphMetrics(nucleus);
+			return fontSize * (metrics.width);
+		})() : nucleusRight; 
 		subLayouted.position = [subX, targetY];
 		scriptLayouted.sub = subLayouted;
 	}
@@ -543,6 +586,14 @@ const layoutRoot = (style, root) => {
 	}
 };
 
+const layoutVertically = (style, nodes, layoutOptions={}) => {
+	layoutOptions = {
+		spacing: style.fontSize * 0.5,
+		...layoutOptions
+	};
+
+
+};
 
 const nodeLayoutFuncMap = {
 	"mathlist": layoutMathList,
@@ -571,6 +622,8 @@ const layoutNode = (style, node) => {
 };
 const layoutWithStyle = (style) => (node => layoutNode(style, node));
 
+
+//rendering ###
 
 const renderAxisLine = (ctx, node) => {
 	ctx.save();
@@ -708,6 +761,44 @@ async function main(){
 			]
 		}
 	};
+	formulaData = {
+		root: {
+			type: "mathlist", 
+			items: [
+				{ type: "ord", value: "one" },
+				{ 
+					type: "delimited", 
+					leftDelim: { type: "open", value: "parenleft" },
+					rightDelim: { type: "close", value: "parenright" },
+					delimited: { type: "ord", value: "omega" }
+				},
+				{ type: "ord", value: "two" },
+			]
+		}
+	};
+	formulaData = {
+		root: {
+			type: "script", 
+			nucleus: {
+				type: "op", value: "integral"
+			},
+			sup: {
+				type: "mathlist",
+				items: [
+					{ type: "bin", value: "plus" },
+					{ type: "ord", value: "x" }
+				]
+			},
+			sub: {
+				type: "mathlist",
+				items: [
+					{ type: "bin", value: "minus" },
+					{ type: "ord", value: "x" }
+				]
+			}
+		}
+	};
+
 
 
 	
@@ -716,7 +807,6 @@ async function main(){
 		baseFontSize: 30,
 		fontSize: 30
 	}, formulaData.root);
-	console.log(layoutData);
 	
 	document.body.insertAdjacentHTML("beforeend", `
 		<canvas width=800 height=400></canvas>

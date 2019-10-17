@@ -1,5 +1,5 @@
 import { 
-	loadFontsAsync, getInterspersedContour, pathContours, getGlyphByIndex, getGlyphIndexByName, pathInterspersedContours, getGlyphByName
+	loadFontsAsync, getInterspersedContour, pathContours, getGlyphByIndex, getGlyphIndexByName, pathInterspersedContours, getGlyphByName, getGlyphContours
 } from './opentype-util.js';
 import * as R from 'ramda';
 import { addFontFaces } from './util.js';
@@ -367,4 +367,66 @@ const testRootFitting = async () => {
 
 	render();
 };
-testRootFitting();
+
+
+import fontMetrics from './fontMetricsData.js';
+const testFontMetrics = async () => {
+	const fonts = await loadFonts();
+
+	document.body.insertAdjacentHTML("beforeend", `
+		<canvas width="1000" height="500"></canvas>
+	`);
+
+	const canvas = document.querySelector("canvas");
+	const ctx = canvas.getContext("2d");
+
+	const fontSize = 50;
+	const scale = fontSize / 1000;
+
+	const fontNameBase = "Size2";
+	const fontName = `KaTeX_${fontNameBase}`;
+	const metricsKey = `${fontNameBase}-Regular`;
+	const glyphName = "integral";
+	const glyph = fonts[fontName].nameToGlyph(glyphName);
+	const metrics = fontMetrics[metricsKey][glyph.unicode].map(val => val * 1000);
+	console.log(metrics, glyph);
+	
+	const render = () => {
+
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		ctx.save();
+		ctx.translate(canvas.width / 2, canvas.height / 2);
+		ctx.scale(scale, -scale);
+		
+		//axes
+		{
+			ctx.beginPath();
+			ctx.moveTo(-1000000, 0);
+			ctx.lineTo(1000000, 0);
+			ctx.moveTo(0, -1000000);
+			ctx.lineTo(0, 1000000);
+			ctx.lineWidth = 40;
+			ctx.stroke();
+		}
+
+		pathContours(ctx, getGlyphContours(glyph));
+		ctx.fill();
+
+		//bounding box
+		// ctx.beginPath();
+		// ctx.rect(glyph.xMin, glyph.yMin, glyph.xMax - glyph.xMin, glyph.yMax - glyph.yMin);
+		// ctx.lineWidth = 10;
+		// ctx.stroke();
+
+		//metrics
+		ctx.beginPath();
+		ctx.rect(0, -metrics[0], metrics[4], metrics[0] + metrics[1]);
+		ctx.lineWidth = 10;
+		ctx.stroke();
+
+		ctx.restore();
+	};
+
+	render();
+};
+testFontMetrics();
