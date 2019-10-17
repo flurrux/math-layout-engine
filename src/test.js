@@ -110,7 +110,7 @@
 
 import * as R from 'ramda';
 import { 
-	getGlyphByName, getCharByName, getGlyphIndexByName, loadFontsAsync, pathContours, translateContours, scaleContours
+	getGlyphIndexByName, loadFontsAsync, pathContours
 } from './opentype-util.js';
 import { addFontFaces, pickList, accumSum, sum } from './util.js';
 
@@ -120,9 +120,7 @@ const clamp = (min, max, val) => {
 	return val;
 };
 const isDefined = obj => obj !== undefined;
-
 const emToPx = (style, em) => style.fontSize * em / 1000;
-
 const scaleMap = scale => (num => num * scale);
 
 //formula description ###
@@ -141,14 +139,17 @@ const isFormulaNodeInner = node => innerTypes.includes(node.type);
 const isNodeNumeric = (nodeType, nodeValue) => nodeType === "ord" && ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"].includes(nodeValue);
 
 //style ###
-import fontMetrics from './fontMetricsData.js';
+import fontMetrics from './fontMetricsData.js'; 
 import { createDelimiter } from './delimiter-util.js';
 import { createRoot } from './root-util.js';
+import { lookUpGlyphByCharOrAlias, getFontDataByName } from './katex-font-util.js';
+import { getTargetYOfGlyphNucleus } from './script-layout.js';
+
 const getGlyphMetrics = (node) => {
 	const fontName = formulaNodeIndexToFontName[getIndexOfFormulaNodeType(node.type)].replace("KaTeX_", "");
 	const entry = fontMetrics[`${fontName}-Regular`];
-	const font = lookupFont(node.type, node.value);
-	const glyph = getGlyphByName(font, node.value);
+	const font = lookupFont(node.value);
+	const glyph = getGlyphByValue(font, node.value);
 	const metrics = entry[glyph.unicode];
 	return {
 		depth: metrics[0], 
@@ -158,12 +159,6 @@ const getGlyphMetrics = (node) => {
 		width: metrics[4]
 	};
 }
-const getItalicCorrection = (style, node) => {
-	const entry = fontMetrics["Main-Italic"];
-	const font = lookupFont(node.type, node.value);
-	const key = `${getGlyphIndexByName(font, node.value)}`;
-	return entry[key] ? entry[key][2] : 0;
-};
 let opentypeFonts = {};
 const katexFontNames = {
 	Main: "KaTeX_Main", Math: "KaTeX_Math"
@@ -176,16 +171,21 @@ const formulaNodeIndexToFontName = [
 	"",
 	""
 ];
-const lookupFontName = (nodeType, glyphName) => {
-	if (isNodeNumeric(nodeType, glyphName)) {
-		return katexFontNames.Main;
-	}
-	return formulaNodeIndexToFontName[getIndexOfFormulaNodeType(nodeType)];
+const lookupFontName = (glyphName) => {
+	const glyphData = lookUpGlyphByCharOrAlias(glyphName);
+	const { fontFamily } = glyphData;
+	const katexFontKey = `KaTeX_${fontFamily}`
+	return katexFontKey;
 };
-const lookupFont = (nodeType, glyphName) => opentypeFonts[lookupFontName(nodeType, glyphName)];
+const lookupFont = (glyphName) => opentypeFonts[lookupFontName(glyphName)];
+const getGlyphByValue = (font, val) => {
+	const { unicode } = lookUpGlyphByCharOrAlias(val);
+	const char = String.fromCharCode(unicode);
+	return font.charToGlyph(char);
+};
 const getDimensionsOfCharNode = (style, node) => {
-	const font = lookupFont(node.type, node.value);
-	const glyph = getGlyphByName(font, node.value);
+	const font = lookupFont(node.value);
+	const glyph = getGlyphByValue(font, node.value);
 	const scaleNum = num => emToPx(style, num);
 	return R.map(scaleNum)({
 		width: glyph.advanceWidth,
@@ -194,8 +194,8 @@ const getDimensionsOfCharNode = (style, node) => {
 	});
 };
 const getRightBoundOfCharNode = (style, node) => {
-	const font = lookupFont(node.type, node.value);
-	const glyph = getGlyphByName(font, node.value);
+	const font = lookupFont(node.value);
+	const glyph = getGlyphByValue(font, node.value);
 	return emToPx(style, glyph.xMax);
 };
 
@@ -320,7 +320,6 @@ const layoutMathList = (style, mathList) => {
 		items: positionedItems
 	};
 };
-
 const layoutFraction = (style, fraction) => {
 	const subStyle = incrementStyleType(style);
 	const [num, denom] = [fraction.numerator, fraction.denominator].map(layoutWithStyle(subStyle));
@@ -350,8 +349,6 @@ const layoutFraction = (style, fraction) => {
 };
 
 
-//script ###
-
 const getRightBoundOfNode = (formNode, layNode) => {
 	if (isFormulaNodeGlyph(formNode)){
 		return getRightBoundOfCharNode(layNode.style, formNode);
@@ -363,14 +360,14 @@ const getSubOrSupStyle = (scriptStyle, subOrSupNode) => {
 };
 const getSupSubTargetYNoLimits = (style, script, nucleusDim) => {
 	const { nucleus } = script;
-	const nucleusType = nucleus.type;
-	const isNucleusBigOp = nucleus.type === "op";
 	const isNucleusGlyph = isFormulaNodeGlyph(nucleus);
 	const { fontSize } = style;
-	if (isNucleusGlyph && !isNucleusBigOp){
+	if (isNucleusGlyph){
+		const nucleusGlyphData = lookUpGlyphByCharOrAlias(nucleus.value);
+		const targetYs = getTargetYOfGlyphNucleus(nucleusGlyphData.fontFamily, nucleusGlyphData.unicode);
 		return [
-			fontSize * 0.42,
-			fontSize * -0.2
+			targetYs.supY * fontSize,
+			targetYs.subY * fontSize
 		]
 	}
 	else {
@@ -586,11 +583,11 @@ const nodeLayoutFuncMap = {
 	"root": layoutRoot
 };
 const layoutCharNode = (style, node) => {
-	const fontName = lookupFontName(node.type, node.value);
-	const font = opentypeFonts[fontName];
+	const fontName = lookupFontName(node.value);
+	const { unicode } = lookUpGlyphByCharOrAlias(node.value);
+	const char = String.fromCharCode(unicode);
 	return {
-		type: "char",
-		char: getCharByName(font, node.value),
+		type: "char", char, 
 		style: { ...style, fontName },
 		dimensions: getDimensionsOfCharNode(style, node)
 	};
@@ -761,24 +758,36 @@ async function main(){
 	};
 	formulaData = {
 		root: {
-			type: "script", 
-			nucleus: {
-				type: "op", value: "integral"
-			},
-			sup: {
-				type: "mathlist",
-				items: [
-					{ type: "bin", value: "plus" },
-					{ type: "ord", value: "x" }
-				]
-			},
-			sub: {
-				type: "mathlist",
-				items: [
-					{ type: "bin", value: "minus" },
-					{ type: "ord", value: "x" }
-				]
-			}
+			type: "mathlist", 
+			items: [
+				{
+					type: "script", 
+					nucleus: {
+						type: "op", value: "integral"
+					},
+					sup: {
+						type: "mathlist",
+						items: [
+							{ type: "ord", value: "plus" },
+							{ type: "ord", value: "infinity" }
+						]
+					},
+					sub: {
+						type: "mathlist",
+						items: [
+							{ type: "ord", value: "minus" },
+							{ type: "ord", value: "infinity" }
+						]
+					}
+				},
+				{ type: "ord", value: "1" },
+				{ type: "bin", value: "-" },
+				{ 
+					type: "fraction",
+					numerator: { type: "ord", value: "1" },
+					denominator: { type: "ord", value: "x" }
+				}
+			]
 		}
 	};
 
@@ -790,7 +799,7 @@ async function main(){
 		baseFontSize: 30,
 		fontSize: 30
 	}, formulaData.root);
-	
+
 	document.body.insertAdjacentHTML("beforeend", `
 		<canvas width=800 height=400></canvas>
 	`);

@@ -68,18 +68,16 @@ const lookUpFamilyNameByUnicode = (unicode) => {
 
 
 const aliasMap = [
-    {
-        alias: ["plus", "+"],
-        fontFamily: "Main", unicode: 43
-    },
-    {
-        alias: ["minus", "-"],
-        fontFamily: "Main", unicode: 8722
-    },
-    {
-        alias: ["muldot"], 
-        fontFamily: "Math", unicode: 8901
-    },
+    { alias: ["plus", "+"], fontFamily: "Main", unicode: 43 },
+    { alias: ["minus", "-"], fontFamily: "Main", unicode: 8722 },
+    { alias: ["muldot"], fontFamily: "Math", unicode: 8901 },
+    { alias: ["equal", "="], fontFamily: "Main", unicode: 61 },
+
+    { alias: ["integral"], fontFamily: "Size2", unicode: 8747 },
+    { alias: ["sum"], fontFamily: "Size2", unicode: 8721 },
+    { alias: ["product"], fontFamily: "Size2", unicode: 8719 },
+
+    { alias: ["infinity"], fontFamily: "Main", unicode: 8734 },
 
     { alias: ["a"], fontFamily: "Math", unicode: 97 },
     { alias: ["b"], fontFamily: "Math", unicode: 98 }, 
@@ -109,48 +107,18 @@ const aliasMap = [
     { alias: ["z"], fontFamily: "Math", unicode: 122 }, 
 
 
-    {
-        alias: ["ellipsis", "..."],
-        fontFamily: "Math", unicode: 8943
-    },
+    { alias: ["ellipsis", "..."], fontFamily: "Math", unicode: 8943 },
 
-    {
-        alias: ["alpha"],
-        fontFamily: "Math", unicode: 945
-    },
-    {
-        alias: ["beta"],
-        fontFamily: "Math", unicode: 946
-    },
-    {
-        alias: ["gamma"],
-        fontFamily: "Math", unicode: 947
-    },
-    {
-        alias: ["delta"],
-        fontFamily: "Math", unicode: 948
-    },
+    { alias: ["alpha"], fontFamily: "Math", unicode: 945 },
+    { alias: ["beta"], fontFamily: "Math", unicode: 946 },
+    { alias: ["gamma"], fontFamily: "Math", unicode: 947 },
+    { alias: ["delta"], fontFamily: "Math", unicode: 948 },
 
-    {
-        alias: ["natural-numbers"],
-        fontFamily: "AMS", unicode: 78
-    },
-    {
-        alias: ["integers"],
-        fontFamily: "AMS", unicode: 90
-    },
-    {
-        alias: ["rational-numbers"],
-        fontFamily: "AMS", unicode: 81
-    },
-    {
-        alias: ["real-numbers"],
-        fontFamily: "AMS", unicode: 82
-    },
-    {
-        alias: ["complex-numbers"],
-        fontFamily: "AMS", unicode: 67
-    },
+    { alias: ["natural-numbers"], fontFamily: "AMS", unicode: 78 },
+    { alias: ["integers"], fontFamily: "AMS", unicode: 90 },
+    { alias: ["rational-numbers"], fontFamily: "AMS", unicode: 81 },
+    { alias: ["real-numbers"], fontFamily: "AMS", unicode: 82 },
+    { alias: ["complex-numbers"], fontFamily: "AMS", unicode: 67 },
 ];
 const lookUpAliasEntry = alias => aliasMap.find(entry => entry.alias.includes(alias));
 
@@ -163,7 +131,7 @@ export const lookUpGlyphByCharOrAlias = (charOrAlias) => {
 
     //no alias found, treat the argument as a char
     const unicode = charOrAlias.charCodeAt(0);
-    const fontFamily = lookUpFamilyNameByUnicode(unicode);
+    const { fontFamily, emphasis } = lookUpFamilyNameByUnicode(unicode);
     return {
         fontFamily, unicode
     };
