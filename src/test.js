@@ -168,23 +168,6 @@ let opentypeFonts = {};
 const katexFontNames = {
 	Main: "KaTeX_Main", Math: "KaTeX_Math"
 };
-const fontNamesBySize = [
-	"KaTeX_Math", 
-	"KaTeX_Size1",
-	"KaTeX_Size2",
-	"KaTeX_Size3",
-	"KaTeX_Size4"
-];
-
-//example: how much bigger is a glyph in "KaTeX_Size3" compared to "KaTeX_Math"
-const getFontTierSize = (fontName) => {
-	const index = fontNamesBySize.indexOf(fontName);
-	if (index < 0){
-		return -1;
-	}
-	return sizeFontScales[index];
-};
-
 
 const formulaNodeIndexToFontName = [
 	katexFontNames.Math,
