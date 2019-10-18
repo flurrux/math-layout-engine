@@ -8,8 +8,9 @@
 	nucleus, subscript, superscript
 	delimiter (( { [ )
 	roots
-
 	integrals, summation, limits	
+	
+	operators (sin, cos, lim, ...)
 	binomials 
 	matrix
 	cramped style
@@ -564,15 +565,18 @@ const layoutRoot = (style, root) => {
 	const contoursOffset = [
 		0, radicandLayouted.dimensions.yMax - rootMetrics.yMax + (rootHeight - getTotalHeightOfDimensions(radicandLayouted.dimensions)) / 2
 	];
-	const rootContours = genRoot.contours;// translateContours(genRoot.contours);
+	const rootContours = genRoot.contours;
 
-	const radicandPosition = [fromEm * genRoot.innerStartX, 0];
+	const radicandPosition = [
+		fromEm * genRoot.innerStartX, 
+		isNodeAlignedToBaseline(root.radicand) ? -getAxisHeight(style) : 0
+	];
 	Object.assign(radicandLayouted, { position: radicandPosition });
 
 	const radicalLayouted = {
 		type: "contours", style,
 		contours: rootContours,
-		position: contoursOffset,
+		position: [contoursOffset[0], contoursOffset[1] + radicandPosition[1]],
 		dimensions: rootMetrics
 	};
 
@@ -601,15 +605,6 @@ const layoutRoot = (style, root) => {
 		radicand: radicandLayouted,
 		...(indexLayouted ? { index: indexLayouted } : {})
 	}
-};
-
-const layoutVertically = (style, nodes, layoutOptions={}) => {
-	layoutOptions = {
-		spacing: style.fontSize * 0.5,
-		...layoutOptions
-	};
-
-
 };
 
 const nodeLayoutFuncMap = {
@@ -655,15 +650,26 @@ const renderAxisLine = (ctx, node) => {
 	ctx.restore();
 };
 const renderBoundingBox = (ctx, node) => {
-	ctx.save();
 	const dim = node.dimensions;
 	const height = dim.yMax - dim.yMin;
+	
+	ctx.save();
 	ctx.beginPath();
 	ctx.rect(0, -dim.yMax, dim.width, height);
 	ctx.setTransform(1, 0, 0, 1, 0, 0);
 	ctx.lineWidth = 1;
 	ctx.stroke();
 	ctx.restore();
+
+	// ctx.save();
+	// ctx.beginPath();
+	// ctx.moveTo(0, 0);
+	// ctx.lineTo(dim.width, 0);
+	// ctx.setTransform(1, 0, 0, 1, 0, 0);
+	// ctx.lineWidth = 1;
+	// ctx.strokeStyle = "red";
+	// ctx.stroke();
+	// ctx.restore();
 };
 const renderFormula = (canvas, ctx, renderData) => {
 	const color = "black";
@@ -795,24 +801,36 @@ async function main(){
 	};
 	formulaData = {
 		root: {
-			type: "script", 
-			nucleus: {
-				type: "op", value: "integral"
-			},
-			sup: {
-				type: "mathlist",
-				items: [
-					{ type: "ord", value: "plus" },
-					{ type: "ord", value: "8" }
-				]
-			},
-			sub: {
-				type: "mathlist",
-				items: [
-					{ type: "ord", value: "minus" },
-					{ type: "ord", value: "4" }
-				]
-			}
+			type: "mathlist", 
+			items: [
+				{
+					type: "script", 
+					nucleus: {
+						type: "op", value: "integral"
+					},
+					sup: {
+						type: "mathlist",
+						items: [
+							{ type: "ord", value: "plus" },
+							{ type: "ord", value: "8" }
+						]
+					},
+					sub: {
+						type: "mathlist",
+						items: [
+							{ type: "ord", value: "minus" },
+							{ type: "ord", value: "4" }
+						]
+					}
+				},
+				{
+					type: "root", 
+					radicand: {
+						type: "ord", value: "x"
+					}
+				},
+				{ type: "ord", value: "a" }
+			]
 		}
 	};
 
