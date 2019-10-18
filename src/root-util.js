@@ -66,11 +66,27 @@ const rootData = [
                     "x": 1.001,
                     "y": 0.85
                 },
+                //upper tail-point
                 {
-                    "onCurve": false,
+                    "onCurve": true,
                     "lastPointOfContour": false,
-                    "x": 1.017,
+                    "x": 1.001,
                     "y": 0.85
+                },
+
+                // {
+                //     "onCurve": false,
+                //     "lastPointOfContour": false,
+                //     "x": 1.017,
+                //     "y": 0.85
+                // },
+
+                //lower tail-point
+                {
+                    "onCurve": true,
+                    "lastPointOfContour": false,
+                    "x": 1.02,
+                    "y": 0.832
                 },
                 {
                     "onCurve": true,
@@ -78,6 +94,7 @@ const rootData = [
                     "x": 1.02,
                     "y": 0.832
                 },
+
                 {
                     "onCurve": true,
                     "lastPointOfContour": false,
@@ -205,11 +222,26 @@ const rootData = [
                     "x": 1.001,
                     "y": 1.15
                 },
+
+                //upper tail-point
                 {
-                    "onCurve": false,
+                    "onCurve": true,
                     "lastPointOfContour": false,
-                    "x": 1.018,
+                    "x": 1.001,
                     "y": 1.15
+                },
+                // {
+                //     "onCurve": false,
+                //     "lastPointOfContour": false,
+                //     "x": 1.018,
+                //     "y": 1.15
+                // },
+                //lower tail-point
+                {
+                    "onCurve": true,
+                    "lastPointOfContour": false,
+                    "x": 1.02,
+                    "y": 1.132
                 },
                 {
                     "onCurve": true,
@@ -506,17 +538,31 @@ const rootData = [
                     "x": 1.001,
                     "y": 1.45
                 },
+                //upper tail-point
                 {
-                    "onCurve": false,
+                    "onCurve": true,
                     "lastPointOfContour": false,
-                    "x": 1.007,
+                    "x": 1.001,
                     "y": 1.45
                 },
+                // {
+                //     "onCurve": false,
+                //     "lastPointOfContour": false,
+                //     "x": 1.007,
+                //     "y": 1.45
+                // },
+                // {
+                //     "onCurve": false,
+                //     "lastPointOfContour": false,
+                //     "x": 1.019,
+                //     "y": 1.44
+                // },
+                //lower tail-point
                 {
-                    "onCurve": false,
+                    "onCurve": true,
                     "lastPointOfContour": false,
-                    "x": 1.019,
-                    "y": 1.44
+                    "x": 1.02,
+                    "y": 1.433
                 },
                 {
                     "onCurve": true,
@@ -927,18 +973,13 @@ const rootData = [
     }
 ];
 
-const rootFontKeys = [
-	"KaTeX_Size1",
-	"KaTeX_Size2",
-	"KaTeX_Size3",
-	"KaTeX_Size4",
-];
-const rootGlyphIndices = [
-    25, 20, 17, 17, 41
-];
 const roofAttachements = [
     [8, 10], [0, 2], [20, 23], [4, 7], [22, 26]
 ];
+const tailIndices = [
+    [9, 10], [1, 2], [21, 22], 
+];
+
 const verticalRootHeight = 1807;
 const indexPositions = [
     [520, 290], [520, 290], [520, 290], [520, 290], [540, 800]
