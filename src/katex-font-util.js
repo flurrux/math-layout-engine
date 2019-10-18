@@ -2,9 +2,10 @@
 
 import fontMetrics from './fontMetricsData.js';
 const capitalize = (str) => str.substr(0, 1).toUpperCase() + str.substr(1);
-const getMetricsByFont = (fontFamily, emphasis) => fontMetrics[`${fontFamily}-${capitalize(emphasis)}`];
-const getMetrics = (fontFamily, emphasis, unicode) => getMetricsByFont(fontFamily, emphasis)[unicode];
-const objectifyMetrics = metric => {
+
+const getMetricsByFont = (fontFamily, emphasis) => fontMetrics[`${fontFamily}-${emphasis}`];
+export const getMetrics = (fontFamily, emphasis, unicode) => getMetricsByFont(fontFamily, emphasis)[unicode];
+export const objectifyMetrics = metric => {
     return {
         depth: metric[0],
         height: metric[1],
@@ -31,20 +32,21 @@ const katexFontFamily = {
 };
 
 export const fontData = [
-    { name: "AMS", emphasis: ["regular"] },
-    { name: "Caligraphic", emphasis: ["regular", "bold"] },
-    { name: "Fraktur", emphasis: ["regular", "bold"] },
-    { name: "Main", emphasis: ["regular", "bold", "italic", "bolditalic"] },
-    { name: "Math", emphasis: ["italic", "bolditalic"] },
-    { name: "SansSerif", emphasis: ["regular", "bold", "italic"] },
-    { name: "Script", emphasis: ["regular"] },
-    { name: "Size1", emphasis: ["regular"] },
-    { name: "Size2", emphasis: ["regular"] },
-    { name: "Size3", emphasis: ["regular"] },
-    { name: "Size4", emphasis: ["regular"] },
-    { name: "Typewriter", emphasis: ["regular"] }
+    { name: "AMS", emphasis: ["Regular"] },
+    { name: "Caligraphic", emphasis: ["Regular", "Bold"] },
+    { name: "Fraktur", emphasis: ["Regular", "Bold"] },
+    { name: "Main", emphasis: ["Regular", "Bold", "Italic", "BoldItalic"] },
+    { name: "Math", emphasis: ["Italic", "BoldItalic"] },
+    { name: "SansSerif", emphasis: ["Regular", "Bold", "Italic"] },
+    { name: "Script", emphasis: ["Regular"] },
+    { name: "Size1", emphasis: ["Regular"] },
+    { name: "Size2", emphasis: ["Regular"] },
+    { name: "Size3", emphasis: ["Regular"] },
+    { name: "Size4", emphasis: ["Regular"] },
+    { name: "Typewriter", emphasis: ["Regular"] }
 ];
 export const getFontDataByName = (name) => fontData.find(entry => entry.name === name);
+export const getDefaultEmphasis = fontFamily => getFontDataByName(fontFamily).emphasis[0];
 
 const fontFamilyLookUpOrder = [
     "Math", "Main", 
@@ -58,7 +60,7 @@ const lookUpFamilyNameByUnicode = (unicode) => {
     for (const fontFam of fontFamilyLookUpOrder){
         const fontEntry = getFontDataByName(fontFam);
         for (const emph of fontEntry.emphasis){
-            if (hasFontFamilyUnicode(fontFam, emph), unicode){
+            if (hasFontFamilyUnicode(fontFam, emph, unicode)){
                 return { fontFamily: fontFam, emphasis: emph };
             }
         }
@@ -136,3 +138,4 @@ export const lookUpGlyphByCharOrAlias = (charOrAlias) => {
         fontFamily, unicode
     };
 };
+

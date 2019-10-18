@@ -142,23 +142,13 @@ const isNodeNumeric = (nodeType, nodeValue) => nodeType === "ord" && ["zero", "o
 import fontMetrics from './fontMetricsData.js'; 
 import { createDelimiter } from './delimiter-util.js';
 import { createRoot } from './root-util.js';
-import { lookUpGlyphByCharOrAlias, getFontDataByName } from './katex-font-util.js';
+import { lookUpGlyphByCharOrAlias, getFontDataByName, objectifyMetrics, getMetrics, getDefaultEmphasis } from './katex-font-util.js';
 import { getTargetYOfGlyphNucleus } from './script-layout.js';
 
 const getGlyphMetrics = (node) => {
-	const fontName = formulaNodeIndexToFontName[getIndexOfFormulaNodeType(node.type)].replace("KaTeX_", "");
-	const entry = fontMetrics[`${fontName}-Regular`];
-	const font = lookupFont(node.value);
-	const glyph = getGlyphByValue(font, node.value);
-	const metrics = entry[glyph.unicode];
-	return {
-		depth: metrics[0], 
-		height: metrics[1],
-		italicCorrection: metrics[2],
-		skew: metrics[3],
-		width: metrics[4]
-	};
-}
+	const { fontFamily, unicode } = lookUpGlyphByCharOrAlias(node.value);
+	return objectifyMetrics(getMetrics(fontFamily, getDefaultEmphasis(fontFamily), unicode));
+};
 let opentypeFonts = {};
 const katexFontNames = {
 	Main: "KaTeX_Main", Math: "KaTeX_Math"
@@ -377,22 +367,53 @@ const getSupSubTargetYNoLimits = (style, script, nucleusDim) => {
 		]
 	}
 };
-const layoutScript = (style, script, layoutOptions={}) => {
-	/*
-		supscript: 
-		there is a style-dependent target-height, if the superscript is a char, 
-		simply raise it to that height. if it's not a char, try to raise it to that height,
-		but there has to be a gap between the bottom of the supscript and the baseline of the nucleus.
-	*/
+const layoutScriptLimitPosition = (style, script) => {
+	const scriptStyle = getSmallerStyle(style);
+	const styles = {
+		nucleus: style, 
+		sup: scriptStyle, sub: scriptStyle
+	};
+	const scriptLayouted = ["nucleus", "sup", "sub"].reduce((obj, key) => {
+		return {
+			...obj,
+			...(script[key] !== undefined ? { [key]: layoutNode(styles[key], script[key]) } : {})
+		};
+	}, {}); 
 
-	layoutOptions = {
-		limitPositions: false,
-		...layoutOptions
+	const nucleusDim = scriptLayouted.nucleus.dimensions;		
+	const positions = {
+		nucleus: [0, 0],
+		sup: scriptLayouted.sup ? [
+			calcCentering(scriptLayouted.sup.dimensions.width, nucleusDim.width), 
+			nucleusDim.yMax - scriptLayouted.sup.dimensions.yMin + style.fontSize * 0.2
+		] : undefined,
+		sub: scriptLayouted.sub ? [
+			calcCentering(scriptLayouted.sub.dimensions.width, nucleusDim.width), 
+			nucleusDim.yMin - scriptLayouted.sub.dimensions.yMax - style.fontSize * 0.2
+		] : undefined
 	};
 
+	const layoutedScriptWithPositions = Reflect.ownKeys(scriptLayouted).reduce((obj, key) => {
+		return {
+			...obj, 
+			[key]: {
+				...scriptLayouted[key], 
+				position: positions[key]
+			}
+		}
+	}, {});
+	const dimensions = getBoundingDimensions(Object.values(layoutedScriptWithPositions));
+	return {
+		type: "script",
+		style, dimensions,
+		...layoutedScriptWithPositions
+	};
+};
+const layoutScriptNoLimitPosition = (style, script) => {
 	const { nucleus, sup, sub } = script;
-	const nucleusLayouted = withPosition(layoutNode(style, nucleus), [0, 0]);
 	const isNucleusGlyph = isFormulaNodeGlyph(nucleus);
+
+	const nucleusLayouted = withPosition(layoutNode(style, nucleus), [0, 0]);
 	const fontSize = style.fontSize;
 
 	const scriptLayouted = {
@@ -400,6 +421,7 @@ const layoutScript = (style, script, layoutOptions={}) => {
 	};
 
 	const nucleusRight = getRightBoundOfNode(nucleus, nucleusLayouted);
+
 	const supSubTargetY = getSupSubTargetYNoLimits(style, script, nucleusLayouted.dimensions);
 
 	if (sup){
@@ -451,6 +473,21 @@ const layoutScript = (style, script, layoutOptions={}) => {
 		type: "script",
 		...scriptLayouted, style, dimensions
 	};
+};
+const layoutScript = (style, script) => {
+	const { nucleus } = script;
+	const nucleusUnicode = lookUpGlyphByCharOrAlias(nucleus.value).unicode;
+	const limitPosition = isFormulaNodeGlyph(nucleus) && nucleus.type === "op" && style.type === "D" && /*integral*/ nucleusUnicode !== 8747; 
+	if (limitPosition){
+		script = {
+			...script,
+			nucleus: { 
+				...script.nucleus, 
+				fontFamily: "Size2"
+			}
+		};
+	}
+	return limitPosition ? layoutScriptLimitPosition(style, script) : layoutScriptNoLimitPosition(style, script);
 };
 
 
@@ -758,36 +795,24 @@ async function main(){
 	};
 	formulaData = {
 		root: {
-			type: "mathlist", 
-			items: [
-				{
-					type: "script", 
-					nucleus: {
-						type: "op", value: "integral"
-					},
-					sup: {
-						type: "mathlist",
-						items: [
-							{ type: "ord", value: "plus" },
-							{ type: "ord", value: "infinity" }
-						]
-					},
-					sub: {
-						type: "mathlist",
-						items: [
-							{ type: "ord", value: "minus" },
-							{ type: "ord", value: "infinity" }
-						]
-					}
-				},
-				{ type: "ord", value: "1" },
-				{ type: "bin", value: "-" },
-				{ 
-					type: "fraction",
-					numerator: { type: "ord", value: "1" },
-					denominator: { type: "ord", value: "x" }
-				}
-			]
+			type: "script", 
+			nucleus: {
+				type: "op", value: "integral"
+			},
+			sup: {
+				type: "mathlist",
+				items: [
+					{ type: "ord", value: "plus" },
+					{ type: "ord", value: "8" }
+				]
+			},
+			sub: {
+				type: "mathlist",
+				items: [
+					{ type: "ord", value: "minus" },
+					{ type: "ord", value: "4" }
+				]
+			}
 		}
 	};
 
