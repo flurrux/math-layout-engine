@@ -136,14 +136,11 @@ const getIndexOfFormulaNodeType = (nodeType) => {
 	return formulaNodeTypes.indexOf(nodeType);
 };
 const isFormulaNodeGlyph = node => [0, 1, 2, 3, 4, 5, 6].includes(getIndexOfFormulaNodeType(node.type));
-const isFormulaNodeInner = node => innerTypes.includes(node.type);
-const isNodeNumeric = (nodeType, nodeValue) => nodeType === "ord" && ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"].includes(nodeValue);
 
 //style ###
-import fontMetrics from './fontMetricsData.js'; 
 import { createDelimiter } from './delimiter-util.js';
 import { createRoot } from './root-util.js';
-import { lookUpGlyphByCharOrAlias, getFontDataByName, objectifyMetrics, getMetrics, getDefaultEmphasis } from './katex-font-util.js';
+import { lookUpGlyphByCharOrAlias, objectifyMetrics, getMetrics, getDefaultEmphasis } from './katex-font-util.js';
 import { getTargetYOfGlyphNucleus } from './script-layout.js';
 
 const getGlyphMetrics = (node) => {
@@ -174,6 +171,7 @@ const getGlyphByValue = (font, val) => {
 	const char = String.fromCharCode(unicode);
 	return font.charToGlyph(char);
 };
+const getUnicodeByNode = node => lookUpGlyphByCharOrAlias(node.value).unicode;
 const getDimensionsOfCharNode = (style, node) => {
 	const font = lookupFont(node.value);
 	const glyph = getGlyphByValue(font, node.value);
@@ -475,10 +473,12 @@ const layoutScriptNoLimitPosition = (style, script) => {
 		...scriptLayouted, style, dimensions
 	};
 };
+const isScriptLimitPosition = (nucleus) => {
+	return isFormulaNodeGlyph(nucleus) && nucleus.type === "op" && style.type === "D" && /*integral*/ getUnicodeByNode(nucleus) !== 8747; 
+};
 const layoutScript = (style, script) => {
 	const { nucleus } = script;
-	const nucleusUnicode = lookUpGlyphByCharOrAlias(nucleus.value).unicode;
-	const limitPosition = isFormulaNodeGlyph(nucleus) && nucleus.type === "op" && style.type === "D" && /*integral*/ nucleusUnicode !== 8747; 
+	const limitPosition = isScriptLimitPosition(nucleus);
 	if (limitPosition){
 		script = {
 			...script,

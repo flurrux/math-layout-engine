@@ -1,6 +1,6 @@
 
 
-import fontMetrics from './fontMetricsData.js';
+import fontMetrics from './font-metrics-data.js/index.js';
 const capitalize = (str) => str.substr(0, 1).toUpperCase() + str.substr(1);
 
 const getMetricsByFont = (fontFamily, emphasis) => fontMetrics[`${fontFamily}-${emphasis}`];
