@@ -140,3 +140,9 @@ export const lookUpGlyphByCharOrAlias = (charOrAlias) => {
     };
 };
 
+import bboxData from './font-bbox-data.js';
+export const lookUpBoundingBox = (fontFamily, unicode, emphasis=null) => {
+	emphasis = emphasis || getDefaultEmphasis(fontFamily);
+	return bboxData[`${fontFamily}-${emphasis}`][unicode];
+};
+
