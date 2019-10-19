@@ -148,17 +148,7 @@ const getGlyphMetrics = (node) => {
 	return objectifyMetrics(getMetrics(fontFamily, getDefaultEmphasis(fontFamily), unicode));
 };
 let opentypeFonts = {};
-const katexFontNames = {
-	Main: "KaTeX_Main", Math: "KaTeX_Math"
-};
 
-const formulaNodeIndexToFontName = [
-	katexFontNames.Math,
-	"KaTeX_Size2",
-	katexFontNames.Main, katexFontNames.Main, katexFontNames.Main, katexFontNames.Main, katexFontNames.Main,
-	"",
-	""
-];
 const lookupFontName = (glyphName) => {
 	const glyphData = lookUpGlyphByCharOrAlias(glyphName);
 	const { fontFamily } = glyphData;

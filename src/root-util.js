@@ -3,7 +3,8 @@ import * as R from 'ramda';
 
 const rootData = [
     {
-        "fontFamily": "Size1",
+		"fontFamily": "Size1",
+		"innerHeight": 1.146,
         "bbox": {
             "xMin": 0.111,
             "yMin": -0.35,
@@ -73,33 +74,18 @@ const rootData = [
                     "x": 1.001,
                     "y": 0.85
                 },
-
-                // {
-                //     "onCurve": false,
-                //     "lastPointOfContour": false,
-                //     "x": 1.017,
-                //     "y": 0.85
-                // },
-
                 //lower tail-point
                 {
                     "onCurve": true,
                     "lastPointOfContour": false,
-                    "x": 1.02,
-                    "y": 0.832
+                    "x": 1.005,
+                    "y": 0.796
                 },
                 {
                     "onCurve": true,
                     "lastPointOfContour": false,
-                    "x": 1.02,
-                    "y": 0.832
-                },
-
-                {
-                    "onCurve": true,
-                    "lastPointOfContour": false,
-                    "x": 1.02,
-                    "y": 0.826
+                    "x": 1.005,
+                    "y": 0.796
                 },
                 {
                     "onCurve": true,
@@ -207,7 +193,8 @@ const rootData = [
         ]
     },
     {
-        "fontFamily": "Size2",
+		"fontFamily": "Size2",
+		"innerHeight": 1.746,
         "bbox": {
             "xMin": 0.111,
             "yMin": -0.65,
@@ -230,30 +217,18 @@ const rootData = [
                     "x": 1.001,
                     "y": 1.15
                 },
-                // {
-                //     "onCurve": false,
-                //     "lastPointOfContour": false,
-                //     "x": 1.018,
-                //     "y": 1.15
-                // },
                 //lower tail-point
                 {
                     "onCurve": true,
                     "lastPointOfContour": false,
-                    "x": 1.02,
-                    "y": 1.132
+                    "x": 1.008,
+                    "y": 1.096
                 },
                 {
                     "onCurve": true,
                     "lastPointOfContour": false,
-                    "x": 1.02,
-                    "y": 1.132
-                },
-                {
-                    "onCurve": false,
-                    "lastPointOfContour": false,
-                    "x": 1.02,
-                    "y": 1.128
+                    "x": 1.008,
+                    "y": 1.096
                 },
                 {
                     "onCurve": false,
@@ -403,7 +378,8 @@ const rootData = [
         ]
     },
     {
-        "fontFamily": "Size3",
+		"fontFamily": "Size3",
+		"innerHeight": 2.346,
         "bbox": {
             "xMin": 0.111,
             "yMin": -0.95,
@@ -545,36 +521,18 @@ const rootData = [
                     "x": 1.001,
                     "y": 1.45
                 },
-                // {
-                //     "onCurve": false,
-                //     "lastPointOfContour": false,
-                //     "x": 1.007,
-                //     "y": 1.45
-                // },
-                // {
-                //     "onCurve": false,
-                //     "lastPointOfContour": false,
-                //     "x": 1.019,
-                //     "y": 1.44
-                // },
                 //lower tail-point
                 {
                     "onCurve": true,
                     "lastPointOfContour": false,
-                    "x": 1.02,
-                    "y": 1.433
+                    "x": 1.011,
+                    "y": 1.396
                 },
                 {
                     "onCurve": true,
                     "lastPointOfContour": false,
-                    "x": 1.02,
-                    "y": 1.433
-                },
-                {
-                    "onCurve": false,
-                    "lastPointOfContour": false,
-                    "x": 1.02,
-                    "y": 1.425
+                    "x": 1.011,
+                    "y": 1.396
                 },
                 {
                     "onCurve": false,
@@ -610,7 +568,8 @@ const rootData = [
         ]
     },
     {
-        "fontFamily": "Size4",
+		"fontFamily": "Size4",
+		"innerHeight": 2.946,
         "bbox": {
             "xMin": 0.111,
             "yMin": -1.25,
@@ -648,30 +607,26 @@ const rootData = [
                     "lastPointOfContour": false,
                     "x": 1.001,
                     "y": 1.75
-                },
-                {
-                    "onCurve": false,
-                    "lastPointOfContour": false,
-                    "x": 1.008,
-                    "y": 1.75
-                },
-                {
-                    "onCurve": false,
-                    "lastPointOfContour": false,
-                    "x": 1.019,
-                    "y": 1.74
-                },
+				},
+				//upper tail-point
+				{
+					"onCurve": true,
+					"lastPointOfContour": false,
+					"x": 1.001,
+					"y": 1.75
+				},
+				//lower tail-point
+				{
+					"onCurve": true,
+					"lastPointOfContour": false,
+					"x": 1.013,
+					"y": 1.696
+				},
                 {
                     "onCurve": true,
                     "lastPointOfContour": false,
-                    "x": 1.02,
-                    "y": 1.733
-                },
-                {
-                    "onCurve": false,
-                    "lastPointOfContour": false,
-                    "x": 1.02,
-                    "y": 1.726
+                    "x": 1.013,
+					"y": 1.696
                 },
                 {
                     "onCurve": false,
@@ -797,13 +752,15 @@ const rootData = [
         ]
     },
     {
-        "fontFamily": "Size4",
+		"fontFamily": "Size4",
+		"innerHeight": 1.805,
         "bbox": {
             "xMin": 0.111,
             "yMin": -0.885,
             "xMax": 0.742,
             "yMax": 0.935
-        },
+		},
+		"advanceWidth": 1.056,
         "contours": [
             [
                 {
@@ -937,31 +894,47 @@ const rootData = [
                     "lastPointOfContour": false,
                     "x": 0.702,
                     "y": 0.168
-                },
+				},
+				//left tower-point
                 {
                     "onCurve": true,
                     "lastPointOfContour": false,
                     "x": 0.703,
-                    "y": 0.922
-                },
-                {
-                    "onCurve": false,
-                    "lastPointOfContour": false,
-                    "x": 0.713,
-                    "y": 0.935
-                },
-                {
-                    "onCurve": true,
-                    "lastPointOfContour": false,
-                    "x": 0.722,
-                    "y": 0.935
-                },
-                {
-                    "onCurve": false,
-                    "lastPointOfContour": false,
-                    "x": 0.734,
-                    "y": 0.935
-                },
+                    "y": 0.92
+				},
+				//upper tail-point
+				{
+					"onCurve": true,
+					"lastPointOfContour": false,
+					"x": 0.703,
+					"y": 0.92
+				},
+                // {
+                //     "onCurve": false,
+                //     "lastPointOfContour": false,
+                //     "x": 0.713,
+                //     "y": 0.935
+                // },
+                // {
+                //     "onCurve": true,
+                //     "lastPointOfContour": false,
+                //     "x": 0.722,
+                //     "y": 0.935
+                // },
+                // {
+                //     "onCurve": false,
+                //     "lastPointOfContour": false,
+                //     "x": 0.734,
+                //     "y": 0.935
+				// },
+				//lower tail-point
+				{
+					"onCurve": true,
+					"lastPointOfContour": true,
+					"x": 0.742,
+					"y": 0.92
+				},
+				//right tower-point
                 {
                     "onCurve": true,
                     "lastPointOfContour": true,
@@ -972,99 +945,86 @@ const rootData = [
         ]
     }
 ];
-
-const roofAttachements = [
-    [8, 10], [0, 2], [20, 23], [4, 7], [22, 26]
-];
-const tailIndices = [
-    [9, 10], [1, 2], [21, 22], 
+const extensionIndices = [
+    [9, 10], [1, 2], [21, 22], [5, 6], [22, 25]
 ];
 
-const verticalRootHeight = 1807;
 const indexPositions = [
-    [520, 290], [520, 290], [520, 290], [520, 290], [540, 800]
+    [0.52, 0.29], [0.52, 0.29], [0.52, 0.29], [0.52, 0.29], [0.54, 0.8]
 ];
+const roofThickness = 0.054;
 
-const getGlyphByIndex = (font, index) => font.glyphs.glyphs[index];
+const moveContourPoints = (contour, movedPoints) => contour.map((glyphPoint, index) => {
+	const point = (movedPoints.find(mov => mov.index === index) || { point: { x: glyphPoint.x, y: glyphPoint.y } }).point;
+	return { ...glyphPoint, ...point }
+});
+export const extendRootTail = (rootIndex, width) => {
+	const extendInds = extensionIndices[rootIndex];
+	const rootEntry = rootData[rootIndex];
+	const contour = rootEntry.contours[0];
+	const tailX = contour[extendInds[1]].x + width;
+	return moveContourPoints(contour, [
+		{ index: extendInds[0], point: { x: tailX, y: contour[extendInds[0]].y } },
+		{ index: extendInds[1], point: { x: tailX, y: contour[extendInds[1]].y } },
+	]);
+};
+export const extendRootBrella = (height, width) => {
+	const rootEntry = rootData[4];
+	const bottomY = rootEntry.bbox.yMin;
+	const lowerRoofY = bottomY + height;
+	const upperRoofY = lowerRoofY + roofThickness;
+	const tailX = rootEntry.advanceWidth + width;
+	const contour = rootEntry.contours[0];
+	return moveContourPoints(contour, [
+		{ index: 22, point: { x: contour[22].x, y: upperRoofY } },
+		{ index: 23, point: { x: tailX, y: upperRoofY } },
+		{ index: 24, point: { x: tailX, y: lowerRoofY } },
+		{ index: 25, point: { x: contour[25].x, y: lowerRoofY } }
+	]);
+};
 
-const getFontKeyForRootHeight = (fontMap, height) => {
-    for (let i = 0; i < rootFontKeys.length - 1; i++){
-        const fontKey = rootFontKeys[i];
-        const font = fontMap[fontKey];
-        const glyph = getGlyphByIndex(font, rootGlyphIndices[i]);
-        const glyphHeight = glyph.yMax - glyph.yMin;
-        if (glyphHeight > height){
-            return {
-                fontKey, fontIndex: i,
-                sizeRatio: height / glyphHeight,
-                remainingHeight: glyphHeight - height
-            };
-        }
-    }
-
-    return null;
+//height means distance from lowest point to bottom of root-"roof"
+const getRootIndexByHeight = (height) => {
+	for (let i = 0; i < 4; i++){
+		if (rootData[i].innerHeight > height){
+			return i;
+		}
+	}
+	return 4;
 };
 
 //{ contours, innerStartX, metrics }
-export const createRoot = (fontMap, width, height, margin=0) => {
-    const keyData = getFontKeyForRootHeight(fontMap, height + margin);
-    if (keyData){
-        const { fontIndex } = keyData;
-        const glyph = getGlyphByIndex(fontMap[keyData.fontKey], rootGlyphIndices[fontIndex]);
-        const glyphScale = Math.min(0.7, keyData.sizeRatio) / 0.7;
-        const contour = scaleContours(glyphScale, getGlyphContours(glyph))[0];
-        const glyphMetrics = R.map(val => val * glyphScale, R.pick(["xMax", "yMin", "yMax"], glyph));
-
-
-        const attachementInds = roofAttachements[fontIndex];
-        const endX = glyphMetrics.xMax + width;
-
-        const extendedContour = [
-            ...contour.slice(0, attachementInds[0] + 1),
-            { ...contour[attachementInds[0]], x: endX },
-            { ...contour[attachementInds[1]], x: endX },
-            ...contour.slice(attachementInds[1])
-        ];
-        const extendedContours = [extendedContour];
-
-        return {
-            contours: extendedContours,
-            innerStartX: glyphMetrics.xMax, 
-            indexCorner: indexPositions[fontIndex],
-            metrics: {
-                width: endX,
-                yMin: glyphMetrics.yMin,
-                yMax: glyphMetrics.yMax
-            }
-        };
-    }
-    else {
-        const fontIndex = rootFontKeys.length;
-        const glyph = getGlyphByIndex(fontMap["KaTeX_Size4"], rootGlyphIndices[fontIndex]);
-        const contour = getGlyphContours(glyph)[0];
-        const endX = glyph.advanceWidth + width;
-        const roofStartY = -885 + height + margin;
-        const roofThickness = 17;
-        const roofEndY = roofStartY + roofThickness;
-
-        const extendedContours = [[
-            ...contour.slice(0, 22),
-            { ...contour[22], y: roofEndY },
-            { ...contour[22], y: roofEndY, x: endX },
-            { ...contour[26], y: roofStartY, x: endX },
-            { ...contour[26], y: roofStartY },
-            ...contour.slice(27)
-        ]];
-
-        return {
-            contours: extendedContours,
-            innerStartX: 1056,
-            indexCorner: indexPositions[fontIndex],
-            metrics: {
-                width: endX,
-                yMin: glyph.yMin,
-                yMax: roofEndY
-            }
-        };
-    }
+export const createRoot = (width, height, margin=0) => {
+	height += margin;
+	const rootIndex = getRootIndexByHeight(height);
+	const rootEntry = rootData[rootIndex];
+	const { bbox } = rootEntry;
+	if (rootIndex < 4){
+		const heightRatio = height / rootEntry.innerHeight;
+		const scale = Math.min(1, Math.min(heightRatio, 0.9) / 0.9);
+		const scaledBbox = R.map(val => val * scale, bbox);
+		const contour = extendRootTail(rootIndex, width / scale);
+		const scaledContours = scaleContours(scale, [contour]);
+		return {
+			contours: scaledContours,
+			innerStartX: scaledBbox.xMax,
+			metrics: {
+				width: scaledBbox.xMax + width,
+				yMin: scaledBbox.yMin,
+				yMax: scaledBbox.yMax
+			}
+		}
+	}
+	else {
+		const startX = rootData[rootIndex].advanceWidth;
+		return {
+			contours: [extendRootBrella(height, width)],
+			innerStartX: startX,
+			metrics: {
+				width: startX + width,
+				yMin: bbox.yMin,
+				yMax: bbox.yMin + height
+			}
+		}
+	}
 };
