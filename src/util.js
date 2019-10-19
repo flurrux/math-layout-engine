@@ -13,3 +13,11 @@ export const addFontFaces = async fontMap => {
 
 //this function sums up all the numbers and records the intermediate sums along the way
 export const accumSum = (nums) => nums.reduce((accum, num) => [...accum, accum[accum.length - 1] + num], [0]);
+
+export const clamp = (min, max, val) => {
+	if (val < min) return min;
+	if (val > max) return max;
+	return val;
+};
+export const scaleMap = scale => (num => num * scale);
+export const isDefined = obj => obj !== undefined;

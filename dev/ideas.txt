@@ -1,0 +1,90 @@
+
+font-styles: 
+	D (display-style, meaning no line breaks and taking up more space)
+	T (text-style, with linebreaks, scripts are placed to take up less space)
+	S (script-style, subscript, superscript, fractions, ...)
+	SS (script-script-style, scripts of scripts, ...)
+
+	for each of these styles there is also a "cramped" version denoted 
+	by a prime, for example S' standing for cramped-script-style. 
+	they are used when placed under something else, for example the denominator 
+	or a subscript. superscripts are less raised in cramped styles.
+
+	parameters: 
+	MathUnit (1/18 em)
+	RuleThickness (thickness of the fraction stroke, underlines, overlines)
+	AxisHeight (vertical distance from the baseline to the layout axis. 
+		letters are placed directly on the baseline while for examples fractions are aligned along the axis)
+
+
+	abstract-formula-description ###
+		
+		types used in texbook: "ord", "op", "bin", "rel", "open", "close", "punct", "inner"
+
+		types ##
+			- ord
+				- number
+				- letter (not only alphabetical)	
+			- op (big operator, like sigma or integral)
+			- bin (binary operator)
+			- rel (relation operator)
+			- open (may not be drawn by character but by other graphics)
+			- close
+			- punct
+			- inner
+				- mathlist
+				- fraction
+				- root
+				- script
+			- spacing
+
+
+	abstract-layout-description ###	
+
+		types ##
+			- mathlist { items }
+			- script { nucleus, sub, sup }
+			- fraction { numerator, fractionRule, denominator }
+			- delimited { leftDelim, rightDelim, inner }
+			- root { index, radicand, radical }
+			- single
+
+
+		every layout node has these properties: {
+			type, style,
+			dimensions: { width, yMax, yMin }, 
+			position: [x, y]
+		}
+		the vertical axis of this system points up
+
+		style: {
+			type: D | T | S | SS,
+			cramped: bool,
+			baseFontSize: number
+		}
+		font-size and axis-height can be infered from style.
+
+
+
+
+	input-data-structure:
+
+	example: 1 + 3 * a - b = 35
+	horizontal-list: {
+		type: "mathlist",
+		items: [
+			{ type: "ord", value: "one" },
+			{ type: "bin", value: "plus" },
+			{ type: "num", value: "three" },
+			{ type: "bin", value: "dotmath" },
+			{ type: "ord", value: "a" },
+			{ type: "bin", value: "minus" },
+			{ type: "ord", value: "b" },
+			{ type: "rel", value: "equal" },
+			{ type: "ord", value: "three" },
+			{ type: "ord", value: "five" }
+		]
+	}
+
+
+- debug renderer where nodes can be hovered and see directly how they are layout

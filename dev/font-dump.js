@@ -1,4 +1,4 @@
-import { loadFontsAsync } from './opentype-util.js';
+import { loadFontsAsync } from '../src/opentype-util.js';
 
 const main = async () => {
     const keys = [

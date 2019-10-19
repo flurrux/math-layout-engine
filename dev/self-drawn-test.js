@@ -1,12 +1,12 @@
 import { 
 	loadFontsAsync, getInterspersedContour, pathContours, getGlyphByIndex, getGlyphIndexByName, pathInterspersedContours, getGlyphByName, getGlyphContours
-} from './opentype-util.js';
+} from '../src/opentype-util.js';
 import * as R from 'ramda';
-import { addFontFaces } from './util.js';
+import { addFontFaces } from '../src/util.js';
 
 import {
 	createDelimiter
-} from './delimiter-util.js';
+} from '../src/delimiter-util.js/index.js.js';
 import { createRoot } from './root-util.js';
 
 const createRangeIndexArray = (min, max) => {

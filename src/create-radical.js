@@ -1,5 +1,5 @@
-import { getGlyphContours, scaleContours } from "./opentype-util";
-import * as R from 'ramda';
+import { scaleContours } from "./opentype-util";
+import { map } from 'ramda';
 
 const rootData = [
     {
@@ -994,20 +994,20 @@ const getRootIndexByHeight = (height) => {
 };
 
 //{ contours, innerStartX, metrics }
-export const createRoot = (width, height, margin=0) => {
-	height += margin;
+export const createRadical = (width, height) => {
 	const rootIndex = getRootIndexByHeight(height);
 	const rootEntry = rootData[rootIndex];
 	const { bbox } = rootEntry;
 	if (rootIndex < 4){
 		const heightRatio = height / rootEntry.innerHeight;
 		const scale = Math.min(1, Math.min(heightRatio, 0.9) / 0.9);
-		const scaledBbox = R.map(val => val * scale, bbox);
+		const scaledBbox = map(val => val * scale, bbox);
 		const contour = extendRootTail(rootIndex, width / scale);
 		const scaledContours = scaleContours(scale, [contour]);
 		return {
 			contours: scaledContours,
 			innerStartX: scaledBbox.xMax,
+			innerHeight: scale * rootEntry.innerHeight,
 			metrics: {
 				width: scaledBbox.xMax + width,
 				yMin: scaledBbox.yMin,
@@ -1020,6 +1020,7 @@ export const createRoot = (width, height, margin=0) => {
 		return {
 			contours: [extendRootBrella(height, width)],
 			innerStartX: startX,
+			innerHeight: height - bbox.yMin,
 			metrics: {
 				width: startX + width,
 				yMin: bbox.yMin,

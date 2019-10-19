@@ -20,109 +20,13 @@
 	text
 */
 
-/*
-	font-styles: 
-	D (display-style, meaning no line breaks and taking up more space)
-	T (text-style, with linebreaks, scripts are placed to take up less space)
-	S (script-style, subscript, superscript, fractions, ...)
-	SS (script-script-style, scripts of scripts, ...)
-
-	for each of these styles there is also a "cramped" version denoted 
-	by a prime, for example S' standing for cramped-script-style. 
-	they are used when placed under something else, for example the denominator 
-	or a subscript. superscripts are less raised in cramped styles.
-
-	parameters: 
-	MathUnit (1/18 em)
-	RuleThickness (thickness of the fraction stroke, underlines, overlines)
-	AxisHeight (vertical distance from the baseline to the layout axis. 
-		letters are placed directly on the baseline while for examples fractions are aligned along the axis)
-
-
-	abstract-formula-description ###
-		
-		types used in texbook: "ord", "op", "bin", "rel", "open", "close", "punct", "inner"
-
-		types ##
-			- ord
-				- number
-				- letter (not only alphabetical)	
-			- op (big operator, like sigma or integral)
-			- bin (binary operator)
-			- rel (relation operator)
-			- open (may not be drawn by character but by other graphics)
-			- close
-			- punct
-			- inner
-				- mathlist
-				- fraction
-				- root
-				- script
-			- spacing
-
-
-	abstract-layout-description ###	
-
-		types ##
-			- mathlist { items }
-			- script { nucleus, sub, sup }
-			- fraction { numerator, fractionRule, denominator }
-			- delimited { leftDelim, rightDelim, inner }
-			- root { index, radicand, radical }
-			- single
-
-
-		every layout node has these properties: {
-			type, style,
-			dimensions: { width, yMax, yMin }, 
-			position: [x, y]
-		}
-		the vertical axis of this system points up
-
-		style: {
-			type: D | T | S | SS,
-			cramped: bool,
-			baseFontSize: number
-		}
-		font-size and axis-height can be infered from style.
-
-
-
-
-	input-data-structure:
-
-	example: 1 + 3 * a - b = 35
-	horizontal-list: {
-		type: "mathlist",
-		items: [
-			{ type: "ord", value: "one" },
-			{ type: "bin", value: "plus" },
-			{ type: "num", value: "three" },
-			{ type: "bin", value: "dotmath" },
-			{ type: "ord", value: "a" },
-			{ type: "bin", value: "minus" },
-			{ type: "ord", value: "b" },
-			{ type: "rel", value: "equal" },
-			{ type: "ord", value: "three" },
-			{ type: "ord", value: "five" }
-		]
-	}
-*/
-
 import * as R from 'ramda';
-import { 
-	getGlyphIndexByName, loadFontsAsync, pathContours
-} from './opentype-util.js';
-import { addFontFaces, pickList, accumSum, sum } from './util.js';
+import { loadFontsAsync, pathContours } from './opentype-util.js';
+import { addFontFaces, pickList, accumSum, clamp, scaleMap, isDefined } from './util.js';
 
-const clamp = (min, max, val) => {
-	if (val < min) return min;
-	if (val > max) return max;
-	return val;
-};
-const isDefined = obj => obj !== undefined;
+
+
 const emToPx = (style, em) => style.fontSize * em / 1000;
-const scaleMap = scale => (num => num * scale);
 
 //formula description ###
 
@@ -139,9 +43,11 @@ const isFormulaNodeGlyph = node => [0, 1, 2, 3, 4, 5, 6].includes(getIndexOfForm
 
 //style ###
 import { createDelimiter } from './delimiter-util.js';
-import { createRoot } from './root-util.js';
-import { lookUpGlyphByCharOrAlias, objectifyMetrics, getMetrics, getDefaultEmphasis } from './katex-font-util.js';
+import { createRadical } from './create-radical.js';
+import { lookUpGlyphByCharOrAlias, objectifyMetrics, getMetrics, getDefaultEmphasis } from './font-data/katex-font-util.js';
 import { getTargetYOfGlyphNucleus } from './script-layout.js';
+import { fontIdentifiers } from './font-data/katex-font-util.js';
+import { loadKatexFontFaces, renderFormulaLayout } from './rendering/render.js';
 
 const getGlyphMetrics = (node) => {
 	const { fontFamily, unicode } = lookUpGlyphByCharOrAlias(node.value);
@@ -247,8 +153,12 @@ const getHorizontalSpacingBetweenNodes = (typeA, typeB) => {
 	return 2 * nodeSpacingTable[ind1][ind2] / 18;
 };
 const isNodeOfAnyType = (node, types) => types.includes(node.type);
-const isNodeAlignedToBaseline = (node) => isNodeOfAnyType(node, ["mathlist", "script"]) || isFormulaNodeGlyph(node);
-const isNodeAlignedToAxis = (node) => isNodeOfAnyType(node, ["fraction", "root"]);
+const isNodeAlignedToBaseline = (node) => isNodeOfAnyType(node, ["mathlist", "script"]) || 
+	isFormulaNodeGlyph(node) || (node.type === "root" && isNodeAlignedToBaseline(node.radicand));
+
+const isNodeAlignedToAxis = (node) => isNodeOfAnyType(node, ["fraction"]) || 
+	(node.type === "root" && isNodeAlignedToAxis(node.radicand));
+
 const getAxisAlignment = (style, node) => isNodeAlignedToAxis(node) ? getAxisHeight(style) : 0;
 const getHeightAndDepthFromAxis = (node, dim, axisHeight) => {
 	return isNodeAlignedToBaseline(node) ? [ dim.yMax - axisHeight, dim.yMin - axisHeight ] : [dim.yMax, dim.yMin];
@@ -539,27 +449,27 @@ const layoutDelimited = (style, delimNode) => {
 
 
 const layoutRoot = (style, root) => {
+	const { fontSize } = style;
 	const radicandLayouted = layoutNode(style, root.radicand);
 	
-	const radicamDimEm = dimensionsToEmSpace(radicandLayouted.dimensions, style.fontSize);
+	const radicandDim = radicandLayouted.dimensions;
+	const radicandDimEm = R.map(scaleMap(1 / fontSize), radicandLayouted.dimensions);
+	const margin = [0.07, 0.18];
 	const [radicandWidth, radicandHeight] = [
-		radicamDimEm.width, 
-		getTotalHeightOfDimensions(radicamDimEm)
+		margin[0] * 2 + radicandDimEm.width, 
+		margin[1] * 2 + getTotalHeightOfDimensions(radicandDimEm)
 	];
 
-	const genRoot = createRoot(opentypeFonts, radicandWidth, radicandHeight, style.fontSize * 2);
-	const fromEm = fromEmSpace(style.fontSize);
-
-	const rootMetrics = dimensionsFromEmSpace(genRoot.metrics, style.fontSize);
-	const rootHeight = getTotalHeightOfDimensions(rootMetrics);
-	const contoursOffset = [
-		0, radicandLayouted.dimensions.yMax - rootMetrics.yMax + (rootHeight - getTotalHeightOfDimensions(radicandLayouted.dimensions)) / 2
-	];
-	const rootContours = genRoot.contours;
+	const radical = createRadical(radicandWidth, radicandHeight, fontSize / 50);
+	const rootMetrics = R.map(scaleMap(fontSize), radical.metrics);
+	const rootContours = radical.contours;
+	
+	const spareYHalf = (radical.innerHeight * fontSize - radicandDim.yMax + radicandDim.yMin) * 0.7;
+	const contourY = spareYHalf - (rootMetrics.yMax - radicandDim.yMax);
+	const contoursOffset = [ 0, contourY ];
 
 	const radicandPosition = [
-		fromEm * genRoot.innerStartX, 
-		isNodeAlignedToBaseline(root.radicand) ? -getAxisHeight(style) : 0
+		fontSize * (radical.innerStartX + margin[0]), 0
 	];
 	Object.assign(radicandLayouted, { position: radicandPosition });
 
@@ -575,7 +485,7 @@ const layoutRoot = (style, root) => {
 	const indexLayouted = root.index ? (function(){
 		const indexStyle = switchStyleType(style, "SS");
 		const indexLayouted = layoutNode(indexStyle, root.index);
-		const scaledCorner = genRoot.indexCorner.map(scaleMap(fromEm));
+		const scaledCorner = radical.indexCorner.map(scaleMap(style.fontSize));
 		const rightBottomPosition = [
 			contoursOffset[0] + scaledCorner[0],
 			contoursOffset[1] + scaledCorner[1]
@@ -596,6 +506,7 @@ const layoutRoot = (style, root) => {
 		...(indexLayouted ? { index: indexLayouted } : {})
 	}
 };
+
 
 const nodeLayoutFuncMap = {
 	"mathlist": layoutMathList,
@@ -625,127 +536,10 @@ const layoutNode = (style, node) => {
 const layoutWithStyle = (style) => (node => layoutNode(style, node));
 
 
-//rendering ###
 
-const renderAxisLine = (ctx, node) => {
-	ctx.save();
-	ctx.beginPath();
-	const axisHeight = getAxisHeight(node.style);
-	ctx.translate(0, axisHeight);
-	ctx.moveTo(0, 0);
-	ctx.lineTo(node.width, 0);
-	ctx.setTransform(1, 0, 0, 1, 0, 0);
-	Object.assign(ctx, { lineWidth: 1, strokeStyle: "red" });
-	ctx.stroke();
-	ctx.restore();
-};
-const renderBoundingBox = (ctx, node) => {
-	const dim = node.dimensions;
-	const height = dim.yMax - dim.yMin;
-	
-	ctx.save();
-	ctx.beginPath();
-	ctx.rect(0, -dim.yMax, dim.width, height);
-	ctx.setTransform(1, 0, 0, 1, 0, 0);
-	ctx.lineWidth = 1;
-	ctx.stroke();
-	ctx.restore();
-
-	// ctx.save();
-	// ctx.beginPath();
-	// ctx.moveTo(0, 0);
-	// ctx.lineTo(dim.width, 0);
-	// ctx.setTransform(1, 0, 0, 1, 0, 0);
-	// ctx.lineWidth = 1;
-	// ctx.strokeStyle = "red";
-	// ctx.stroke();
-	// ctx.restore();
-};
-const renderFormula = (canvas, ctx, renderData) => {
-	const color = "black";
-	ctx.fillStyle = color;
-	ctx.strokeStyle = color;
-
-	const renderPropNodes = (node, props) => pickList(props, node).filter(isDefined).forEach(renderNode);
-
-	const renderNode = node => {
-		
-		ctx.save();
-		ctx.translate(node.position[0], -node.position[1]);
-
-		//renderBoundingBox(ctx, node);
-
-		const nodeType = node.type;
-		if (nodeType === "char"){
-			const style = node.style;
-			ctx.font = `${style.fontSize}px ${style.fontName}`;
-			ctx.fillText(node.char, 0, 0);
-		}
-		else if (nodeType === "contours"){
-			ctx.save();
-			ctx.scale(...[0, 1].map(n => (node.style.fontSize / 1000)));
-			ctx.scale(1, -1);
-			pathContours(ctx, node.contours);
-			ctx.restore();
-			ctx.fillStyle = "black";
-			ctx.fill();
-		}
-		else if (nodeType === "mathlist"){
-			node.items.forEach(renderNode);
-		}
-		else if (nodeType === "fraction"){
-			pickList(["numerator", "denominator"], node).forEach(renderNode);
-
-			//draw fraction line
-			{
-				ctx.beginPath();
-				ctx.moveTo(0, 0);
-				ctx.lineTo(node.dimensions.width, 0);
-				ctx.lineWidth = node.ruleThickness;
-				ctx.stroke();
-			}
-		}
-		else if (nodeType === "script"){
-			pickList(["nucleus", "sup", "sub"], node).filter(isDefined).forEach(renderNode);
-		}
-		else if (nodeType === "root"){
-			renderPropNodes(node, ["radical", "radicand", "index"]);
-		}
-		
-		ctx.restore();
-	};
-	renderData.position = [
-		calcCentering(renderData.dimensions.width, canvas.width),
-		-calcCentering(getTotalHeightOfDimensions(renderData.dimensions), canvas.height)
-	];
-	renderNode(renderData);
-};
-
-const loadFonts = async () => {
-	const baseUrl = "https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/fonts/";
-	const fontEntries = [
-		["KaTeX_Main", "KaTeX_Main-Regular.ttf"],
-		["KaTeX_Math", "KaTeX_Math-Italic.ttf"],
-		["KaTeX_Size1", "KaTeX_Size1-Regular.ttf"],
-		["KaTeX_Size2", "KaTeX_Size2-Regular.ttf"],
-		["KaTeX_Size3", "KaTeX_Size3-Regular.ttf"],
-		["KaTeX_Size4", "KaTeX_Size4-Regular.ttf"]
-	];
-	const fontUrlMap = R.fromPairs(fontEntries.map(entry => [entry[0], baseUrl + entry[1]]));
-	const fontMap = await loadFontsAsync(fontUrlMap);
-	await addFontFaces(fontUrlMap);
-	return fontMap;
-};
 
 
 async function main(){
-
-	//font loading ###
-	const fontData = await loadFonts();
-	opentypeFonts = fontData;
-	window.opentypeFonts = opentypeFonts;
-
-
 
 	let formulaData = {
 		root: {
@@ -823,22 +617,40 @@ async function main(){
 			]
 		}
 	};
-
-
+	formulaData = {
+		type: "mathlist", 
+		items: [
+			{
+				type: "root",
+				radicand: {
+					//type: "ord", value: "alpha"
+					type: "fraction", 
+					numerator: { type: "ord", value: "1" },
+					denominator: { type: "ord", value: "a" },
+				}
+			},
+			{
+				type: "ord", value: "x"
+			},
+			{
+				type: "fraction", 
+				numerator: { type: "ord", value: "2" },
+				denominator: { type: "ord", value: "beta" }
+			}
+		]
+	};
 
 	
 	const layoutData = layoutNode({
 		type: "D", 
-		baseFontSize: 30,
-		fontSize: 30
-	}, formulaData.root);
+		baseFontSize: 40,
+		fontSize: 40
+	}, formulaData);
 
-	document.body.insertAdjacentHTML("beforeend", `
-		<canvas width=800 height=400></canvas>
-	`);
+	document.body.insertAdjacentHTML("beforeend", `<canvas width=800 height=400></canvas>`);
 	const canvas = document.querySelector("canvas");
 	const ctx = canvas.getContext("2d");
-	renderFormula(canvas, ctx, layoutData);
+	await loadKatexFontFaces();
+	renderFormulaLayout(canvas, ctx, layoutData);
 }
-
 main();

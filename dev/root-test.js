@@ -1,5 +1,5 @@
-import { extendRootTail, extendRootBrella, createRoot } from "./root-util";
-import { pathContours } from "./opentype-util";
+import { extendRootTail, extendRootBrella, createRadical } from "../src/create-radical.js";
+import { pathContours } from "../src/opentype-util";
 import { LitElement, html, css } from 'lit-element';
 import '@polymer/paper-slider/paper-slider.js';
 
@@ -167,7 +167,7 @@ class RootCreationTest extends LitElement {
 		ctx.save();
 		const scale = 50;
 		const { fitWidth, fitHeight, margin } = this;
-		const root = createRoot(fitWidth, fitHeight, margin);
+		const root = createRadical(fitWidth, fitHeight + margin);
 		const position = [
 			(canvas.width - root.metrics.width * scale) / 2, 
 			canvas.height - 100 + root.metrics.yMin * scale

@@ -47,6 +47,7 @@ export const fontData = [
 ];
 export const getFontDataByName = (name) => fontData.find(entry => entry.name === name);
 export const getDefaultEmphasis = fontFamily => getFontDataByName(fontFamily).emphasis[0];
+export const fontIdentifiers = fontData.map(entry => entry.emphasis.map(emph => `${entry.name}-${emph}`)).flat();
 
 const fontFamilyLookUpOrder = [
     "Math", "Main", 

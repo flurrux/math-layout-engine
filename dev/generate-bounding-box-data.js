@@ -1,5 +1,5 @@
-import { fontData } from './katex-font-util.js';
-import { loadFontsAsync } from './opentype-util.js';
+import { fontData } from '../src/katex-font-util.js';
+import { loadFontsAsync } from '../src/opentype-util.js';
 
 const getBboxesOfFont = font => {
     const glyphs = font.glyphs.glyphs;
