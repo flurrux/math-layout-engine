@@ -39,7 +39,7 @@ const getIndexOfFormulaNodeType = (nodeType) => {
 const isFormulaNodeGlyph = node => [0, 1, 2, 3, 4, 5, 6].includes(getIndexOfFormulaNodeType(node.type));
 
 //style ###
-import { createDelimiter } from './delimiter-util.js';
+import { createDelimiter } from './create-delimiter.js';
 import { createRadical } from './create-radical.js';
 import { lookUpGlyphByCharOrAlias, objectifyMetrics, getMetrics, getDefaultEmphasis } from './font-data/katex-font-util.js';
 import { getTargetYOfGlyphNucleus } from './script-layout.js';

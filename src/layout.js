@@ -2,7 +2,7 @@ import { scaleMap, identity, addFontFaces } from "./util";
 import { nodeType, isNodeComposite, glyphTypes } from "./node-types";
 import * as R from 'ramda';
 import { layoutScript } from "./script-layout";
-import { getMetrics } from "./font-data/katex-font-util";
+import { getMetrics, lookUpGlyphByCharOrAlias, getDefaultEmphasis } from "./font-data/katex-font-util";
 
 
 //layout util ###
@@ -297,22 +297,24 @@ const layoutRoot = (style, root) => {
 
 //char ###
 const getDimensionsOfCharNode = (style, node) => {
-	const font = lookupFont(node.value);
-	const glyph = getGlyphByValue(font, node.value);
-	const scaleNum = num => emToPx(style, num);
-	return R.map(scaleNum)({
-		width: glyph.advanceWidth,
-		yMin: glyph.yMin,
-		yMax: glyph.yMax
+	const fontData = lookUpGlyphByCharOrAlias(node.value);
+	const metrics = getMetricsObject(fontData.fontFamily, getDefaultEmphasis(fontData.fontData), fontData.unicode);
+	return R.map(scaleMap(style.fontSize))({
+		width: metrics.width,
+		yMin: -metrics.depth,
+		yMax: metrics.height
 	});
 };
 const layoutCharNode = (style, node) => {
-	const fontName = lookupFontName(node.value);
-	const { unicode } = lookUpGlyphByCharOrAlias(node.value);
+	const { fontFamily, unicode } = lookUpGlyphByCharOrAlias(node.value);
 	const char = String.fromCharCode(unicode);
 	return {
-		type: "char", char,
-		style: { ...style, fontName },
+		type: "char", char, unicode,
+		style: { 
+			emphasis: getDefaultEmphasis(fontFamily),
+			...style, 
+			fontName 
+		},
 		dimensions: getDimensionsOfCharNode(style, node)
 	};
 };

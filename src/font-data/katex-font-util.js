@@ -146,3 +146,7 @@ export const lookUpBoundingBox = (fontFamily, unicode, emphasis=null) => {
 	return bboxData[`${fontFamily}-${emphasis}`][unicode];
 };
 
+export const getUrlByFontName = (fontFamily, emphasis=null) => {
+	emphasis = emphasis || getDefaultEmphasis(fontFamily);
+	return `https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/fonts/KaTeX_${fontFamily}-${emphasis}.ttf`
+};
