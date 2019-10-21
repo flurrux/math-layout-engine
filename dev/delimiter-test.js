@@ -92,13 +92,26 @@ class DelimiterByHeightTest extends LitElement {
 
 		const { height } = this;
 
+
 		const localCanvasWidth = canvas.width / scale;
+		
 		ctx.lineWidth = 0.03;
 		ctx.strokeStyle = "black";
 		drawHorizontalLine(ctx, 0, localCanvasWidth, 0);
+		
+		const heights = [0.5, 0.6, 0.9, 1.2, 1.5, 1.5];
+		for (const threshHeight of heights){
+			ctx.save();
+			Object.assign(ctx, { globalAlpha: 0.3 });
+			ctx.setLineDash([0.1, 0.1]);
+			drawHorizontalLine(ctx, 0, localCanvasWidth, threshHeight);
+			ctx.restore();
+		}
+
 		ctx.strokeStyle = "#666666";
 		drawHorizontalLine(ctx, 0, localCanvasWidth, height);
 		drawHorizontalLine(ctx, 0, localCanvasWidth, -height);
+
 
 		ctx.translate(0, -0.25);
 		for (let i = 0; i < delimiterUnicodes.length; i++){

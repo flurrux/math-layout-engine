@@ -23,8 +23,147 @@ const fontIdsBySize = [
 	"Size4-Regular"
 ];
 const maxFontId = "Size4-Regular";
+
 const delimiterFontData = {
 	"40": [
+		{
+            "fontId": "Main-Regular",
+            "bbox": {
+                "xMin": 0.094,
+                "yMin": -0.25,
+                "xMax": 0.333,
+                "yMax": 0.75
+            },
+            "contours": [
+                [
+                    {
+                        "onCurve": true,
+                        "x": 0.333,
+                        "y": -0.241
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.333,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.315,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.302,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.295,
+                        "y": -0.244
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.274,
+                        "y": -0.226
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.094,
+                        "y": -0.062
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.094,
+                        "y": 0.25
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.094,
+                        "y": 0.372
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.123,
+                        "y": 0.473
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.169,
+                        "y": 0.63
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.274,
+                        "y": 0.726
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.281,
+                        "y": 0.732
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.299,
+                        "y": 0.747
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.302,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.315,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.327,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.333,
+                        "y": 0.744
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.333,
+                        "y": 0.741
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.333,
+                        "y": 0.737
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.322,
+                        "y": 0.726
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.167,
+                        "y": 0.562
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.167,
+                        "y": -0.062
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.322,
+                        "y": -0.226
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.333,
+                        "y": -0.237
+                    }
+                ]
+            ]
+        },
 		{
 			"fontId": "Size1-Regular",
 			"bbox": {
@@ -782,6 +921,159 @@ const delimiterFontData = {
 		}
 	],
 	"41": [
+		{
+            "fontId": "Main-Regular",
+            "bbox": {
+                "xMin": 0.055,
+                "yMin": -0.25,
+                "xMax": 0.294,
+                "yMax": 0.75
+            },
+            "contours": [
+                [
+                    {
+                        "onCurve": true,
+                        "x": 0.06,
+                        "y": 0.749
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.064,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.069,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.074,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.086,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.093,
+                        "y": 0.744
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.114,
+                        "y": 0.726
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.294,
+                        "y": 0.562
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.294,
+                        "y": 0.25
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.294,
+                        "y": 0.127
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.265,
+                        "y": 0.028
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.219,
+                        "y": -0.13
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.114,
+                        "y": -0.226
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.107,
+                        "y": -0.232
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.089,
+                        "y": -0.247
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.086,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.074,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.062,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.055,
+                        "y": -0.246
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.055,
+                        "y": -0.238
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.056,
+                        "y": -0.237
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.066,
+                        "y": -0.225
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.221,
+                        "y": -0.064
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.221,
+                        "y": 0.564
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.066,
+                        "y": 0.725
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.056,
+                        "y": 0.737
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.055,
+                        "y": 0.738
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.055,
+                        "y": 0.746
+                    }
+                ]
+            ]
+        },
 		{
 			"fontId": "Size1-Regular",
 			"bbox": {
@@ -1571,6 +1863,59 @@ const delimiterFontData = {
 
 	"91": [
 		{
+            "fontId": "Main-Regular",
+            "bbox": {
+                "xMin": 0.118,
+                "yMin": -0.25,
+                "xMax": 0.255,
+                "yMax": 0.75
+            },
+            "contours": [
+                [
+                    {
+                        "onCurve": true,
+                        "x": 0.118,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.118,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.255,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.255,
+                        "y": 0.71
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.158,
+                        "y": 0.71
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.158,
+                        "y": -0.21
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.255,
+                        "y": -0.21
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.255,
+                        "y": -0.25
+                    }
+                ]
+            ]
+        },
+		{
 			"fontId": "Size1-Regular",
 			"bbox": {
 				"xMin": 0.202,
@@ -1781,62 +2126,62 @@ const delimiterFontData = {
 					}
 				]
 			]
-		},
-		{
-			"fontId": "Size4-Regular",
-			"bbox": {
-				"xMin": 0.269,
-				"yMin": -1.249,
-				"xMax": 0.577,
-				"yMax": 1.75
-			},
-			"contours": [
-				[
-					{
-						"onCurve": true,
-						"x": 0.269,
-						"y": -1.249
-					},
-					{
-						"onCurve": true,
-						"x": 0.269,
-						"y": 1.75
-					},
-					{
-						"onCurve": true,
-						"x": 0.577,
-						"y": 1.75
-					},
-					{
-						"onCurve": true,
-						"x": 0.577,
-						"y": 1.677
-					},
-					{
-						"onCurve": true,
-						"x": 0.342,
-						"y": 1.677
-					},
-					{
-						"onCurve": true,
-						"x": 0.342,
-						"y": -1.176
-					},
-					{
-						"onCurve": true,
-						"x": 0.577,
-						"y": -1.176
-					},
-					{
-						"onCurve": true,
-						"x": 0.577,
-						"y": -1.249
-					}
-				]
-			]
 		}
 	],
 	"93": [
+		{
+            "fontId": "Main-Regular",
+            "bbox": {
+                "xMin": 0.022,
+                "yMin": -0.25,
+                "xMax": 0.159,
+                "yMax": 0.75
+            },
+            "contours": [
+                [
+                    {
+                        "onCurve": true,
+                        "x": 0.022,
+                        "y": 0.71
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.022,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.159,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.159,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.022,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.022,
+                        "y": -0.21
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.119,
+                        "y": -0.21
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.119,
+                        "y": 0.71
+                    }
+                ]
+            ]
+        },
 		{
 			"fontId": "Size1-Regular",
 			"bbox": {
@@ -2048,63 +2393,373 @@ const delimiterFontData = {
 					}
 				]
 			]
-		},
-		{
-			"fontId": "Size4-Regular",
-			"bbox": {
-				"xMin": 0.005,
-				"yMin": -1.249,
-				"xMax": 0.313,
-				"yMax": 1.75
-			},
-			"contours": [
-				[
-					{
-						"onCurve": true,
-						"x": 0.005,
-						"y": 1.677
-					},
-					{
-						"onCurve": true,
-						"x": 0.005,
-						"y": 1.75
-					},
-					{
-						"onCurve": true,
-						"x": 0.313,
-						"y": 1.75
-					},
-					{
-						"onCurve": true,
-						"x": 0.313,
-						"y": -1.249
-					},
-					{
-						"onCurve": true,
-						"x": 0.005,
-						"y": -1.249
-					},
-					{
-						"onCurve": true,
-						"x": 0.005,
-						"y": -1.176
-					},
-					{
-						"onCurve": true,
-						"x": 0.24,
-						"y": -1.176
-					},
-					{
-						"onCurve": true,
-						"x": 0.24,
-						"y": 1.677
-					}
-				]
-			]
 		}
 	],
 
 	"123": [
+		{
+            "fontId": "Main-Regular",
+            "bbox": {
+                "xMin": 0.065,
+                "yMin": -0.25,
+                "xMax": 0.434,
+                "yMax": 0.75
+            },
+            "contours": [
+                [
+                    {
+                        "onCurve": true,
+                        "x": 0.434,
+                        "y": -0.231
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.434,
+                        "y": -0.244
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.428,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.41,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.334,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.225,
+                        "y": -0.199
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.212,
+                        "y": -0.145
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.21,
+                        "y": -0.138
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.209,
+                        "y": 0
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.209,
+                        "y": 0.021
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.209,
+                        "y": 0.053
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.208,
+                        "y": 0.142
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.204,
+                        "y": 0.153
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.203,
+                        "y": 0.154
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.203,
+                        "y": 0.155
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.191,
+                        "y": 0.186
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.123,
+                        "y": 0.231
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.082,
+                        "y": 0.231
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.071,
+                        "y": 0.231
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.065,
+                        "y": 0.237
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.065,
+                        "y": 0.263
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.071,
+                        "y": 0.269
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.082,
+                        "y": 0.269
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.123,
+                        "y": 0.269
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.191,
+                        "y": 0.314
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.203,
+                        "y": 0.345
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.207,
+                        "y": 0.357
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.208,
+                        "y": 0.383
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.209,
+                        "y": 0.501
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.21,
+                        "y": 0.638
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.212,
+                        "y": 0.645
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.22,
+                        "y": 0.677
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.244,
+                        "y": 0.698
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.27,
+                        "y": 0.724
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.324,
+                        "y": 0.74
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.361,
+                        "y": 0.748
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.377,
+                        "y": 0.749
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.379,
+                        "y": 0.749
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.402,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.408,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.428,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.434,
+                        "y": 0.744
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.434,
+                        "y": 0.732
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.434,
+                        "y": 0.719
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.431,
+                        "y": 0.716
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.429,
+                        "y": 0.713
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.415,
+                        "y": 0.713
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.359,
+                        "y": 0.71
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.322,
+                        "y": 0.681
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.302,
+                        "y": 0.666
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.296,
+                        "y": 0.647
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.291,
+                        "y": 0.634
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.291,
+                        "y": 0.499
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.291,
+                        "y": 0.369
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.29,
+                        "y": 0.363
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.28,
+                        "y": 0.285
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.17,
+                        "y": 0.25
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.221,
+                        "y": 0.232
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.285,
+                        "y": 0.18
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.29,
+                        "y": 0.137
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.291,
+                        "y": 0.131
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.291,
+                        "y": 0.001
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.291,
+                        "y": -0.134
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.296,
+                        "y": -0.147
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.306,
+                        "y": -0.175
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.374,
+                        "y": -0.211
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.415,
+                        "y": -0.213
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.429,
+                        "y": -0.213
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.431,
+                        "y": -0.216
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.434,
+                        "y": -0.219
+                    }
+                ]
+            ]
+        },
 		{
 			"fontId": "Size1-Regular",
 			"bbox": {
@@ -4268,6 +4923,314 @@ const delimiterFontData = {
 	],
 	"125": [
 		{
+            "fontId": "Main-Regular",
+            "bbox": {
+                "xMin": 0.065,
+                "yMin": -0.25,
+                "xMax": 0.434,
+                "yMax": 0.75
+            },
+            "contours": [
+                [
+                    {
+                        "onCurve": true,
+                        "x": 0.065,
+                        "y": 0.731
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.065,
+                        "y": 0.744
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.069,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.079,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.088,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.168,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.274,
+                        "y": 0.696
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.288,
+                        "y": 0.645
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.291,
+                        "y": 0.636
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.292,
+                        "y": 0.365
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.293,
+                        "y": 0.357
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.303,
+                        "y": 0.321
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.373,
+                        "y": 0.269
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.417,
+                        "y": 0.269
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.428,
+                        "y": 0.269
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.434,
+                        "y": 0.263
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.434,
+                        "y": 0.237
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.428,
+                        "y": 0.231
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.417,
+                        "y": 0.231
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.378,
+                        "y": 0.231
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.309,
+                        "y": 0.187
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.298,
+                        "y": 0.157
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.293,
+                        "y": 0.144
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.292,
+                        "y": 0.117
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.291,
+                        "y": 0
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.29,
+                        "y": -0.138
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.288,
+                        "y": -0.145
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.28,
+                        "y": -0.177
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.256,
+                        "y": -0.198
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.202,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.089,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.078,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.07,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.065,
+                        "y": -0.243
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.065,
+                        "y": -0.23
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.065,
+                        "y": -0.219
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.069,
+                        "y": -0.213
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.077,
+                        "y": -0.213
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.126,
+                        "y": -0.213
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.197,
+                        "y": -0.171
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.207,
+                        "y": -0.139
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.208,
+                        "y": -0.134
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.209,
+                        "y": 0.003
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.21,
+                        "y": 0.139
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.23,
+                        "y": 0.223
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.33,
+                        "y": 0.25
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.297,
+                        "y": 0.261
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.28,
+                        "y": 0.27
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.225,
+                        "y": 0.303
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.212,
+                        "y": 0.352
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.21,
+                        "y": 0.362
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.209,
+                        "y": 0.498
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.208,
+                        "y": 0.635
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.207,
+                        "y": 0.64
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.197,
+                        "y": 0.672
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.126,
+                        "y": 0.713
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.077,
+                        "y": 0.713
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.069,
+                        "y": 0.713
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.065,
+                        "y": 0.719
+                    }
+                ]
+            ]
+        },
+		{
 			"fontId": "Size1-Regular",
 			"bbox": {
 				"xMin": 0.105,
@@ -6316,6 +7279,69 @@ const delimiterFontData = {
 
 	"8739": [
 		{
+            "fontId": "Main-Regular",
+            "bbox": {
+                "xMin": 0.119,
+                "yMin": -0.249,
+                "xMax": 0.159,
+                "yMax": 0.75
+            },
+            "contours": [
+                [
+                    {
+                        "onCurve": false,
+                        "x": 0.152,
+                        "y": -0.249
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.126,
+                        "y": -0.249
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.119,
+                        "y": -0.235
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.119,
+                        "y": 0.251
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.12,
+                        "y": 0.737
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.13,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.139,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.152,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.159,
+                        "y": 0.735
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.159,
+                        "y": -0.235
+                    }
+                ]
+            ]
+        },
+		{
 			"fontId": "Size1-Regular",
 			"bbox": {
 				"xMin": 0.145,
@@ -6622,6 +7648,104 @@ const delimiterFontData = {
 
 	"8968": [
 		{
+            "fontId": "Main-Regular",
+            "bbox": {
+                "xMin": 0.174,
+                "yMin": -0.25,
+                "xMax": 0.422,
+                "yMax": 0.75
+            },
+            "contours": [
+                [
+                    {
+                        "onCurve": true,
+                        "x": 0.174,
+                        "y": 0.734
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.178,
+                        "y": 0.746
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.19,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.298,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.406,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.41,
+                        "y": 0.748
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.422,
+                        "y": 0.742
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.422,
+                        "y": 0.718
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.41,
+                        "y": 0.712
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.406,
+                        "y": 0.71
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.31,
+                        "y": 0.71
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.214,
+                        "y": 0.71
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.214,
+                        "y": -0.235
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.207,
+                        "y": -0.249
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.196,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.184,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.174,
+                        "y": -0.234
+                    }
+                ]
+            ]
+        },
+		{
 			"fontId": "Size1-Regular",
 			"bbox": {
 				"xMin": 0.202,
@@ -6795,6 +7919,104 @@ const delimiterFontData = {
 		}
 	],
 	"8969": [
+		{
+            "fontId": "Main-Regular",
+            "bbox": {
+                "xMin": 0.021,
+                "yMin": -0.25,
+                "xMax": 0.269,
+                "yMax": 0.75
+            },
+            "contours": [
+                [
+                    {
+                        "onCurve": true,
+                        "x": 0.269,
+                        "y": -0.235
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.262,
+                        "y": -0.249
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.251,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.239,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.229,
+                        "y": -0.234
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.229,
+                        "y": 0.71
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.133,
+                        "y": 0.71
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.037,
+                        "y": 0.71
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.034,
+                        "y": 0.712
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.021,
+                        "y": 0.718
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.021,
+                        "y": 0.742
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.034,
+                        "y": 0.748
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.037,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.147,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.256,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.266,
+                        "y": 0.742
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.269,
+                        "y": 0.735
+                    }
+                ]
+            ]
+        },
 		{
 			"fontId": "Size1-Regular",
 			"bbox": {
@@ -6971,6 +8193,104 @@ const delimiterFontData = {
 
 	"8970": [
 		{
+            "fontId": "Main-Regular",
+            "bbox": {
+                "xMin": 0.174,
+                "yMin": -0.25,
+                "xMax": 0.422,
+                "yMax": 0.75
+            },
+            "contours": [
+                [
+                    {
+                        "onCurve": true,
+                        "x": 0.19,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.178,
+                        "y": -0.246
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.174,
+                        "y": -0.234
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.174,
+                        "y": 0.734
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.184,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.196,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.207,
+                        "y": 0.749
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.214,
+                        "y": 0.735
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.214,
+                        "y": -0.21
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.31,
+                        "y": -0.21
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.406,
+                        "y": -0.21
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.41,
+                        "y": -0.212
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.422,
+                        "y": -0.218
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.422,
+                        "y": -0.242
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.41,
+                        "y": -0.248
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.406,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.298,
+                        "y": -0.25
+                    }
+                ]
+            ]
+        },
+		{
 			"fontId": "Size1-Regular",
 			"bbox": {
 				"xMin": 0.202,
@@ -7144,6 +8464,114 @@ const delimiterFontData = {
 		}
 	],
 	"8971": [
+		{
+            "fontId": "Main-Regular",
+            "bbox": {
+                "xMin": 0.021,
+                "yMin": -0.25,
+                "xMax": 0.269,
+                "yMax": 0.75
+            },
+            "contours": [
+                [
+                    {
+                        "onCurve": true,
+                        "x": 0.251,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.262,
+                        "y": 0.749
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.269,
+                        "y": 0.735
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.269,
+                        "y": -0.235
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.267,
+                        "y": -0.24
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.256,
+                        "y": -0.249
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.147,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.059,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.032,
+                        "y": -0.249
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.027,
+                        "y": -0.244
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.021,
+                        "y": -0.238
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.021,
+                        "y": -0.23
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.021,
+                        "y": -0.218
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.034,
+                        "y": -0.212
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.037,
+                        "y": -0.21
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.133,
+                        "y": -0.21
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.229,
+                        "y": -0.21
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.229,
+                        "y": 0.734
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.239,
+                        "y": 0.75
+                    }
+                ]
+            ]
+        },
 		{
 			"fontId": "Size1-Regular",
 			"bbox": {
@@ -7319,6 +8747,139 @@ const delimiterFontData = {
 	],
 
 	"10216": [
+		{
+            "fontId": "Main-Regular",
+            "bbox": {
+                "xMin": 0.11,
+                "yMin": -0.25,
+                "xMax": 0.333,
+                "yMax": 0.75
+            },
+            "contours": [
+                [
+                    {
+                        "onCurve": true,
+                        "x": 0.333,
+                        "y": -0.232
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.332,
+                        "y": -0.239
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.321,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.313,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.303,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.296,
+                        "y": -0.24
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.293,
+                        "y": -0.233
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.11,
+                        "y": 0.245
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.11,
+                        "y": 0.255
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.293,
+                        "y": 0.733
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.296,
+                        "y": 0.74
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.299,
+                        "y": 0.745
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.306,
+                        "y": 0.749
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.309,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.312,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.313,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.331,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.333,
+                        "y": 0.732
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.333,
+                        "y": 0.727
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.243,
+                        "y": 0.489
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.152,
+                        "y": 0.252
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.152,
+                        "y": 0.248
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.243,
+                        "y": 0.011
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.333,
+                        "y": -0.227
+                    }
+                ]
+            ]
+        },
 		{
 			"fontId": "Size1-Regular",
 			"bbox": {
@@ -7850,9 +9411,245 @@ const delimiterFontData = {
 					}
 				]
 			]
-		}
+		},
+		{
+			"fontId": "Size4-Regular",
+			"bbox": {
+				"xMin": 0.14,
+				"yMin": -1.248,
+				"xMax": 0.703,
+				"yMax": 1.75
+			},
+			"contours": [
+				[
+					{
+						"onCurve": true,
+						"x": 0.14,
+						"y": 0.242
+					},
+					{
+						"onCurve": true,
+						"x": 0.14,
+						"y": 0.26
+					},
+					{
+						"onCurve": true,
+						"x": 0.635,
+						"y": 1.732
+					},
+					{
+						"onCurve": false,
+						"x": 0.643,
+						"y": 1.745
+					},
+					{
+						"onCurve": true,
+						"x": 0.657,
+						"y": 1.749
+					},
+					{
+						"onCurve": false,
+						"x": 0.658,
+						"y": 1.749
+					},
+					{
+						"onCurve": false,
+						"x": 0.666,
+						"y": 1.75
+					},
+					{
+						"onCurve": true,
+						"x": 0.668,
+						"y": 1.75
+					},
+					{
+						"onCurve": false,
+						"x": 0.682,
+						"y": 1.749
+					},
+					{
+						"onCurve": false,
+						"x": 0.702,
+						"y": 1.73
+					},
+					{
+						"onCurve": true,
+						"x": 0.702,
+						"y": 1.714
+					},
+					{
+						"onCurve": true,
+						"x": 0.702,
+						"y": 1.705
+					},
+					{
+						"onCurve": true,
+						"x": 0.214,
+						"y": 0.251
+					},
+					{
+						"onCurve": true,
+						"x": 0.703,
+						"y": -1.204
+					},
+					{
+						"onCurve": true,
+						"x": 0.702,
+						"y": -1.213
+					},
+					{
+						"onCurve": false,
+						"x": 0.702,
+						"y": -1.229
+					},
+					{
+						"onCurve": false,
+						"x": 0.683,
+						"y": -1.248
+					},
+					{
+						"onCurve": true,
+						"x": 0.667,
+						"y": -1.248
+					},
+					{
+						"onCurve": false,
+						"x": 0.647,
+						"y": -1.248
+					},
+					{
+						"onCurve": true,
+						"x": 0.635,
+						"y": -1.231
+					}
+				]
+			]
+		},
 	],
 	"10217": [
+		{
+            "fontId": "Main-Regular",
+            "bbox": {
+                "xMin": 0.055,
+                "yMin": -0.25,
+                "xMax": 0.278,
+                "yMax": 0.75
+            },
+            "contours": [
+                [
+                    {
+                        "onCurve": true,
+                        "x": 0.055,
+                        "y": 0.732
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.056,
+                        "y": 0.739
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.067,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.075,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.085,
+                        "y": 0.75
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.092,
+                        "y": 0.74
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.095,
+                        "y": 0.733
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.278,
+                        "y": 0.255
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.278,
+                        "y": 0.245
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.095,
+                        "y": -0.233
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.092,
+                        "y": -0.24
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.085,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.075,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.067,
+                        "y": -0.25
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.056,
+                        "y": -0.239
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.055,
+                        "y": -0.232
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.055,
+                        "y": -0.227
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.145,
+                        "y": 0.011
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.236,
+                        "y": 0.248
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.236,
+                        "y": 0.252
+                    },
+                    {
+                        "onCurve": true,
+                        "x": 0.145,
+                        "y": 0.489
+                    },
+                    {
+                        "onCurve": false,
+                        "x": 0.055,
+                        "y": 0.727
+                    }
+                ]
+            ]
+        },
 		{
 			"fontId": "Size1-Regular",
 			"bbox": {
@@ -8364,10 +10161,107 @@ const delimiterFontData = {
 					}
 				]
 			]
-		}
+		},
+		{
+			"fontId": "Size4-Regular",
+			"bbox": {
+				"xMin": 0.103,
+				"yMin": -1.248,
+				"xMax": 0.665,
+				"yMax": 1.75
+			},
+			"contours": [
+				[
+					{
+						"onCurve": true,
+						"x": 0.138,
+						"y": -1.248
+					},
+					{
+						"onCurve": false,
+						"x": 0.122,
+						"y": -1.248
+					},
+					{
+						"onCurve": false,
+						"x": 0.103,
+						"y": -1.229
+					},
+					{
+						"onCurve": true,
+						"x": 0.103,
+						"y": -1.213
+					},
+					{
+						"onCurve": true,
+						"x": 0.103,
+						"y": -1.204
+					},
+					{
+						"onCurve": true,
+						"x": 0.591,
+						"y": 0.251
+					},
+					{
+						"onCurve": true,
+						"x": 0.103,
+						"y": 1.705
+					},
+					{
+						"onCurve": true,
+						"x": 0.103,
+						"y": 1.714
+					},
+					{
+						"onCurve": false,
+						"x": 0.103,
+						"y": 1.73
+					},
+					{
+						"onCurve": false,
+						"x": 0.122,
+						"y": 1.75
+					},
+					{
+						"onCurve": true,
+						"x": 0.137,
+						"y": 1.75
+					},
+					{
+						"onCurve": false,
+						"x": 0.157,
+						"y": 1.75
+					},
+					{
+						"onCurve": true,
+						"x": 0.17,
+						"y": 1.732
+					},
+					{
+						"onCurve": true,
+						"x": 0.665,
+						"y": 0.26
+					},
+					{
+						"onCurve": true,
+						"x": 0.665,
+						"y": 0.242
+					},
+					{
+						"onCurve": true,
+						"x": 0.17,
+						"y": -1.231
+					},
+					{
+						"onCurve": false,
+						"x": 0.158,
+						"y": -1.248
+					}
+				]
+			]
+		},
 	]
 };
-
 
 const extensionData = {
 	"40": {
@@ -8395,6 +10289,33 @@ const extensionData = {
 	"125": {
 		downShifted: [39, 62],
 		upShifted: [79, 15]
+	},
+
+	"8968": {
+		downShifted: [5, 1],
+		upShifted: [1, 5]
+	},
+	"8969": {
+		downShifted: [3, 5],
+		upShifted: [5, 3]
+	},
+
+	"8970": {
+		downShifted: [3, 1],
+		upShifted: [1, 3]
+	},
+	"8971": {
+		downShifted: [3, 1],
+		upShifted: [1, 3]
+	},
+
+	"10216": {
+		downShifted: [13, 0], 
+		upShifted: [2, 12]
+	},
+	"10217": {
+		downShifted: [15, 5],
+		upShifted: [6, 13]
 	}
 };
 
@@ -8445,7 +10366,7 @@ const getHeightOfDelimiterToAxis = (bbox) => bbox.yMax - axisHeight;
 export const lookUpGlyphByHeightToAxis = (unicode, heightToAxis) => delimiterFontData[unicode]
 	.find((entry, index) => index === delimiterFontData[unicode].length - 1 || getHeightOfDelimiterToAxis(entry.bbox) >= heightToAxis);
 
-
+console.log(delimiterFontData["40"].map(entry => getHeightOfDelimiterToAxis(entry.bbox)));
 	
 
 // const getFontFittingHeight = (fontMap, glyphName, height, depth) => {

@@ -20,9 +20,10 @@ const normalizeBboxAndContours = glyph => {
 };
 
 const main = async () => {
-    const keys = [
-		"Size1-Regular", "Size2-Regular", "Size3-Regular", "Size4-Regular"
-    ];
+    // const keys = [
+	// 	"Main-Regular", "Size1-Regular", "Size2-Regular", "Size3-Regular", "Size4-Regular"
+	// ];
+	const keys = [ "Main-Regular" ];
 	const urlMap = keys.reduce((map, key) => Object.assign(map, { [key]: `https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/fonts/KaTeX_${key}.ttf` }), {});
     const fontMap = await loadFontsAsync(urlMap);
 	
