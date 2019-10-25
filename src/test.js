@@ -20,52 +20,9 @@
 	text
 */
 
-import * as R from 'ramda';
-import { pickList, accumSum, clamp, scaleMap, isDefined } from './util.js';
 
-const emToPx = (style, em) => style.fontSize * em / 1000;
-
-//formula description ###
-
-const formulaNodeTypes = [
-	"ord", "op", "bin", "rel", "open", "close",
-	"punct", "inner", "spacing"
-];
-const innerTypes = ["mathlist", "fraction", "root", "script"];
-const getIndexOfFormulaNodeType = (nodeType) => {
-	if (innerTypes.includes(nodeType)) nodeType = "inner";
-	return formulaNodeTypes.indexOf(nodeType);
-};
-const isFormulaNodeGlyph = node => [0, 1, 2, 3, 4, 5, 6].includes(getIndexOfFormulaNodeType(node.type));
-
-//style ###
-import { createDelimiter } from './create-delimiter.js';
-import { createRadical } from './create-radical.js';
-import { lookUpGlyphByCharOrAlias, objectifyMetrics, getMetrics, getDefaultEmphasis } from './font-data/katex-font-util.js';
-import { getTargetYOfGlyphNucleus } from './script-layout.js';
-import { loadKatexFontFaces, renderFormulaLayout } from './rendering/render.js';
-
-const getGlyphMetrics = (node) => {
-	const { fontFamily, unicode } = lookUpGlyphByCharOrAlias(node.value);
-	return objectifyMetrics(getMetrics(fontFamily, getDefaultEmphasis(fontFamily), unicode));
-};
-
-const lookupFontName = (glyphName) => {
-	const glyphData = lookUpGlyphByCharOrAlias(glyphName);
-	const { fontFamily } = glyphData;
-	const katexFontKey = `KaTeX_${fontFamily}`
-	return katexFontKey;
-};
-const lookupFont = (glyphName) => opentypeFonts[lookupFontName(glyphName)];
-const getGlyphByValue = (font, val) => {
-	const { unicode } = lookUpGlyphByCharOrAlias(val);
-	const char = String.fromCharCode(unicode);
-	return font.charToGlyph(char);
-};
-const unicodeOfCharNode = node => lookUpGlyphByCharOrAlias(node.value).unicode;
-
-
-
+import { loadKatexFontFaces, renderFormulaLayout, centerNodeOnCanvas } from './rendering/render.js';
+import { layoutNode } from './layout.js';
 
 
 async function main(){
@@ -168,6 +125,47 @@ async function main(){
 			}
 		]
 	};
+	formulaData = {
+		type: "mathlist", 
+		items: [
+			{
+				type: "delimited", 
+				delimited: {
+					type: "mathlist", 
+					items: [
+						{
+							type: "fraction",
+							numerator: { type: "ord", value: "a" },
+							denominator: { type: "ord", value: "b" },
+						},
+						{ type: "bin", value: "+" },
+						{
+							type: "fraction",
+							numerator: { type: "ord", value: "f" },
+							denominator: { type: "ord", value: "M" },
+						},
+					]
+				},
+				leftDelim: { type: "open", value: "(" },
+				rightDelim: { type: "close", value: ")" }
+			},
+			{ type: "bin", value: "muldot" },
+			{
+				type: "delimited",
+				delimited: {
+					type: "mathlist",
+					items: [
+						{ type: "ord", value: "c" },
+						{ type: "bin", value: "-" },
+						{ type: "ord", value: "d" },
+					]
+				},
+				leftDelim: { type: "open", value: "(" },
+				rightDelim: { type: "close", value: ")" }
+			}
+		]
+		
+	};
 
 	
 	const layoutData = layoutNode({
@@ -180,6 +178,6 @@ async function main(){
 	const canvas = document.querySelector("canvas");
 	const ctx = canvas.getContext("2d");
 	await loadKatexFontFaces();
-	renderFormulaLayout(canvas, ctx, layoutData);
+	renderFormulaLayout(canvas, ctx, centerNodeOnCanvas(canvas, layoutData));
 }
 main();

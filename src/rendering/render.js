@@ -1,4 +1,4 @@
-import { pickList, isDefined } from '../util.js';
+import { pickList, isDefined, addFontFaces } from '../util.js';
 import { fontIdentifiers } from '../font-data/katex-font-util.js';
 import { pathContours } from '../opentype-util.js';
 
@@ -6,7 +6,7 @@ export const loadKatexFontFaces = async () => {
 	const baseUrl = "https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/fonts/";
 	const katexPrefix = "KaTeX_";
 	const fontUrlMap = fontIdentifiers.reduce((urlMap, key) => Object.assign(urlMap, { 
-		[katexPrefix + key]: `${baseUrl}${key}.ttf`
+		[katexPrefix + key]: `${baseUrl}${katexPrefix}${key}.ttf`
 	}), {});
 	await addFontFaces(fontUrlMap);
 };
@@ -48,13 +48,17 @@ const renderBoundingBox = (ctx, node) => {
 };
 const renderChar = (ctx, node) => {
 	const style = node.style;
-	ctx.font = `${style.fontSize}px ${style.fontName}`;
+	const fontName = `KaTeX_${style.fontFamily}-${style.emphasis}`;
+	ctx.save();
+	ctx.font = `${style.fontSize}px ${fontName}`;
+	ctx.scale(1, -1);
 	ctx.fillText(node.char, 0, 0);
+	ctx.restore();
 };
 const renderContours = (ctx, node) => {
 	ctx.save();
 	const { fontSize } = node.style;
-	ctx.scale(fontSize, -fontSize);
+	ctx.scale(fontSize, fontSize);
 	pathContours(ctx, node.contours);
 	ctx.fillStyle = "black";
 	ctx.fill();
@@ -68,10 +72,11 @@ const renderFractionRule = (ctx, width, thickness) => {
 	ctx.stroke();
 };
 const renderFraction = (ctx, node) => {
-	renderSubNodes(node, ["numerator", "denominator"]);
+	renderSubNodes(ctx, node, ["numerator", "denominator"]);
 	renderFractionRule(ctx, node.dimensions.width, node.ruleThickness);
 };
-const renderSubNodes = (node, props) => pickList(props, node).filter(isDefined).forEach(renderNode);
+const renderSubNodes = (ctx, node, props) => pickList(props, node)
+	.filter(isDefined).forEach((subNode => renderNode(ctx, subNode)));
 const renderNode = (ctx, node) => {
 
 	ctx.save();
@@ -87,16 +92,16 @@ const renderNode = (ctx, node) => {
 		renderContours(ctx, node);
 	}
 	else if (nodeType === "mathlist") {
-		node.items.forEach(renderNode);
+		node.items.forEach(subNode => renderNode(ctx, subNode));
 	}
 	else if (nodeType === "fraction") {
 		renderFraction(ctx, node);
 	}
 	else if (nodeType === "script") {
-		renderSubNodes(node, ["nucleus", "sup", "sub"]);
+		renderSubNodes(ctx, node, ["nucleus", "sup", "sub"]);
 	}
 	else if (nodeType === "root") {
-		renderSubNodes(node, ["radical", "radicand", "index"]);
+		renderSubNodes(ctx, node, ["radical", "radicand", "index"]);
 	}
 
 	ctx.restore();
@@ -105,8 +110,8 @@ export const centerNodeOnCanvas = (canvas, node) => {
 	return {
 		...node,
 		position: [
-			(canvas.width - formulaLayout.dimensions.width) / 2,
-			(canvas.height - formulaLayout.dimensions.yMax + formulaLayout.dimensions.yMin) / 2
+			(canvas.width - node.dimensions.width) / 2,
+			(canvas.height - node.dimensions.yMax + node.dimensions.yMin) / 2
 		]
 	}
 };
@@ -114,6 +119,6 @@ export const renderFormulaLayout = (canvas, ctx, formulaLayout) => {
 	ctx.save();
 	Object.assign(ctx, { fillStyle: "black", strokeStyle: "black" });
 	ctx.setTransform(1, 0, 0, -1, 0, canvas.height);
-	renderNode(formulaLayout);
+	renderNode(ctx, formulaLayout);
 	ctx.restore();
 };

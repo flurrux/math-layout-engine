@@ -14,7 +14,7 @@ export const objectifyMetrics = metric => {
         width: metric[4]
     }
 };
-export const getMetricsObject = (fontFamily, emphasis, unicode) => objectifyMetric(getMetrics(fontFamily, emphasis, unicode));
+export const getMetricsObject = (fontFamily, emphasis, unicode) => objectifyMetrics(getMetrics(fontFamily, emphasis, unicode));
 
 const katexFontFamily = {
     AMS: "AMS", 
@@ -73,7 +73,7 @@ const lookUpFamilyNameByUnicode = (unicode) => {
 const aliasMap = [
     { alias: ["plus", "+"], fontFamily: "Main", unicode: 43 },
     { alias: ["minus", "-"], fontFamily: "Main", unicode: 8722 },
-    { alias: ["muldot"], fontFamily: "Math", unicode: 8901 },
+    { alias: ["muldot"], fontFamily: "Main", unicode: 8901 },
     { alias: ["equal", "="], fontFamily: "Main", unicode: 61 },
 
     { alias: ["integral"], fontFamily: "Size2", unicode: 8747 },

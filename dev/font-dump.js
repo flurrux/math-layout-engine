@@ -1,6 +1,7 @@
 import { loadFontsAsync } from '../src/opentype-util.js';
 import { getUrlByFontName } from '../src/font-data/katex-font-util.js';
 import { map, pick, pipe } from 'ramda';
+import { delimiterFontData } from '../src/create-delimiter.js';
 
 const toPxSpace = val => val / 1000;
 const normalizeBbox = glyph => pipe(pick(["xMin", "yMin", "xMax", "yMax"]), map(toPxSpace))(glyph);
@@ -20,44 +21,58 @@ const normalizeBboxAndContours = glyph => {
 };
 
 const main = async () => {
-    // const keys = [
-	// 	"Main-Regular", "Size1-Regular", "Size2-Regular", "Size3-Regular", "Size4-Regular"
-	// ];
-	const keys = [ "Main-Regular" ];
+    const keys = [
+		"Main-Regular", "Size1-Regular", "Size2-Regular", "Size3-Regular", "Size4-Regular"
+	];
 	const urlMap = keys.reduce((map, key) => Object.assign(map, { [key]: `https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/fonts/KaTeX_${key}.ttf` }), {});
     const fontMap = await loadFontsAsync(urlMap);
 	
-	const getGlyphByUnicode = (font, unicode) => font.charToGlyph(String.fromCharCode(unicode));
-	const getGlyphsByUnicode = unicode => keys.reduce((glyphs, key) => {
-		const font = fontMap[key];
-		const glyph = getGlyphByUnicode(font, unicode);
-		if (glyph){
-			glyphs.push({ fontId: key, unicode, glyph });
-		}
-		return glyphs;
-	}, []);
+	// const getGlyphByUnicode = (font, unicode) => font.charToGlyph(String.fromCharCode(unicode));
+	// const getGlyphsByUnicode = unicode => keys.reduce((glyphs, key) => {
+	// 	const font = fontMap[key];
+	// 	const glyph = getGlyphByUnicode(font, unicode);
+	// 	if (glyph){
+	// 		glyphs.push({ fontId: key, unicode, glyph });
+	// 	}
+	// 	return glyphs;
+	// }, []);
 
-	const unicodes = [
-		40, 41, 123, 125, 
-		91, 93, 10216, 10217, 
-		8739, 8968, 8969,
-		8970, 8971
-	];
-	const glyphsByUnicodes = unicodes.map(unicode => getGlyphsByUnicode(unicode)).flat()
-		.map(entry => {
-			const { glyph } = entry;
-			return {
-				...pick(["fontId", "unicode"], entry),
-				...normalizeBboxAndContours(glyph)
-			}
-		})
-		.reduce((mapByUnicode, entry) => Object.assign(mapByUnicode, {
-			[entry.unicode]: [
-				...(mapByUnicode[entry.unicode] || []),
-				pick(["fontId", "bbox", "contours"], entry)
-			]
-		}), {});
+	// const unicodes = [
+	// 	40, 41, 123, 125, 
+	// 	91, 93, 10216, 10217, 
+	// 	8739, 8968, 8969,
+	// 	8970, 8971
+	// ];
+	// const glyphsByUnicodes = unicodes.map(unicode => getGlyphsByUnicode(unicode)).flat()
+	// 	.map(entry => {
+	// 		const { glyph } = entry;
+	// 		return {
+	// 			...pick(["fontId", "unicode"], entry),
+	// 			...normalizeBboxAndContours(glyph)
+	// 		}
+	// 	})
+	// 	.reduce((mapByUnicode, entry) => Object.assign(mapByUnicode, {
+	// 		[entry.unicode]: [
+	// 			...(mapByUnicode[entry.unicode] || []),
+	// 			pick(["fontId", "bbox", "contours"], entry)
+	// 		]
+	// 	}), {});
 
-	console.log(JSON.stringify(glyphsByUnicodes, null, 4));
+	// console.log(JSON.stringify(glyphsByUnicodes, null, 4));
+
+	const unicodeKeys = Reflect.ownKeys(delimiterFontData);
+	const withAdvanceWidth = unicodeKeys.reduce((obj, uniKey) => {
+		const char = String.fromCharCode(uniKey);
+		const arr = delimiterFontData[uniKey];
+		return Object.assign(obj, {
+			[uniKey]: arr.map(entry => {
+				return {
+					...entry, 
+					advanceWidth: fontMap[entry.fontId].charToGlyph(char).advanceWidth / 1000
+				}
+			})
+		}) 
+	}, {});
+	console.log(JSON.stringify(withAdvanceWidth, null, 4));
 };
 main();

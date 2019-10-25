@@ -14,10 +14,9 @@ const styleTypeToFontScale = {
 export const fontSizeOfStyleType = (defaultFontSize, styleType) => defaultFontSize * styleTypeToFontScale[styleType];
 
 
-
 const switchStyleType = (style, nextStyleType) => identity({
 	...style, type: nextStyleType,
-	fontSize: getFontSizeOfStyleType(style.baseFontSize, nextStyleType)
+	fontSize: fontSizeOfStyleType(style.baseFontSize, nextStyleType)
 });
 export const incrementStyle = (style) => switchStyleType(style, incrementStyleType(style.type));
 export const smallerStyle = (style) => switchStyleType(style, getSmallerStyleType(style.type));

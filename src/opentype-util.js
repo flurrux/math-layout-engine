@@ -1,5 +1,5 @@
 import { load as loadOpentype } from 'opentype.js';
-import * as R from 'ramda';
+import { identity } from 'ramda';
 
 export const loadOpentypeAsync = url => new Promise((resolve, reject) => {
 	loadOpentype(url, (err, result) => {
@@ -105,6 +105,12 @@ export const transformContour = (matrix, contour) => contour.map(pointData => {
 		x: transformedPoint[0],
 		y: transformedPoint[1]
 	};
+});
+export const transformBbox = (matrix, bbox) => identity({
+	xMin: bbox.xMin * matrix[0] + matrix[4],
+	xMax: bbox.xMax * matrix[0] + matrix[4],
+	yMin: bbox.yMin * matrix[3] + matrix[5],
+	yMax: bbox.yMax * matrix[3] + matrix[5],
 });
 export const translateContours = (translation, contours) => contours.map(contour => contour.map(pointData => {
 	return {
