@@ -74,7 +74,8 @@ const aliasMap = [
     { alias: ["plus", "+"], fontFamily: "Main", unicode: 43 },
     { alias: ["minus", "-"], fontFamily: "Main", unicode: 8722 },
     { alias: ["muldot"], fontFamily: "Main", unicode: 8901 },
-    { alias: ["equal", "="], fontFamily: "Main", unicode: 61 },
+	{ alias: ["equal", "="], fontFamily: "Main", unicode: 61 },
+	{ alias: ["to", "->"], fontFamily: "Main", unicode: 8594 },
 
     { alias: ["integral"], fontFamily: "Size2", unicode: 8747 },
     { alias: ["sum"], fontFamily: "Size2", unicode: 8721 },
@@ -139,6 +140,8 @@ export const lookUpGlyphByCharOrAlias = (charOrAlias) => {
         fontFamily, unicode
     };
 };
+
+export const lookUpUnicode = (charOrAlias) => lookUpGlyphByCharOrAlias(charOrAlias).unicode;
 
 import bboxData from './font-bbox-data.js';
 export const lookUpBoundingBox = (fontFamily, unicode, emphasis=null) => {

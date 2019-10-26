@@ -1,6 +1,9 @@
-import { smallerStyle, smallestStyle } from "./style";
+
+import { isNodeChar, isNodeText } from "./node-types";
+
 
 const fontFamilyToTargetY = {
+	Main: { supY: 0.42, subY: -0.2 },
     Math: { supY: 0.42, subY: -0.2 }, 
     Size1: { supY: 0.5, subY: -0.25 },
     Size2: { supY: 0.7, subY: -0.4 }
@@ -16,20 +19,27 @@ const getTargetYOfGlyphNucleus = (fontFamily, unicode) => {
 };
 
 
+import { smallerStyle, smallestStyle } from "./style";
+import { pickList, scaleMap, isDefined } from "./util";
+import { layoutNode, calcBoundingDimensions, withPosition, getAxisAlignment } from "./layout";
+import { lookUpUnicode, lookUpGlyphByCharOrAlias } from "./font-data/katex-font-util";
 const getSubOrSupStyle = (scriptStyle, subOrSupNode) => {
 	return subOrSupNode.type === "fraction" ? smallestStyle(scriptStyle) : smallerStyle(scriptStyle);
 };
 const getSupSubTargetYNoLimits = (style, script, nucleusDim) => {
 	const { nucleus } = script;
-	const isNucleusGlyph = isFormulaNodeGlyph(nucleus);
 	const { fontSize } = style;
-	if (isNucleusGlyph) {
+	if (isNodeChar(nucleus)){
 		const nucleusGlyphData = lookUpGlyphByCharOrAlias(nucleus.value);
 		const targetYs = getTargetYOfGlyphNucleus(nucleusGlyphData.fontFamily, nucleusGlyphData.unicode);
 		return [
 			targetYs.supY * fontSize,
 			targetYs.subY * fontSize
 		]
+	}
+	else if (isNodeText(nucleus)){
+		const fontFamily = style.fontFamily || "Main";
+		return pickList(["supY", "subY"], fontFamilyToTargetY[fontFamily]).map(scaleMap(fontSize));
 	}
 	else {
 		return [
@@ -40,14 +50,14 @@ const getSupSubTargetYNoLimits = (style, script, nucleusDim) => {
 };
 const layoutScriptLimitPosition = (style, script) => {
 	const scriptStyle = smallerStyle(style);
-	const styles = {
-		nucleus: style,
-		sup: scriptStyle, sub: scriptStyle
-	};
+	const styles = { nucleus: style, sup: scriptStyle, sub: scriptStyle };
 	const scriptLayouted = ["nucleus", "sup", "sub"].reduce((obj, key) => {
 		return {
 			...obj,
-			...(script[key] !== undefined ? { [key]: layoutNode(styles[key], script[key]) } : {})
+			...(script[key] !== undefined ? { 
+				[key]: layoutNode(styles[key], 
+				script[key]) 
+			} : {})
 		};
 	}, {});
 
@@ -82,10 +92,9 @@ const layoutScriptLimitPosition = (style, script) => {
 };
 const layoutScriptNoLimitPosition = (style, script) => {
 	const { nucleus, sup, sub } = script;
-	const isNucleusGlyph = isFormulaNodeGlyph(nucleus);
 
 	const nucleusLayouted = withPosition(layoutNode(style, nucleus), [0, 0]);
-	const fontSize = style.fontSize;
+	const { fontSize } = style;
 
 	const scriptLayouted = {
 		nucleus: nucleusLayouted
@@ -130,10 +139,7 @@ const layoutScriptNoLimitPosition = (style, script) => {
 			return y;
 		})();
 
-		const subX = isNucleusGlyph ? (function () {
-			const metrics = getGlyphMetrics(nucleus);
-			return fontSize * (metrics.width);
-		})() : nucleusRight;
+		const subX = isNodeChar(nucleus) ? (fontSize * getGlyphMetrics(nucleus).width) : nucleusRight;
 		subLayouted.position = [subX, targetY];
 		scriptLayouted.sub = subLayouted;
 	}
@@ -145,9 +151,13 @@ const layoutScriptNoLimitPosition = (style, script) => {
 		...scriptLayouted, style, dimensions
 	};
 };
-const isScriptLimitPosition = (nucleus) => {
-	return isFormulaNodeGlyph(nucleus) && nucleus.type === "op" && style.type === "D" && /*integral*/ getUnicodeByNode(nucleus) !== 8747;
-};
+const isScriptLimitPosition = (nucleus) => (
+	(
+		isNodeChar(nucleus) && nucleus.type === "op" && 
+		style.type === "D" && lookUpUnicode(nucleus.value) !== 8747
+	) || 
+	isNodeText(nucleus) && nucleus.text === "lim"
+);
 export const layoutScript = (style, script) => {
 	const { nucleus } = script;
 	const limitPosition = isScriptLimitPosition(nucleus);

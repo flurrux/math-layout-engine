@@ -9,15 +9,16 @@
 	delimiter (( { [ )
 	roots
 	integrals, summation, limits	
-	
+	text
 	operators (sin, cos, lim, ...)
-	binomials 
-	matrix
-	cramped style
+	
+	explicit node style
+	cramped style, tight style
 	ellipsis
+	matrix
+	binomials 
 	accents (dot, hat, ...)
 	manual spaces
-	text
 */
 
 
@@ -126,45 +127,68 @@ async function main(){
 		]
 	};
 	formulaData = {
-		type: "mathlist", 
+		type: "delimited",
+		leftDelim: { type: "open", value: "(" },
+		rightDelim: { type: "close", value: ")" },
+		delimited: {
+			type: "mathlist", 
+			items: [
+				{
+					type: "delimited", 
+					delimited: {
+						type: "mathlist", 
+						items: [
+							{
+								type: "fraction",
+								numerator: { type: "ord", value: "a" },
+								denominator: { type: "ord", value: "b" },
+							},
+							{ type: "bin", value: "+" },
+							{
+								type: "fraction",
+								numerator: { type: "ord", value: "f" },
+								denominator: { type: "ord", value: "M" },
+							},
+						]
+					},
+					leftDelim: { type: "open", value: "(" },
+					rightDelim: { type: "close", value: ")" }
+				},
+				{ type: "bin", value: "muldot" },
+				{
+					type: "delimited",
+					delimited: {
+						type: "mathlist",
+						items: [
+							{ type: "ord", value: "c" },
+							{ type: "bin", value: "-" },
+							{ type: "ord", value: "d" },
+						]
+					},
+					leftDelim: { type: "open", value: "(" },
+					rightDelim: { type: "close", value: ")" }
+				}
+			]
+		}
+	};
+	formulaData = {
+		type: "script", 
+		nucleus: { type: "ord", text: "lim" },
+		sub: {
+			type: "mathlist", 
+			items: [
+				{ type: "ord", value: "x" },
+				{ type: "rel", value: "->" },
+				{ type: "ord", value: "infinity" }
+			]
+		}
+	};
+	formulaData = {
+		type: "mathlist",
 		items: [
-			{
-				type: "delimited", 
-				delimited: {
-					type: "mathlist", 
-					items: [
-						{
-							type: "fraction",
-							numerator: { type: "ord", value: "a" },
-							denominator: { type: "ord", value: "b" },
-						},
-						{ type: "bin", value: "+" },
-						{
-							type: "fraction",
-							numerator: { type: "ord", value: "f" },
-							denominator: { type: "ord", value: "M" },
-						},
-					]
-				},
-				leftDelim: { type: "open", value: "(" },
-				rightDelim: { type: "close", value: ")" }
-			},
-			{ type: "bin", value: "muldot" },
-			{
-				type: "delimited",
-				delimited: {
-					type: "mathlist",
-					items: [
-						{ type: "ord", value: "c" },
-						{ type: "bin", value: "-" },
-						{ type: "ord", value: "d" },
-					]
-				},
-				leftDelim: { type: "open", value: "(" },
-				rightDelim: { type: "close", value: ")" }
-			}
+			{ type: "ord", value: "a" },
+			{ type: "ord", value: "⋯" }
 		]
-		
 	};
 
 	

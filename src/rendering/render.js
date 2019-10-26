@@ -30,31 +30,32 @@ const renderBoundingBox = (ctx, node) => {
 
 	ctx.save();
 	ctx.beginPath();
-	ctx.rect(0, -dim.yMax, dim.width, height);
+	ctx.rect(0, dim.yMin, dim.width, height);
 	ctx.setTransform(1, 0, 0, 1, 0, 0);
 	ctx.lineWidth = 1;
 	ctx.stroke();
 	ctx.restore();
 
-	ctx.save();
-	ctx.beginPath();
-	ctx.moveTo(0, 0);
-	ctx.lineTo(dim.width, 0);
-	ctx.setTransform(1, 0, 0, 1, 0, 0);
-	ctx.lineWidth = 1;
-	ctx.strokeStyle = "red";
-	ctx.stroke();
-	ctx.restore();
+	// ctx.save();
+	// ctx.beginPath();
+	// ctx.moveTo(0, 0);
+	// ctx.lineTo(dim.width, 0);
+	// ctx.setTransform(1, 0, 0, 1, 0, 0);
+	// ctx.lineWidth = 1;
+	// ctx.strokeStyle = "red";
+	// ctx.stroke();
+	// ctx.restore();
 };
-const renderChar = (ctx, node) => {
-	const style = node.style;
-	const fontName = `KaTeX_${style.fontFamily}-${style.emphasis}`;
+const renderText = (ctx, style, text) => {
 	ctx.save();
-	ctx.font = `${style.fontSize}px ${fontName}`;
+	ctx.font = `${style.fontSize}px KaTeX_${style.fontFamily}-${style.emphasis}`;
 	ctx.scale(1, -1);
-	ctx.fillText(node.char, 0, 0);
+	ctx.fillText(text, 0, 0);
 	ctx.restore();
 };
+const renderChar = (ctx, node) => renderText(ctx, node.style, node.char);
+const renderTextNode = (ctx, node) => renderText(ctx, node.style, node.text);
+
 const renderContours = (ctx, node) => {
 	ctx.save();
 	const { fontSize } = node.style;
@@ -87,6 +88,9 @@ const renderNode = (ctx, node) => {
 	const nodeType = node.type;
 	if (nodeType === "char") {
 		renderChar(ctx, node);
+	}
+	else if (nodeType === "text") {
+		renderTextNode(ctx, node);
 	}
 	else if (nodeType === "contours") {
 		renderContours(ctx, node);

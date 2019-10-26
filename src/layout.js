@@ -1,8 +1,7 @@
-import { scaleMap, identity, addFontFaces } from "./util";
-import { nodeType, isNodeComposite, glyphTypes, isNodeTextual, compositeTypes } from "./node-types";
+import { scaleMap, identity, isDefined } from "./util";
+import { nodeType, glyphTypes, isNodeTextual, compositeTypes, isNodeChar, isNodeText } from "./node-types";
 import * as R from 'ramda';
 import { layoutScript } from "./script-layout";
-import { getMetrics, lookUpGlyphByCharOrAlias, getDefaultEmphasis, getMetricsObject } from "./font-data/katex-font-util";
 
 
 //layout util ###
@@ -26,13 +25,6 @@ const offsetDimensionsVertically = (dimensions, offset) => identity({
 	yMin: dimensions.yMin + offset,
 	yMax: dimensions.yMax + offset
 });
-
-
-const toEmSpace = (fontSize) => 1000 / fontSize;
-const fromEmSpace = (fontSize) => fontSize / 1000;
-
-const dimensionsToEmSpace = (dimensions, fontSize) => R.map(scaleMap(1000 / fontSize), dimensions);
-const dimensionsFromEmSpace = (dimensions, fontSize) => R.map(scaleMap(fontSize / 1000), dimensions);
 
 const scaleMetrics = (metrics, scale) => R.map(scaleMap(scale), metrics);
 
@@ -200,32 +192,11 @@ const layoutRoot = (style, root) => {
 	}
 };
 
-//char ###
-const getDimensionsOfCharNode = (style, node) => {
-	const fontData = lookUpGlyphByCharOrAlias(node.value);
-	const metrics = getMetricsObject(fontData.fontFamily, getDefaultEmphasis(fontData.fontFamily), fontData.unicode);
-	return R.map(scaleMap(style.fontSize))({
-		width: metrics.width,
-		yMin: -metrics.depth,
-		yMax: metrics.height
-	});
-};
-const layoutCharNode = (style, node) => {
-	const { fontFamily, unicode } = lookUpGlyphByCharOrAlias(node.value);
-	const char = String.fromCharCode(unicode);
-	return {
-		type: "char", char, unicode,
-		style: { 
-			emphasis: getDefaultEmphasis(fontFamily),
-			...style, fontFamily 
-		},
-		dimensions: getDimensionsOfCharNode(style, node)
-	};
-};
-
 import { layoutFraction } from './fraction-layout.js';
 import { layoutDelimited } from './delimited-layout.js';
 import { createRadical } from "./create-radical";
+import { layoutTextNode } from './text-layout.js';
+import { layoutCharNode } from './char-layout.js';
 const nodeLayoutFuncMap = {
 	"mathlist": layoutMathList,
 	"fraction": layoutFraction,
@@ -233,12 +204,12 @@ const nodeLayoutFuncMap = {
 	"delimited": layoutDelimited,
 	"root": layoutRoot
 };
-export const layoutNode = (style, node) => {
+const getLayoutFuncByNode = node => {
 	if (Reflect.ownKeys(nodeLayoutFuncMap).includes(node.type)) {
-		return nodeLayoutFuncMap[node.type](style, node);
+		return nodeLayoutFuncMap[node.type];
 	}
-	if (isNodeTextual(node)) {
-		return layoutCharNode(style, node);
-	}
+	if (isNodeChar(node)) return layoutCharNode;
+	if (isNodeText(node)) return layoutTextNode;
 };
+export const layoutNode = (style, node) => getLayoutFuncByNode(node)(style, node);
 export const layoutWithStyle = (style) => (node => layoutNode(style, node));

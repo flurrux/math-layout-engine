@@ -22,6 +22,6 @@ export const glyphTypes = ["ord", "op", "bin", "rel", "open", "close", "punct"];
 export const compositeTypes = ["mathlist", "fraction", "root", "script", "delimited"];
 
 export const isNodeTextual = (node) => isNodeChar(node) || isNodeText(node);
-export const isNodeChar = (node) => glyphTypes.includes(node.type);
+export const isNodeChar = (node) => glyphTypes.includes(node.type) && node.text === undefined;
 export const isNodeText = (node) => node.type === "ord" && node.text !== undefined;
 export const isNodeComposite = (node) => compositeTypes.includes(node.type);

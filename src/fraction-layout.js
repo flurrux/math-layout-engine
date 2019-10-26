@@ -1,5 +1,5 @@
 import { incrementStyle } from "./style";
-import { layoutWithStyle, dimensionHeight, calcCentering, withPosition, calcBoundingDimensions, boxTop, boxBottom } from "./layout";
+import { layoutWithStyle, dimensionHeight, withPosition, calcBoundingDimensions, boxTop, boxBottom } from "./layout";
 import { isNodeTextual } from "./node-types";
 
 const normalizedRuleThickness = 0.05;
@@ -21,8 +21,8 @@ export const layoutFraction = (style, fraction) => {
 
 	const ruleThickness = getRuleThickness(subStyle);
 	const halfRuleThickness = ruleThickness / 2;
-	const topSpacing = ruleThickness * 6;
-	const bottomSpacing = ruleThickness * 6;
+	const topSpacing = ruleThickness * 2;
+	const bottomSpacing = ruleThickness * 2;
 
 	const numY = halfRuleThickness + topSpacing + calculateNumeratorPositionY(fraction.numerator, subStyle, num.dimensions);
 	const denomY = -(halfRuleThickness + bottomSpacing) + calculateDenominatorPositionY(fraction.denominator, subStyle, denom.dimensions);
@@ -43,7 +43,7 @@ export const layoutFraction = (style, fraction) => {
 		ruleThickness,
 		dimensions: {
 			yMin: denomPos[1] + denom.dimensions.yMin, 
-			yMax: numPos[1] + denom.dimensions.yMax,
+			yMax: numPos[1] + num.dimensions.yMax,
 			width
 		}
 	};
