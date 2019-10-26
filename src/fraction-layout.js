@@ -1,6 +1,7 @@
-import { incrementStyle } from "./style";
-import { layoutWithStyle, dimensionHeight, withPosition, calcBoundingDimensions, boxTop, boxBottom } from "./layout";
+import { incrementStyle, withStyle } from "./style";
+import { withPosition, layoutNode } from "./layout";
 import { isNodeTextual } from "./node-types";
+import { map, pipe } from 'ramda';
 
 const normalizedRuleThickness = 0.05;
 const getRuleThickness = style => style.fontSize * normalizedRuleThickness;
@@ -14,10 +15,10 @@ const maxTextualDepth = -0.205
 const calculateNumeratorPositionY = (num, style, metrics) => isNodeTextual(num) ? -maxTextualDepth * style.fontSize : -metrics.yMin;
 const calculateDenominatorPositionY = (denom, style, metrics) => isNodeTextual(denom) ? -maxTextualHeight * style.fontSize : -metrics.yMax;
 
-export const layoutFraction = (style, fraction) => {
+export const layoutFraction = (fraction) => {
+	const { style } = fraction;
 	const subStyle = incrementStyle(style);
-	const [num, denom] = [fraction.numerator, fraction.denominator].map(layoutWithStyle(subStyle));
-
+	const [num, denom] = map(pipe(withStyle(subStyle), layoutNode))([fraction.numerator, fraction.denominator]);
 
 	const ruleThickness = getRuleThickness(subStyle);
 	const halfRuleThickness = ruleThickness / 2;

@@ -186,17 +186,21 @@ async function main(){
 	formulaData = {
 		type: "mathlist",
 		items: [
-			{ type: "ord", value: "a" },
-			{ type: "ord", value: "⋯" }
-		]
+			{ type: "ord", value: "a", style: { fontFamily: "Fraktur", emphasis: "Bold" } },
+			{ type: "bin", value: "+" },
+			{ type: "ord", value: "⋯" },
+			{ type: "bin", value: "+" },
+		],
+		style: {
+			type: "D",
+			baseFontSize: 40,
+			fontSize: 40
+		}
 	};
 
 	
-	const layoutData = layoutNode({
-		type: "D", 
-		baseFontSize: 40,
-		fontSize: 40
-	}, formulaData);
+	const layoutData = layoutNode(formulaData);
+	console.log(layoutData);
 
 	document.body.insertAdjacentHTML("beforeend", `<canvas width=800 height=400></canvas>`);
 	const canvas = document.querySelector("canvas");

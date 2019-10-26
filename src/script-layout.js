@@ -19,10 +19,11 @@ const getTargetYOfGlyphNucleus = (fontFamily, unicode) => {
 };
 
 
-import { smallerStyle, smallestStyle } from "./style";
+import { smallerStyle, smallestStyle, withStyle } from "./style";
 import { pickList, scaleMap, isDefined } from "./util";
 import { layoutNode, calcBoundingDimensions, withPosition, getAxisAlignment } from "./layout";
 import { lookUpUnicode, lookUpGlyphByCharOrAlias } from "./font-data/katex-font-util";
+import { pipe, map } from 'ramda';
 const getSubOrSupStyle = (scriptStyle, subOrSupNode) => {
 	return subOrSupNode.type === "fraction" ? smallestStyle(scriptStyle) : smallerStyle(scriptStyle);
 };
@@ -48,15 +49,15 @@ const getSupSubTargetYNoLimits = (style, script, nucleusDim) => {
 		]
 	}
 };
-const layoutScriptLimitPosition = (style, script) => {
+const layoutScriptLimitPosition = (script) => {
+	const { style } = script;
 	const scriptStyle = smallerStyle(style);
 	const styles = { nucleus: style, sup: scriptStyle, sub: scriptStyle };
 	const scriptLayouted = ["nucleus", "sup", "sub"].reduce((obj, key) => {
 		return {
 			...obj,
 			...(script[key] !== undefined ? { 
-				[key]: layoutNode(styles[key], 
-				script[key]) 
+				[key]: pipe(withStyle(styles[key]), layoutNode)(script[key]) 
 			} : {})
 		};
 	}, {});
@@ -90,10 +91,11 @@ const layoutScriptLimitPosition = (style, script) => {
 		...layoutedScriptWithPositions
 	};
 };
-const layoutScriptNoLimitPosition = (style, script) => {
+const layoutScriptNoLimitPosition = (script) => {
+	const { style } = script;
 	const { nucleus, sup, sub } = script;
 
-	const nucleusLayouted = withPosition(layoutNode(style, nucleus), [0, 0]);
+	const nucleusLayouted = withPosition(layoutNode(withStyle(style, nucleus)), [0, 0]);
 	const { fontSize } = style;
 
 	const scriptLayouted = {
@@ -106,7 +108,7 @@ const layoutScriptNoLimitPosition = (style, script) => {
 
 	if (sup) {
 		const supStyle = getSubOrSupStyle(style, sup);
-		const supLayouted = layoutNode(supStyle, sup);
+		const supLayouted = pipe(withStyle(supStyle), layoutNode)(sup);
 		const targetY = (function () {
 			let y = supSubTargetY[0] - getAxisAlignment(style, sup);
 
@@ -124,7 +126,7 @@ const layoutScriptNoLimitPosition = (style, script) => {
 
 	if (sub) {
 		const subStyle = getSubOrSupStyle(style, sub);
-		const subLayouted = layoutNode(subStyle, sub);
+		const subLayouted = pipe(withStyle(subStyle), layoutNode)(sub);
 		const targetY = (function () {
 			let y = supSubTargetY[1];
 
@@ -158,7 +160,7 @@ const isScriptLimitPosition = (nucleus) => (
 	) || 
 	isNodeText(nucleus) && nucleus.text === "lim"
 );
-export const layoutScript = (style, script) => {
+export const layoutScript = (script) => {
 	const { nucleus } = script;
 	const limitPosition = isScriptLimitPosition(nucleus);
 	if (limitPosition) {
@@ -170,5 +172,5 @@ export const layoutScript = (style, script) => {
 			}
 		};
 	}
-	return limitPosition ? layoutScriptLimitPosition(style, script) : layoutScriptNoLimitPosition(style, script);
+	return limitPosition ? layoutScriptLimitPosition(script) : layoutScriptNoLimitPosition(script);
 };

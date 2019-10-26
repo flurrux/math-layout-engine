@@ -38,28 +38,6 @@ const isNodeOfAnyType = (node, types) => types.includes(node.type);
 const normalizedAxisHeight = 0.25;
 export const getAxisHeight = style => style.fontSize * normalizedAxisHeight;
 
-//the horizontal spacing between two nodes depends on their respective types
-const nodeSpacingTable = [
-	[0, 1, 2, 3, 2, 0, 0, 1],
-	[1, 1, 0, 3, 0, 0, 0, 1],
-	[2, 2, 0, 0, 2, 0, 0, 2],
-	[3, 3, 0, 0, 3, 0, 0, 3],
-	[0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 1, 2, 3, 0, 0, 0, 1],
-	[1, 1, 0, 1, 1, 1, 1, 1],
-	[1, 1, 2, 3, 1, 0, 1, 1]
-];
-const getIndexOfFormulaNodeType = type => compositeTypes.includes(type) ? 7 : glyphTypes.indexOf(type);
-export const getHorizontalSpacingBetweenNodes = (typeA, typeB) => {
-	const [ind1, ind2] = [typeA, typeB].map(getIndexOfFormulaNodeType);
-	if (ind1 < 0 || ind2 < 0) {
-		return 0;
-	}
-	return 2 * nodeSpacingTable[ind1][ind2] / 18;
-};
-
-
-
 
 export const isNodeAlignedToBaseline = (node) => isNodeOfAnyType(node, ["mathlist", "script"]) ||
 	isNodeTextual(node) || (node.type === "root" && isNodeAlignedToBaseline(node.radicand));
@@ -100,103 +78,15 @@ const getSubNodePaths = node => {
 // const insertCharCode = node => isNodeChar(node) ? { ...node, unicode:  } : node;
 // const insertCharCodes = parent => mapFormulaTree(insertCharCode, parent);
 
-//mathlist ###
-const layoutMathList = (style, mathList) => {
-	const items = mathList.items;
-	const layoutItems = items.map((item, ind) => layoutNode(style, item));
-
-	let curX = 0;
-	const positions = [];
-	for (let i = 0; i < items.length; i++) {
-		const item = items[i];
-		const layoutItem = layoutItems[i];
-		const y = getAxisAlignment(style, item);
-
-		positions.push([curX, y]);
-		curX += layoutItem.dimensions.width;
-
-		//spacing
-		if (i < items.length - 1) {
-			curX += getHorizontalSpacingBetweenNodes(items[i].type, items[i + 1].type) * style.fontSize;
-		}
-	}
-
-	const positionedItems = layoutItems.map((layoutItem, index) => {
-		return { ...layoutItem, position: positions[index] }
-	});
-
-	return {
-		type: "mathlist",
-		dimensions: calcBoundingDimensions(positionedItems),
-		items: positionedItems
-	};
-};
-
-//root ###
-const layoutRoot = (style, root) => {
-	const { fontSize } = style;
-	const radicandLayouted = layoutNode(style, root.radicand);
-
-	const radicandDim = radicandLayouted.dimensions;
-	const radicandDimEm = R.map(scaleMap(1 / fontSize), radicandLayouted.dimensions);
-	const margin = [0.07, 0.18];
-	const [radicandWidth, radicandHeight] = [
-		margin[0] * 2 + radicandDimEm.width,
-		margin[1] * 2 + dimensionHeight(radicandDimEm)
-	];
-
-	const radical = createRadical(radicandWidth, radicandHeight, fontSize / 50);
-	const rootMetrics = R.map(scaleMap(fontSize), radical.metrics);
-	const rootContours = radical.contours;
-
-	const spareYHalf = (radical.innerHeight * fontSize - radicandDim.yMax + radicandDim.yMin) * 0.7;
-	const contourY = spareYHalf - (rootMetrics.yMax - radicandDim.yMax);
-	const contoursOffset = [0, contourY];
-
-	const radicandPosition = [
-		fontSize * (radical.innerStartX + margin[0]), 0
-	];
-	Object.assign(radicandLayouted, { position: radicandPosition });
-
-	const radicalLayouted = {
-		type: "contours", style,
-		contours: rootContours,
-		position: [contoursOffset[0], contoursOffset[1] + radicandPosition[1]],
-		dimensions: rootMetrics
-	};
-
-
-	//index
-	const indexLayouted = root.index ? (function () {
-		const indexStyle = switchStyleType(style, "SS");
-		const indexLayouted = layoutNode(indexStyle, root.index);
-		const scaledCorner = radical.indexCorner.map(scaleMap(style.fontSize));
-		const rightBottomPosition = [
-			contoursOffset[0] + scaledCorner[0],
-			contoursOffset[1] + scaledCorner[1]
-		];
-		const indexPosition = [
-			rightBottomPosition[0] - indexLayouted.dimensions.width,
-			rightBottomPosition[1] - indexLayouted.dimensions.yMin
-		];
-		return withPosition(indexLayouted, indexPosition);
-	})() : undefined;
-
-	const dimensions = calcBoundingDimensions([radicalLayouted, indexLayouted].filter(isDefined));
-
-	return {
-		type: "root", dimensions,
-		radical: radicalLayouted,
-		radicand: radicandLayouted,
-		...(indexLayouted ? { index: indexLayouted } : {})
-	}
-};
 
 import { layoutFraction } from './fraction-layout.js';
 import { layoutDelimited } from './delimited-layout.js';
-import { createRadical } from "./create-radical";
+import { layoutRoot } from './root-layout.js';
 import { layoutTextNode } from './text-layout.js';
 import { layoutCharNode } from './char-layout.js';
+import { layoutMathList } from './mathlist-layout.js';
+import { withStyle } from "./style";
+
 const nodeLayoutFuncMap = {
 	"mathlist": layoutMathList,
 	"fraction": layoutFraction,
@@ -211,5 +101,5 @@ const getLayoutFuncByNode = node => {
 	if (isNodeChar(node)) return layoutCharNode;
 	if (isNodeText(node)) return layoutTextNode;
 };
-export const layoutNode = (style, node) => getLayoutFuncByNode(node)(style, node);
-export const layoutWithStyle = (style) => (node => layoutNode(style, node));
+export const layoutNode = (node) => getLayoutFuncByNode(node)(node);
+export const layoutWithStyle = (style) => R.pipe(withStyle(style), layoutNode);

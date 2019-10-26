@@ -14,10 +14,18 @@ const styleTypeToFontScale = {
 export const fontSizeOfStyleType = (defaultFontSize, styleType) => defaultFontSize * styleTypeToFontScale[styleType];
 
 
-const switchStyleType = (style, nextStyleType) => identity({
+export const switchStyleType = (style, nextStyleType) => identity({
 	...style, type: nextStyleType,
 	fontSize: fontSizeOfStyleType(style.baseFontSize, nextStyleType)
 });
 export const incrementStyle = (style) => switchStyleType(style, incrementStyleType(style.type));
 export const smallerStyle = (style) => switchStyleType(style, getSmallerStyleType(style.type));
 export const smallestStyle = (style) => switchStyleType(style, styleType.SS);
+
+//if the node already has a style, merge the supplied style with it
+export const createNodeStyle = (node, style) => identity({
+	...style, ...(node.style || {})
+});
+
+//returns a functor that merges the nodes style with the supplied style
+export const withStyle = (style) => (node => identity({ ...node, style: createNodeStyle(node, style) }));

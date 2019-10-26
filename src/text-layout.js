@@ -1,5 +1,6 @@
 import { sum, pipe, map } from 'ramda';
 import { getMetricsObject } from './font-data/katex-font-util';
+import { createNodeStyle } from './style';
 
 const maxTextualHeight = 0.685;
 const maxTextualDepth = -0.205;
@@ -11,12 +12,11 @@ const calculateTextWidth = (style, text) => pipe(
 	sum
 )(text);
 
-export const layoutTextNode = (style, textNode) => {
-	style = {
+export const layoutTextNode = (textNode) => {
+	const style = createNodeStyle(textNode, {
 		fontFamily: "Main", 
 		emphasis: "Regular",
-		...style
-	};
+	});
 	const dimensions = {
 		width: calculateTextWidth(style, textNode.text) * style.fontSize,
 		yMax: maxTextualHeight * style.fontSize,

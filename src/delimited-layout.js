@@ -1,7 +1,8 @@
 import { getAxisHeight, layoutNode, getHorizontalSpacingBetweenNodes, calcBoundingDimensions, isNodeAlignedToBaseline, withPosition, getAxisAlignment } from "./layout";
 import { createDelimiter } from "./create-delimiter";
 import { identity, accumSum, scaleMap } from "./util";
-import { map } from 'ramda';
+import { map, pipe } from 'ramda';
+import { withStyle } from "./style";
 
 const calculateDelimiterHeight = (delimited, delimitedMetrics, style) => {
 	const axisOffset = isNodeAlignedToBaseline(delimited) ? -getAxisHeight(style) : 0;
@@ -11,9 +12,10 @@ const calculateDelimiterHeight = (delimited, delimitedMetrics, style) => {
 	const delimiterSpacing = 0.1;
 	return Math.max(height, -depth) + delimiterSpacing;
 };
-export const layoutDelimited = (style, delimNode) => {
+export const layoutDelimited = (delimNode) => {
 	const { delimited } = delimNode;
-	const delimitedLayouted = layoutNode(style, delimited);
+	const { style } = delimNode;
+	const delimitedLayouted = pipe(withStyle(style), layoutNode)(delimited);
 	
 	const delimiterHeight = calculateDelimiterHeight(delimited, delimitedLayouted.dimensions, style);
 
@@ -39,6 +41,6 @@ export const layoutDelimited = (style, delimNode) => {
 	return {
 		type: "mathlist",
 		dimensions: calcBoundingDimensions(items),
-		style, items
+		items
 	};
 };
