@@ -9,7 +9,6 @@
   "author": "Christian Hoffmann <christianhoffmann@outlook.com>",
   "license": "ISC",
   "dependencies": {
-    "@flurrux/array-vector-2d": "^1.0.2",
     "opentype.js": "^1.1.0",
     "ramda": "^0.26.1"
   },
