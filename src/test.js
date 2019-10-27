@@ -190,6 +190,23 @@ async function main(){
 			{ type: "ord", value: "a" }
 		]
 	};
+	formulaData = {
+		type: "delimited",
+		leftDelim: { type: "open", value: "[" },
+		rightDelim: { type: "close", value: "]" },
+		delimited: {
+			type: "matrix",
+			rowCount: 2,
+			colCount: 2,
+			rowSpacing: 0.2, colSpacing: 0.6,
+			items: [
+				{ type: "ord", value: "a" },
+				{ type: "ord", value: "b" },
+				{ type: "ord", value: "c" },
+				{ type: "ord", value: "d" }
+			]
+		}
+	};
 	const defaultStyle = {
 		type: "D", 
 		baseFontSize: 40,
@@ -197,6 +214,7 @@ async function main(){
 	};
 	
 	const layoutData = layoutNode({ ...formulaData, style: defaultStyle });
+	console.log(layoutData);
 
 	document.body.insertAdjacentHTML("beforeend", `<canvas width=800 height=400></canvas>`);
 	const canvas = document.querySelector("canvas");

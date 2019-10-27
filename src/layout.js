@@ -85,6 +85,7 @@ import { layoutRoot } from './root-layout.js';
 import { layoutTextNode } from './text-layout.js';
 import { layoutCharNode } from './char-layout.js';
 import { layoutMathList } from './mathlist-layout.js';
+import { layoutMatrix } from './matrix-layout.js';
 import { withStyle } from "./style";
 
 const nodeLayoutFuncMap = {
@@ -92,7 +93,8 @@ const nodeLayoutFuncMap = {
 	"fraction": layoutFraction,
 	"script": layoutScript,
 	"delimited": layoutDelimited,
-	"root": layoutRoot
+	"root": layoutRoot,
+	"matrix": layoutMatrix
 };
 const getLayoutFuncByNode = node => {
 	if (Reflect.ownKeys(nodeLayoutFuncMap).includes(node.type)) {

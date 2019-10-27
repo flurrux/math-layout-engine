@@ -83,7 +83,7 @@ const renderNode = (ctx, node) => {
 	ctx.save();
 	ctx.translate(...node.position);
 
-	renderBoundingBox(ctx, node);
+	//renderBoundingBox(ctx, node);
 
 	const nodeType = node.type;
 	if (nodeType === "char") {
@@ -106,6 +106,9 @@ const renderNode = (ctx, node) => {
 	}
 	else if (nodeType === "root") {
 		renderSubNodes(ctx, node, ["radical", "radicand", "index"]);
+	}
+	else if (nodeType === "matrix"){
+		node.items.forEach(subNode => renderNode(ctx, subNode));
 	}
 
 	ctx.restore();

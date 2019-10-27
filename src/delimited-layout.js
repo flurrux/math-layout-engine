@@ -13,7 +13,7 @@ const calculateDelimiterHeight = (delimited, delimitedMetrics, style) => {
 	const [height, depth] = [delimitedMetrics.yMax, delimitedMetrics.yMin]
 		.map(val => val + axisOffset)
 		.map(val => val / style.fontSize);
-	const delimiterSpacing = 0.1;
+	const delimiterSpacing = 0.15;
 	return Math.max(height, -depth) + delimiterSpacing;
 };
 export const layoutDelimited = (delimNode) => {
@@ -33,8 +33,6 @@ export const layoutDelimited = (delimNode) => {
 		leftDelim.dimensions.width + lookUpHorizontalSpacing("open", delimited.type),
 		delimitedLayouted.dimensions.width + lookUpHorizontalSpacing(delimited.type, "close")
 	]);
-	console.log(itemXs);
-
 	const items = [
 		withPosition(leftDelim, [itemXs[0], 0]),
 		withPosition(delimitedLayouted, [
