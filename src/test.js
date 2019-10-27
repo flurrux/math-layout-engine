@@ -173,16 +173,22 @@ async function main(){
 		}
 	};
 	formulaData = {
-		type: "script", 
-		nucleus: { type: "ord", text: "lim" },
-		sub: {
-			type: "mathlist", 
-			items: [
-				{ type: "ord", value: "x" },
-				{ type: "rel", value: "->" },
-				{ type: "ord", value: "infinity" }
-			]
-		}
+		type: "mathlist", 
+		items: [
+			{
+				type: "script", 
+				nucleus: { type: "op", value: "sum" },
+				sub: {
+					type: "mathlist", 
+					items: [
+						{ type: "ord", value: "x" },
+						{ type: "rel", value: "->" },
+						{ type: "ord", value: "infinity" }
+					]
+				}
+			},
+			{ type: "ord", value: "a" }
+		]
 	};
 	const defaultStyle = {
 		type: "D", 
@@ -191,7 +197,6 @@ async function main(){
 	};
 	
 	const layoutData = layoutNode({ ...formulaData, style: defaultStyle });
-	console.log(layoutData);
 
 	document.body.insertAdjacentHTML("beforeend", `<canvas width=800 height=400></canvas>`);
 	const canvas = document.querySelector("canvas");

@@ -168,7 +168,7 @@ const layoutScriptNoLimitPosition = (script) => {
 		...scriptLayouted, style, dimensions
 	};
 };
-const isScriptLimitPosition = (nucleus) => (
+const isScriptLimitPosition = (style, nucleus) => (
 	(
 		isNodeChar(nucleus) && nucleus.type === "op" && 
 		style.type === "D" && lookUpUnicode(nucleus.value) !== 8747
@@ -177,7 +177,7 @@ const isScriptLimitPosition = (nucleus) => (
 );
 export const layoutScript = (script) => {
 	const { nucleus } = script;
-	const limitPosition = isScriptLimitPosition(nucleus);
+	const limitPosition = isScriptLimitPosition(script.style, nucleus);
 	if (limitPosition) {
 		script = {
 			...script,

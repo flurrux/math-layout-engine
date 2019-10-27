@@ -36,15 +36,15 @@ const renderBoundingBox = (ctx, node) => {
 	ctx.stroke();
 	ctx.restore();
 
-	// ctx.save();
-	// ctx.beginPath();
-	// ctx.moveTo(0, 0);
-	// ctx.lineTo(dim.width, 0);
-	// ctx.setTransform(1, 0, 0, 1, 0, 0);
-	// ctx.lineWidth = 1;
-	// ctx.strokeStyle = "red";
-	// ctx.stroke();
-	// ctx.restore();
+	ctx.save();
+	ctx.beginPath();
+	ctx.moveTo(0, 0);
+	ctx.lineTo(dim.width, 0);
+	ctx.setTransform(1, 0, 0, 1, 0, 0);
+	ctx.lineWidth = 1;
+	ctx.strokeStyle = "red";
+	ctx.stroke();
+	ctx.restore();
 };
 const renderText = (ctx, style, text) => {
 	ctx.save();
@@ -83,7 +83,7 @@ const renderNode = (ctx, node) => {
 	ctx.save();
 	ctx.translate(...node.position);
 
-	//renderBoundingBox(ctx, node);
+	renderBoundingBox(ctx, node);
 
 	const nodeType = node.type;
 	if (nodeType === "char") {
