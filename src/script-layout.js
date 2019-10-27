@@ -20,10 +20,11 @@ const getTargetYOfGlyphNucleus = (fontFamily, unicode) => {
 
 
 import { smallerStyle, smallestStyle, withStyle } from "./style";
-import { pickList, scaleMap, isDefined } from "./util";
-import { layoutNode, calcBoundingDimensions, withPosition, getAxisAlignment } from "./layout";
+import { pickList, scaleMap, isDefined, identity } from "./util";
+import { layoutNode, calcBoundingDimensions, withPosition, getAxisAlignment, calcCentering, boxBottom } from "./layout";
 import { lookUpUnicode, lookUpGlyphByCharOrAlias } from "./font-data/katex-font-util";
-import { pipe, map } from 'ramda';
+import { pipe, filter, map } from 'ramda';
+
 const getSubOrSupStyle = (scriptStyle, subOrSupNode) => {
 	return subOrSupNode.type === "fraction" ? smallestStyle(scriptStyle) : smallerStyle(scriptStyle);
 };
@@ -49,53 +50,67 @@ const getSupSubTargetYNoLimits = (style, script, nucleusDim) => {
 		]
 	}
 };
+const getCrampedTargetYOffset = (style) => style.cramped ? (-style.fontSize * 0.1) : 0;
+
+
+
+const layoutSuperScriptInLimitPosition = (parentStyle, supStyle, nucleusDimensions, sup) => {
+	const supLayouted = pipe(withStyle(supStyle), layoutNode)(sup);
+	const supDim = supLayouted.dimensions;
+	const spacing = parentStyle.fontSize * 0.2;
+	const position = [
+		calcCentering(supDim.width, nucleusDimensions.width),
+		nucleusDimensions.yMin - supDim.yMax - spacing
+	];
+	return withPosition(supLayouted, position);
+};
+const layoutSubScriptInLimitPosition = (parentStyle, subStyle, nucleusDimensions, sub) => {
+	const subLayouted = pipe(withStyle(subStyle), layoutNode)(sub);
+	const subDim = subLayouted.dimensions;
+	const spacing = parentStyle.fontSize * 0.2;
+	const position = [
+		calcCentering(subDim.width, nucleusDimensions.width),
+		nucleusDimensions.yMin - subDim.yMax - spacing
+	];
+	return withPosition(subLayouted, position);
+};
+const translateNode = (translation) => (node => identity({ 
+	...node, 
+	position: [
+		node.position[0] + translation[0],
+		node.position[1] + translation[1]
+	] 
+}));
+const min = (arr) => Math.min(...arr);
+const alignBoxLeftToZero = (scriptLayouted) => {
+	const horizontalShift = -pipe(Object.values, map(obj => obj.position[0]), min)(scriptLayouted);
+	return map(translateNode([horizontalShift, 0]))(scriptLayouted);
+};
 const layoutScriptLimitPosition = (script) => {
 	const { style } = script;
+	
+	const nucleusLayouted = pipe(withStyle(style), layoutNode)(script.nucleus);
+	const nucleusDim = nucleusLayouted.dimensions;
+
 	const scriptStyle = smallerStyle(style);
-	const styles = { nucleus: style, sup: scriptStyle, sub: scriptStyle };
-	const scriptLayouted = ["nucleus", "sup", "sub"].reduce((obj, key) => {
-		return {
-			...obj,
-			...(script[key] !== undefined ? { 
-				[key]: pipe(withStyle(styles[key]), layoutNode)(script[key]) 
-			} : {})
-		};
-	}, {});
-
-	const nucleusDim = scriptLayouted.nucleus.dimensions;
-	const positions = {
-		nucleus: [0, 0],
-		sup: scriptLayouted.sup ? [
-			calcCentering(scriptLayouted.sup.dimensions.width, nucleusDim.width),
-			nucleusDim.yMax - scriptLayouted.sup.dimensions.yMin + style.fontSize * 0.2
-		] : undefined,
-		sub: scriptLayouted.sub ? [
-			calcCentering(scriptLayouted.sub.dimensions.width, nucleusDim.width),
-			nucleusDim.yMin - scriptLayouted.sub.dimensions.yMax - style.fontSize * 0.2
-		] : undefined
-	};
-
-	const layoutedScriptWithPositions = Reflect.ownKeys(scriptLayouted).reduce((obj, key) => {
-		return {
-			...obj,
-			[key]: {
-				...scriptLayouted[key],
-				position: positions[key]
-			}
-		}
-	}, {});
-	const dimensions = calcBoundingDimensions(Object.values(layoutedScriptWithPositions));
+	let scriptLayouted = pipe(filter(isDefined), alignBoxLeftToZero)({
+		nucleus: withPosition(nucleusLayouted, [0, 0]),
+		sup: script.sup ? layoutSuperScriptInLimitPosition(style, scriptStyle, nucleusDim, script.sup) : undefined,
+		sub: script.sub ? layoutSubScriptInLimitPosition(style, scriptStyle, nucleusDim, script.sub) : undefined,
+	});
+	
+	const dimensions = calcBoundingDimensions(Object.values(scriptLayouted));
 	return {
 		type: "script",
 		style, dimensions,
-		...layoutedScriptWithPositions
+		...scriptLayouted
 	};
 };
 const layoutScriptNoLimitPosition = (script) => {
 	const { style } = script;
 	const { nucleus, sup, sub } = script;
 
-	const nucleusLayouted = withPosition(layoutNode(withStyle(style, nucleus)), [0, 0]);
+	const nucleusLayouted = withPosition(layoutNode(withStyle(style)(nucleus)), [0, 0]);
 	const { fontSize } = style;
 
 	const scriptLayouted = {
@@ -110,7 +125,7 @@ const layoutScriptNoLimitPosition = (script) => {
 		const supStyle = getSubOrSupStyle(style, sup);
 		const supLayouted = pipe(withStyle(supStyle), layoutNode)(sup);
 		const targetY = (function () {
-			let y = supSubTargetY[0] - getAxisAlignment(style, sup);
+			let y = supSubTargetY[0] - getAxisAlignment(style, sup) + getCrampedTargetYOffset(style);
 
 			//if bottom of superscript is too close to baseline, shift it up
 			const minBottomToBaselineGap = fontSize * 0.3;

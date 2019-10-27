@@ -3,6 +3,9 @@ import { lookUpHorizontalSpacing } from "./horizontal-layout";
 import { map, pipe } from 'ramda';
 import { withStyle } from "./style";
 
+const calculateHorizontalSpacing = (style, index, itemCount, node1, node2) => {
+	return (index >= itemCount - 1 || ["S", "SS"].includes(style.type)) ? 0 : lookUpHorizontalSpacing(node1, node2) * style.fontSize;
+};
 export const layoutMathList = (mathList) => {
 	const items = mathList.items;
 	const { style } = mathList;
@@ -19,9 +22,7 @@ export const layoutMathList = (mathList) => {
 		curX += layoutItem.dimensions.width;
 
 		//spacing
-		if (i < items.length - 1) {
-			curX += lookUpHorizontalSpacing(items[i], items[i + 1]) * style.fontSize;
-		}
+		curX += calculateHorizontalSpacing(style, i, items.length, items[i], items[i + 1]);
 	}
 
 	const positionedItems = layoutItems.map((layoutItem, index) => {

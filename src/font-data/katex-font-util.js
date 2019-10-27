@@ -76,6 +76,7 @@ const aliasMap = [
     { alias: ["muldot"], fontFamily: "Main", unicode: 8901 },
 	{ alias: ["equal", "="], fontFamily: "Main", unicode: 61 },
 	{ alias: ["to", "->"], fontFamily: "Main", unicode: 8594 },
+	{ alias: ["dot", "."], fontFamily: "Main", unicode: 46 },
 
     { alias: ["integral"], fontFamily: "Size2", unicode: 8747 },
     { alias: ["sum"], fontFamily: "Size2", unicode: 8721 },

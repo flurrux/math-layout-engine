@@ -1,5 +1,5 @@
 import { incrementStyle, withStyle } from "./style";
-import { withPosition, layoutNode } from "./layout";
+import { withPosition, layoutNode, calcCentering } from "./layout";
 import { isNodeTextual } from "./node-types";
 import { map, pipe } from 'ramda';
 
@@ -18,12 +18,13 @@ const calculateDenominatorPositionY = (denom, style, metrics) => isNodeTextual(d
 export const layoutFraction = (fraction) => {
 	const { style } = fraction;
 	const subStyle = incrementStyle(style);
-	const [num, denom] = map(pipe(withStyle(subStyle), layoutNode))([fraction.numerator, fraction.denominator]);
+	const num = pipe(withStyle(subStyle), layoutNode)(fraction.numerator);
+	const denom = pipe(withStyle({ ...subStyle, cramped: true }), layoutNode)(fraction.denominator);
 
 	const ruleThickness = getRuleThickness(subStyle);
 	const halfRuleThickness = ruleThickness / 2;
-	const topSpacing = ruleThickness * 2;
-	const bottomSpacing = ruleThickness * 2;
+	const topSpacing = ruleThickness * 3;
+	const bottomSpacing = ruleThickness * 3;
 
 	const numY = halfRuleThickness + topSpacing + calculateNumeratorPositionY(fraction.numerator, subStyle, num.dimensions);
 	const denomY = -(halfRuleThickness + bottomSpacing) + calculateDenominatorPositionY(fraction.denominator, subStyle, denom.dimensions);

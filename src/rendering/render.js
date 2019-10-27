@@ -115,13 +115,14 @@ export const centerNodeOnCanvas = (canvas, node) => {
 		...node,
 		position: [
 			(canvas.width - node.dimensions.width) / 2,
-			(canvas.height - node.dimensions.yMax + node.dimensions.yMin) / 2
+			(canvas.height - node.dimensions.yMax - node.dimensions.yMin) / 2
 		]
 	}
 };
 export const renderFormulaLayout = (canvas, ctx, formulaLayout) => {
 	ctx.save();
 	Object.assign(ctx, { fillStyle: "black", strokeStyle: "black" });
+
 	ctx.setTransform(1, 0, 0, -1, 0, canvas.height);
 	renderNode(ctx, formulaLayout);
 	ctx.restore();

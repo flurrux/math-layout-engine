@@ -11,10 +11,11 @@
 	integrals, summation, limits	
 	text
 	operators (sin, cos, lim, ...)
-	
 	explicit node style
-	cramped style, tight style
-	ellipsis
+	punctuation
+
+	cramped style
+	ellipsis inner type spacing problem
 	matrix
 	binomials 
 	accents (dot, hat, ...)
@@ -183,23 +184,13 @@ async function main(){
 			]
 		}
 	};
-	formulaData = {
-		type: "mathlist",
-		items: [
-			{ type: "ord", value: "a", style: { fontFamily: "Fraktur", emphasis: "Bold" } },
-			{ type: "bin", value: "+" },
-			{ type: "ord", value: "⋯" },
-			{ type: "bin", value: "+" },
-		],
-		style: {
-			type: "D",
-			baseFontSize: 40,
-			fontSize: 40
-		}
+	const defaultStyle = {
+		type: "D", 
+		baseFontSize: 40,
+		fontSize: 40,
 	};
-
 	
-	const layoutData = layoutNode(formulaData);
+	const layoutData = layoutNode({ ...formulaData, style: defaultStyle });
 	console.log(layoutData);
 
 	document.body.insertAdjacentHTML("beforeend", `<canvas width=800 height=400></canvas>`);

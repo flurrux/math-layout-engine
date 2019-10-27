@@ -1,8 +1,12 @@
-import { getAxisHeight, layoutNode, getHorizontalSpacingBetweenNodes, calcBoundingDimensions, isNodeAlignedToBaseline, withPosition, getAxisAlignment } from "./layout";
+import { 
+	getAxisHeight, layoutNode, calcBoundingDimensions, 
+	isNodeAlignedToBaseline, withPosition 
+} from "./layout";
 import { createDelimiter } from "./create-delimiter";
 import { identity, accumSum, scaleMap } from "./util";
 import { map, pipe } from 'ramda';
 import { withStyle } from "./style";
+import { lookUpHorizontalSpacing } from "./horizontal-layout";
 
 const calculateDelimiterHeight = (delimited, delimitedMetrics, style) => {
 	const axisOffset = isNodeAlignedToBaseline(delimited) ? -getAxisHeight(style) : 0;
@@ -26,8 +30,8 @@ export const layoutDelimited = (delimNode) => {
 		}));
 
 	const itemXs = accumSum([
-		leftDelim.dimensions.width + getHorizontalSpacingBetweenNodes("open", delimited.type),
-		delimitedLayouted.dimensions.width + getHorizontalSpacingBetweenNodes(delimited.type, "close")
+		leftDelim.dimensions.width + lookUpHorizontalSpacing("open", delimited.type),
+		delimitedLayouted.dimensions.width + lookUpHorizontalSpacing(delimited.type, "close")
 	]);
 	console.log(itemXs);
 
