@@ -19,7 +19,7 @@ const partitionIntoRows = (colCount) => (array => array.reduce((rows, item, ind)
 	return rows;
 }, map(() => [], range(0, array.length / colCount))));
 
-const calcOffsetY = (node) => isNodeAlignedToBaseline(node) ? 0 : getAxisHeight(node.style);
+const calcOffsetY = (node, layoutedNode) => isNodeAlignedToBaseline(node) ? 0 : getAxisHeight(layoutedNode.style);
 const heightOfNode = node => pick(["yMin", "yMax"], node.dimensions);
 const widthOfNode = node => node.dimensions.width;
 const max = array => Math.max(...array);
@@ -42,7 +42,7 @@ export const layoutMatrix = (matrixNode) => {
 
 	const yOffsetMap = new Map();
 	for (const [index, layoutItem] of itemsLayouted.entries()){
-		yOffsetMap.set(layoutItem, calcOffsetY(items[index]));
+		yOffsetMap.set(layoutItem, calcOffsetY(items[index], layoutItem));
 	}
 	const colWidths = pipe(partitionIntoCols(colCount), map(col => pipe(map(widthOfNode), max)(col)))(itemsLayouted);
 	const rowDims = pipe(

@@ -1007,7 +1007,8 @@ export const createRadical = (width, height) => {
 		return {
 			contours: scaledContours,
 			innerStartX: scaledBbox.xMax,
-			innerHeight: scale * rootEntry.innerHeight,
+            innerHeight: scale * rootEntry.innerHeight,
+            indexCorner: indexPositions[rootIndex],
 			metrics: {
 				width: scaledBbox.xMax + width,
 				yMin: scaledBbox.yMin,
@@ -1020,7 +1021,8 @@ export const createRadical = (width, height) => {
 		return {
 			contours: [extendRootBrella(height, width)],
 			innerStartX: startX,
-			innerHeight: height - bbox.yMin,
+            innerHeight: height - bbox.yMin,
+            indexCorner: indexPositions[rootIndex],
 			metrics: {
 				width: startX + width,
 				yMin: bbox.yMin,

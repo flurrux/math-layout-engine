@@ -1,5 +1,5 @@
 import { layoutNode, dimensionHeight, withPosition, calcBoundingDimensions } from "./layout";
-import { scaleMap } from "./util";
+import { scaleMap, isDefined } from "./util";
 import { map, pipe } from 'ramda';
 import { createRadical } from "./create-radical";
 import { switchStyleType, withStyle } from "./style";
@@ -40,7 +40,7 @@ export const layoutRoot = (root) => {
 
 	//index
 	const indexLayouted = root.index ? (function () {
-		const indexLayouted = pipe(withStyle(switchStyleType(stye, "SS")), layoutNode)(root.index);
+		const indexLayouted = pipe(withStyle(switchStyleType(style, "SS")), layoutNode)(root.index);
 		const scaledCorner = radical.indexCorner.map(scaleMap(style.fontSize));
 		const rightBottomPosition = [
 			contoursOffset[0] + scaledCorner[0],

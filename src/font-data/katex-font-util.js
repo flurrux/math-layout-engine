@@ -83,6 +83,7 @@ const aliasMap = [
     { alias: ["product"], fontFamily: "Size2", unicode: 8719 },
 
     { alias: ["infinity"], fontFamily: "Main", unicode: 8734 },
+    { alias: ["'"], fontFamily: "Main", unicode: 8242 },
 
     { alias: ["a"], fontFamily: "Math", unicode: 97 },
     { alias: ["b"], fontFamily: "Math", unicode: 98 }, 

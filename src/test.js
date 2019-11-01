@@ -13,10 +13,10 @@
 	operators (sin, cos, lim, ...)
 	explicit node style
 	punctuation
-
 	cramped style
-	ellipsis inner type spacing problem
 	matrix
+	
+	ellipsis inner type spacing problem
 	binomials 
 	accents (dot, hat, ...)
 	manual spaces
@@ -200,13 +200,23 @@ async function main(){
 			colCount: 2,
 			rowSpacing: 0.2, colSpacing: 0.6,
 			items: [
-				{ type: "ord", value: "a" },
+				{ 
+					type: "fraction",
+					numerator: { type: "ord", value: "1" },
+					denominator: { type: "ord", value: "a" }
+				},
 				{ type: "ord", value: "b" },
 				{ type: "ord", value: "c" },
 				{ type: "ord", value: "d" }
 			]
 		}
 	};
+	formulaData = {
+		type: "script",
+		nucleus: { type: "ord", value: "f" },
+		sup: { type: "ord", value: "'" }
+	};
+
 	const defaultStyle = {
 		type: "D", 
 		baseFontSize: 40,
