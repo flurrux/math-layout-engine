@@ -19,6 +19,7 @@
 	ellipsis inner type spacing problem
 	binomials 
 	accents (dot, hat, ...)
+	accents that are not glyphs (overline, underline)
 	manual spaces
 */
 
@@ -215,6 +216,11 @@ async function main(){
 		type: "script",
 		nucleus: { type: "ord", value: "f" },
 		sup: { type: "ord", value: "'" }
+	};
+	formulaData = {
+		type: "accented", 
+		nucleus: { type: "ord", value: "d" },
+		accent: { type: "ord", value: "vector" }
 	};
 
 	const defaultStyle = {

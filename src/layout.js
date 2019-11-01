@@ -86,6 +86,7 @@ import { layoutTextNode } from './text-layout.js';
 import { layoutCharNode } from './char-layout.js';
 import { layoutMathList } from './mathlist-layout.js';
 import { layoutMatrix } from './matrix-layout.js';
+import { layoutAccent } from './accent-layout.js';
 import { withStyle } from "./style";
 
 const nodeLayoutFuncMap = {
@@ -94,7 +95,8 @@ const nodeLayoutFuncMap = {
 	"script": layoutScript,
 	"delimited": layoutDelimited,
 	"root": layoutRoot,
-	"matrix": layoutMatrix
+	"matrix": layoutMatrix,
+	"accented": layoutAccent
 };
 const getLayoutFuncByNode = node => {
 	if (Reflect.ownKeys(nodeLayoutFuncMap).includes(node.type)) {

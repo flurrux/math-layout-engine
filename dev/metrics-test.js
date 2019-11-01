@@ -37,7 +37,7 @@ const glyphData = (char, fontFamily, emphasis) => {
 };
 
 const charData = glyphData("d", "Math", "Italic");
-const accentData = glyphData(String.fromCharCode(8407), "Main", "Regular");
+const accentData = glyphData(String.fromCharCode(713), "Main", "Regular");
 
 const drawLine = (ctx, x1, y1, x2, y2) => {
     ctx.beginPath();
@@ -72,10 +72,10 @@ const render = () => {
 
     ctx.save();
 
-    const accentWidth = 0.471;
+    const accentWidth = accentData.metrics.width;// 0.471;
     const accentX = (charData.metrics.width + charData.metrics.italicCorrection - accentWidth) / 2 + charData.metrics.skew;
     const accentY = charData.metrics.height - accentData.bbox[1] + 0.08;
-    ctx.translate(accentX + accentWidth, accentY);
+    ctx.translate(accentX, accentY);
     ctx.scale(1, -1);
     ctx.font = `1px KaTeX_${accentData.fontName}`;
     ctx.fillText(accentData.value, 0, 0);

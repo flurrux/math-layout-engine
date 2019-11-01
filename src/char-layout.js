@@ -1,5 +1,5 @@
 import { 
-	lookUpGlyphByCharOrAlias, getMetricsObject, getDefaultEmphasis 
+	lookUpGlyphByCharOrAlias, getMetricsObject, getDefaultEmphasis, lookUpBoundingBox 
 } from "./font-data/katex-font-util";
 import { scaleMap } from "./util";
 import { map } from 'ramda';
@@ -15,14 +15,15 @@ const getDimensionsOfCharNode = (style, node) => {
 	});
 };
 export const layoutCharNode = (node) => {
+	//todo: use fontFamily if it's defined in style
 	const { fontFamily, unicode } = lookUpGlyphByCharOrAlias(node.value);
+	const emphasis = getDefaultEmphasis(fontFamily);
+
 	const char = String.fromCharCode(unicode);
-	const style = createNodeStyle(node, {
-		fontFamily,
-		emphasis: getDefaultEmphasis(fontFamily)
-	});
+	const style = createNodeStyle(node, { fontFamily, emphasis });
 	return {
 		type: "char", char, unicode, style,
-		dimensions: getDimensionsOfCharNode(style, node)
+		dimensions: getDimensionsOfCharNode(style, node),
+		bbox: map(scaleMap(style.fontSize))(lookUpBoundingBox(fontFamily, unicode, style.emphasis))
 	};
 };

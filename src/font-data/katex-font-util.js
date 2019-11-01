@@ -73,6 +73,7 @@ const lookUpFamilyNameByUnicode = (unicode) => {
 const aliasMap = [
     { alias: ["plus", "+"], fontFamily: "Main", unicode: 43 },
     { alias: ["minus", "-"], fontFamily: "Main", unicode: 8722 },
+    { alias: ["plusminus", "+-"], fontFamily: "Main", unicode: 177 },
     { alias: ["muldot"], fontFamily: "Main", unicode: 8901 },
 	{ alias: ["equal", "="], fontFamily: "Main", unicode: 61 },
 	{ alias: ["to", "->"], fontFamily: "Main", unicode: 8594 },
@@ -84,6 +85,7 @@ const aliasMap = [
 
     { alias: ["infinity"], fontFamily: "Main", unicode: 8734 },
     { alias: ["'"], fontFamily: "Main", unicode: 8242 },
+    { alias: ["vector"], fontFamily: "Main", unicode: 8407 },
 
     { alias: ["a"], fontFamily: "Math", unicode: 97 },
     { alias: ["b"], fontFamily: "Math", unicode: 98 }, 
@@ -148,7 +150,11 @@ export const lookUpUnicode = (charOrAlias) => lookUpGlyphByCharOrAlias(charOrAli
 import bboxData from './font-bbox-data.js';
 export const lookUpBoundingBox = (fontFamily, unicode, emphasis=null) => {
 	emphasis = emphasis || getDefaultEmphasis(fontFamily);
-	return bboxData[`${fontFamily}-${emphasis}`][unicode];
+    const bbox = bboxData[`${fontFamily}-${emphasis}`][unicode];
+    return {
+        xMin: bbox[0], yMin: bbox[1],
+        xMax: bbox[2], yMax: bbox[3]
+    }
 };
 
 export const getUrlByFontName = (fontFamily, emphasis=null) => {

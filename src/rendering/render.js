@@ -110,6 +110,9 @@ const renderNode = (ctx, node) => {
 	else if (nodeType === "matrix"){
 		node.items.forEach(subNode => renderNode(ctx, subNode));
 	}
+	else if (nodeType === "accented"){
+		renderSubNodes(ctx, node, ["nucleus", "accent"]);
+	}
 
 	ctx.restore();
 };
