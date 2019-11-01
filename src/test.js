@@ -219,8 +219,8 @@ async function main(){
 	};
 	formulaData = {
 		type: "accented", 
-		nucleus: { type: "ord", value: "d" },
-		accent: { type: "ord", value: "vector" }
+		nucleus: { type: "ord", value: "j" },
+		accent: { type: "ord", value: "^" }
 	};
 
 	const defaultStyle = {
