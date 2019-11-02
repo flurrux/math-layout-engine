@@ -218,9 +218,26 @@ async function main(){
 		sup: { type: "ord", value: "'" }
 	};
 	formulaData = {
-		type: "accented", 
-		nucleus: { type: "ord", value: "j" },
-		accent: { type: "ord", value: "^" }
+		type: "mathlist",
+		items: [
+			{
+				type: "accented", 
+				nucleus: { type: "ord", value: "i" },
+				accent: { type: "ord", value: "^" }
+			},
+			{ type: "bin", value: "+" },
+			{
+				type: "accented", 
+				nucleus: { type: "ord", value: "j" },
+				accent: { type: "ord", value: "^" }
+			},
+			{ type: "bin", value: "+" },
+			{
+				type: "accented", 
+				nucleus: { type: "ord", value: "k" },
+				accent: { type: "ord", value: "^" }
+			}
+		]
 	};
 
 	const defaultStyle = {
