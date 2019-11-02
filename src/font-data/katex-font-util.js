@@ -74,7 +74,7 @@ const aliasMap = [
     { alias: ["plus", "+"], fontFamily: "Main", unicode: 43 },
     { alias: ["minus", "-"], fontFamily: "Main", unicode: 8722 },
     { alias: ["plusminus", "+-"], fontFamily: "Main", unicode: 177 },
-    { alias: ["muldot"], fontFamily: "Main", unicode: 8901 },
+    { alias: ["*", "muldot"], fontFamily: "Main", unicode: 8901 },
 	{ alias: ["equal", "="], fontFamily: "Main", unicode: 61 },
 	{ alias: ["to", "->"], fontFamily: "Main", unicode: 8594 },
 	{ alias: ["dot", "."], fontFamily: "Main", unicode: 46 },

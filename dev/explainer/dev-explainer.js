@@ -3,6 +3,10 @@ const converter = new Converter();
 import './fonts-overview.js';
 import { loadKatexFontFaces } from './load-katex-font-faces.js';
 
+import sampleRenderImg from './sample-render.png';
+import parsingToRenderingImg from './parsing-to-rendering.png';
+import { removeIndentation } from './remove-indentation.js';
+
 const result = converter.makeHtml(`
 # dev-explainer
 
@@ -48,6 +52,47 @@ or atleast that's what i'm thinking. probably need to use WOFF more.
 quick overview of the fonts
 
 <font-overview-table></font-overview-table>
+
+
+## glyphs 
+
+the glyphs in the fonts above are all described by a series of quadratic bezier curves and straight lines, 
+but that's not that important. more important are the metrics of a glyph.  
+
+the metrics of a glyph are relative to the baseline. that's the axis where the glyphs are aligned.  
+short glyphs like a or x sit directly on the baseline, while f intersects the baseline.  
+
+todo: width, height and depth can be shown graphically.  
+todo: italic correction.  
+
+the bounding-box (short bbox) is the smallest box that conains the glyph.  
+
+the complete metrics-data is located at "src/font-data/font-metrics-data.js".  
+it's taken directly from [katex](https://github.com/KaTeX/katex-fonts/blob/b4477ffc58391153f8e54231cab4746b9edc349d/fontMetricsData.js).  
+i have modified it file at two places so far. i've adjusted the skew-parameter for the characters  
+'i' (code: 105) and 'j' (code 106) in the font "Math-Italic".  
+
+As for the bounding boxes, i generated them myself with the help of [opentypejs](https://opentype.js.org).  
+they are located at "src/font-data/font-bbox-data.js".  
+
+
+
+
+## layout
+
+the main functionality is to turn an abstract formula-description into a layout-description, 
+which can then be rendered.  
+
+![parsing to rendering](${parsingToRenderingImg})
+
+parsing is not implemented yet. the functionality of highest priority is layout.
+
+todo: types of layout
+todo: math-axis
+
+
+
+## style
 
 
 

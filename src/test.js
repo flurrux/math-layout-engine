@@ -239,6 +239,18 @@ async function main(){
 			}
 		]
 	};
+	formulaData = {
+        type: "mathlist",
+        items: [
+            { type: "ord", value: "a" },
+            { type: "bin", value: "+" },
+            { type: "open", value: "(" },
+            { type: "ord", value: "b" },
+            { type: "bin", value: "*" },
+            { type: "ord", value: "c" },
+            { type: "open", value: ")" }
+        ]
+    };
 
 	const defaultStyle = {
 		type: "D", 

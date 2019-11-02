@@ -1,3 +1,4 @@
+//[xMin, yMin, xMax, yMax]
 export default {
     "AMS-Regular": {
         "65": [0.017, -0.001, 0.703, 0.701],
