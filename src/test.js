@@ -15,10 +15,11 @@
 	punctuation
 	cramped style
 	matrix
+	accents (dot, hat, ...)
 	
+	multiple primes accent
 	ellipsis inner type spacing problem
 	binomials 
-	accents (dot, hat, ...)
 	accents that are not glyphs (overline, underline)
 	manual spaces
 */
@@ -31,80 +32,61 @@ import { layoutNode } from './layout.js';
 async function main(){
 
 	let formulaData = {
-		root: {
-			type: "mathlist", 
-			items: [
-				{
-					type: "root",
-					radicand: {
-						type: "fraction",
-						numerator: { type: "ord", value: "one" },
-						denominator: { type: "ord", value: "pi" }
-					},
-					index: { 
-						type: "delimited", 
-						leftDelim: { type: "open", value: "parenleft" },
-						rightDelim: { type: "open", value: "parenright" },
-						delimited: {
-							type: "fraction",
-							numerator: { type: "ord", value: "seven" },
-							denominator: { type: "ord", value: "delta" }
-						}
-					}
+		type: "mathlist", 
+		items: [
+			{
+				type: "root",
+				radicand: {
+					type: "fraction",
+					numerator: { type: "ord", value: "1" },
+					denominator: { type: "ord", value: "pi" }
 				},
-				{ type: "bin", value: "plus" },
-				{ type: "ord", value: "alpha" }
-			]
-		}
-	};
-	formulaData = {
-		root: {
-			type: "mathlist", 
-			items: [
-				{ type: "ord", value: "one" },
-				{ 
+				index: { 
 					type: "delimited", 
-					leftDelim: { type: "open", value: "parenleft" },
-					rightDelim: { type: "close", value: "parenright" },
-					delimited: { type: "ord", value: "omega" }
-				},
-				{ type: "ord", value: "two" },
-			]
-		}
+					leftDelim: { type: "open", value: "(" },
+					rightDelim: { type: "open", value: ")" },
+					delimited: {
+						type: "fraction",
+						numerator: { type: "ord", value: "7" },
+						denominator: { type: "ord", value: "delta" }
+					}
+				}
+			},
+			{ type: "bin", value: "+" },
+			{ type: "ord", value: "alpha" }
+		]
 	};
 	formulaData = {
-		root: {
-			type: "mathlist", 
-			items: [
-				{
-					type: "script", 
-					nucleus: {
-						type: "op", value: "integral"
-					},
-					sup: {
-						type: "mathlist",
-						items: [
-							{ type: "ord", value: "plus" },
-							{ type: "ord", value: "8" }
-						]
-					},
-					sub: {
-						type: "mathlist",
-						items: [
-							{ type: "ord", value: "minus" },
-							{ type: "ord", value: "4" }
-						]
-					}
+		type: "mathlist", 
+		items: [
+			{
+				type: "script", 
+				nucleus: {
+					type: "op", value: "integral"
 				},
-				{
-					type: "root", 
-					radicand: {
-						type: "ord", value: "x"
-					}
+				sup: {
+					type: "mathlist",
+					items: [
+						{ type: "ord", value: "+" },
+						{ type: "ord", value: "8" }
+					]
 				},
-				{ type: "ord", value: "a" }
-			]
-		}
+				sub: {
+					type: "mathlist",
+					items: [
+						{ type: "ord", value: "-" },
+						{ type: "ord", value: "4" }
+					]
+				}
+			},
+			{
+				type: "root", 
+				radicand: {
+					type: "ord", value: "x"
+				}
+			},
+			{ type: "ord", value: "a" }
+		]
 	};
 	formulaData = {
 		type: "mathlist", 
@@ -188,7 +170,9 @@ async function main(){
 					]
 				}
 			},
-			{ type: "ord", value: "a" }
+			{ type: "ord", value: "a" },
+			{ type: "bin", value: "*" },
+			{ type: "ord", value: "x" }
 		]
 	};
 	formulaData = {
@@ -201,11 +185,7 @@ async function main(){
 			colCount: 2,
 			rowSpacing: 0.2, colSpacing: 0.6,
 			items: [
-				{ 
-					type: "fraction",
-					numerator: { type: "ord", value: "1" },
-					denominator: { type: "ord", value: "a" }
-				},
+				{ type: "ord", value: "a" },
 				{ type: "ord", value: "b" },
 				{ type: "ord", value: "c" },
 				{ type: "ord", value: "d" }
@@ -239,18 +219,7 @@ async function main(){
 			}
 		]
 	};
-	formulaData = {
-        type: "mathlist",
-        items: [
-            { type: "ord", value: "a" },
-            { type: "bin", value: "+" },
-            { type: "open", value: "(" },
-            { type: "ord", value: "b" },
-            { type: "bin", value: "*" },
-            { type: "ord", value: "c" },
-            { type: "open", value: ")" }
-        ]
-    };
+	
 
 	const defaultStyle = {
 		type: "D", 
@@ -263,6 +232,10 @@ async function main(){
 
 	document.body.insertAdjacentHTML("beforeend", `<canvas width=800 height=400></canvas>`);
 	const canvas = document.querySelector("canvas");
+	Object.assign(canvas, { 
+		width: layoutData.dimensions.width + 40, 
+		height: (layoutData.dimensions.yMax - layoutData.dimensions.yMin) + 40
+	});
 	const ctx = canvas.getContext("2d");
 	await loadKatexFontFaces();
 	renderFormulaLayout(canvas, ctx, centerNodeOnCanvas(canvas, layoutData));

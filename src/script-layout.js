@@ -21,8 +21,8 @@ const getTargetYOfGlyphNucleus = (fontFamily, unicode) => {
 
 import { smallerStyle, smallestStyle, withStyle } from "./style";
 import { pickList, scaleMap, isDefined, identity } from "./util";
-import { layoutNode, calcBoundingDimensions, withPosition, getAxisAlignment, calcCentering, boxBottom } from "./layout";
-import { lookUpUnicode, lookUpGlyphByCharOrAlias } from "./font-data/katex-font-util";
+import { layoutNode, calcBoundingDimensions, withPosition, getAxisAlignment, calcCentering, boxBottom, getAxisHeight } from "./layout";
+import { lookUpUnicode, lookUpGlyphByCharOrAlias, getMetricsObject, getMetricsOfCharNode } from "./font-data/katex-font-util";
 import { pipe, filter, map } from 'ramda';
 
 const getSubOrSupStyle = (scriptStyle, subOrSupNode) => {
@@ -117,6 +117,7 @@ const layoutScriptNoLimitPosition = (script) => {
 		nucleus: nucleusLayouted
 	};
 
+	const nucleusMetrics = isNodeChar(nucleus) ? getMetricsOfCharNode(nucleusLayouted) : null;
 	const nucleusRight = nucleusLayouted.dimensions.width;
 
 	const supSubTargetY = getSupSubTargetYNoLimits(style, script, nucleusLayouted.dimensions);
@@ -134,7 +135,7 @@ const layoutScriptNoLimitPosition = (script) => {
 			return y;
 		})();
 		//add a small spacing
-		const supX = nucleusRight + (fontSize * 0.08);
+		const supX = (nucleusMetrics.width + nucleusMetrics.italicCorrection + 0.08) * fontSize;
 		supLayouted.position = [supX, targetY];
 		scriptLayouted.sup = supLayouted;
 	}
@@ -156,7 +157,7 @@ const layoutScriptNoLimitPosition = (script) => {
 			return y;
 		})();
 
-		const subX = isNodeChar(nucleus) ? (fontSize * getGlyphMetrics(nucleus).width) : nucleusRight;
+		const subX = isNodeChar(nucleus) ? (fontSize * getMetricsObject(nucleusLayouted.style.fontFamily, nucleusLayouted.style.emphasis, nucleusLayouted.unicode).width) : nucleusRight;
 		subLayouted.position = [subX, targetY];
 		scriptLayouted.sub = subLayouted;
 	}

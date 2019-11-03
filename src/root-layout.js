@@ -7,7 +7,7 @@ import { switchStyleType, withStyle } from "./style";
 export const layoutRoot = (root) => {
 	const { style } = root;
 	const { fontSize } = style;
-	const radicandLayouted = pipe(withStyle(style), layoutNode)(root.radicand);
+	let radicandLayouted = pipe(withStyle(style), layoutNode)(root.radicand);
 
 	const radicandDim = radicandLayouted.dimensions;
 	const radicandDimEm = map(scaleMap(1 / fontSize), radicandLayouted.dimensions);
@@ -30,7 +30,7 @@ export const layoutRoot = (root) => {
 	];
 	Object.assign(radicandLayouted, { position: radicandPosition });
 
-	const radicalLayouted = {
+	let radicalLayouted = {
 		type: "contours", style,
 		contours: rootContours,
 		position: [contoursOffset[0], contoursOffset[1] + radicandPosition[1]],
@@ -39,7 +39,7 @@ export const layoutRoot = (root) => {
 
 
 	//index
-	const indexLayouted = root.index ? (function () {
+	let indexLayouted = root.index ? (function () {
 		const indexLayouted = pipe(withStyle(switchStyleType(style, "SS")), layoutNode)(root.index);
 		const scaledCorner = radical.indexCorner.map(scaleMap(style.fontSize));
 		const rightBottomPosition = [
@@ -52,6 +52,13 @@ export const layoutRoot = (root) => {
 		];
 		return withPosition(indexLayouted, indexPosition);
 	})() : undefined;
+
+	const shift = (indexLayouted && indexLayouted.position[0] < 0) ? -indexLayouted.position[0] : 0;
+	if (shift > 0){
+		indexLayouted.position[0] = 0;
+		radicandLayouted.position[0] += shift;
+		radicalLayouted.position[0] += shift;
+	}
 
 	const dimensions = calcBoundingDimensions([radicalLayouted, indexLayouted].filter(isDefined));
 
