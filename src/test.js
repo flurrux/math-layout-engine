@@ -31,192 +31,21 @@ import { layoutNode } from './layout.js';
 
 async function main(){
 
-	let formulaData = {
-		type: "mathlist", 
-		items: [
-			{
-				type: "root",
-				radicand: {
-					type: "fraction",
-					numerator: { type: "ord", value: "1" },
-					denominator: { type: "ord", value: "pi" }
-				},
-				index: { 
-					type: "delimited", 
-					leftDelim: { type: "open", value: "(" },
-					rightDelim: { type: "open", value: ")" },
-					delimited: {
-						type: "fraction",
-						numerator: { type: "ord", value: "7" },
-						denominator: { type: "ord", value: "delta" }
-					}
-				}
-			},
-			{ type: "bin", value: "+" },
-			{ type: "ord", value: "alpha" }
-		]
-	};
-	formulaData = {
-		type: "mathlist", 
-		items: [
-			{
-				type: "script", 
-				nucleus: {
-					type: "op", value: "integral"
-				},
-				sup: {
-					type: "mathlist",
-					items: [
-						{ type: "ord", value: "+" },
-						{ type: "ord", value: "8" }
-					]
-				},
-				sub: {
-					type: "mathlist",
-					items: [
-						{ type: "ord", value: "-" },
-						{ type: "ord", value: "4" }
-					]
-				}
-			},
-			{
-				type: "root", 
-				radicand: {
-					type: "ord", value: "x"
-				}
-			},
-			{ type: "ord", value: "a" }
-		]
-	};
-	formulaData = {
-		type: "mathlist", 
-		items: [
-			{
-				type: "root",
-				radicand: {
-					//type: "ord", value: "alpha"
-					type: "fraction", 
-					numerator: { type: "ord", value: "1" },
-					denominator: { type: "ord", value: "a" },
-				}
-			},
-			{
-				type: "ord", value: "x"
-			},
-			{
-				type: "fraction", 
-				numerator: { type: "ord", value: "2" },
-				denominator: { type: "ord", value: "beta" }
-			}
-		]
-	};
-	formulaData = {
-		type: "delimited",
-		leftDelim: { type: "open", value: "(" },
-		rightDelim: { type: "close", value: ")" },
-		delimited: {
-			type: "mathlist", 
-			items: [
-				{
-					type: "delimited", 
-					delimited: {
-						type: "mathlist", 
-						items: [
-							{
-								type: "fraction",
-								numerator: { type: "ord", value: "a" },
-								denominator: { type: "ord", value: "b" },
-							},
-							{ type: "bin", value: "+" },
-							{
-								type: "fraction",
-								numerator: { type: "ord", value: "f" },
-								denominator: { type: "ord", value: "M" },
-							},
-						]
-					},
-					leftDelim: { type: "open", value: "(" },
-					rightDelim: { type: "close", value: ")" }
-				},
-				{ type: "bin", value: "muldot" },
-				{
-					type: "delimited",
-					delimited: {
-						type: "mathlist",
-						items: [
-							{ type: "ord", value: "c" },
-							{ type: "bin", value: "-" },
-							{ type: "ord", value: "d" },
-						]
-					},
-					leftDelim: { type: "open", value: "(" },
-					rightDelim: { type: "close", value: ")" }
-				}
-			]
-		}
-	};
-	formulaData = {
-		type: "mathlist", 
-		items: [
-			{
-				type: "script", 
-				nucleus: { type: "op", value: "sum" },
-				sub: {
-					type: "mathlist", 
-					items: [
-						{ type: "ord", value: "x" },
-						{ type: "rel", value: "->" },
-						{ type: "ord", value: "infinity" }
-					]
-				}
-			},
-			{ type: "ord", value: "a" },
-			{ type: "bin", value: "*" },
-			{ type: "ord", value: "x" }
-		]
-	};
-	formulaData = {
-		type: "delimited",
-		leftDelim: { type: "open", value: "[" },
-		rightDelim: { type: "close", value: "]" },
-		delimited: {
-			type: "matrix",
-			rowCount: 2,
-			colCount: 2,
-			rowSpacing: 0.2, colSpacing: 0.6,
-			items: [
-				{ type: "ord", value: "a" },
-				{ type: "ord", value: "b" },
-				{ type: "ord", value: "c" },
-				{ type: "ord", value: "d" }
-			]
-		}
-	};
-	formulaData = {
-		type: "script",
-		nucleus: { type: "ord", value: "f" },
-		sup: { type: "ord", value: "'" }
-	};
-	formulaData = {
+	const formulaData = {
 		type: "mathlist",
 		items: [
-			{
-				type: "accented", 
-				nucleus: { type: "ord", value: "i" },
-				accent: { type: "ord", value: "^" }
-			},
-			{ type: "bin", value: "+" },
-			{
-				type: "accented", 
-				nucleus: { type: "ord", value: "j" },
-				accent: { type: "ord", value: "^" }
-			},
-			{ type: "bin", value: "+" },
-			{
-				type: "accented", 
-				nucleus: { type: "ord", value: "k" },
-				accent: { type: "ord", value: "^" }
-			}
+			{ type: "ord", value: "f" },
+			{ type: "open", value: "(" },
+			{ type: "ord", value: "x" },
+			{ type: "close", value: ")" },
+			{ type: "rel", value: "=" },
+			{ type: "ord", value: "x" },
+			{ type: "bin", value: "*" },
+			{ type: "open", value: "(" },
+			{ type: "ord", value: "x" },
+			{ type: "ord", value: "+" },
+			{ type: "ord", value: "1" },
+			{ type: "close", value: ")" },
 		]
 	};
 	

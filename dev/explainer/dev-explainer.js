@@ -9,9 +9,6 @@ import parsingToRenderingImg from './parsing-to-rendering.png';
 
 
 const markdownStr = `
-# dev-explainer
-
-this is a kinda in-depth explainer.  
 
 ## intro
 
@@ -55,20 +52,15 @@ quick overview of the fonts
 <font-overview-table></font-overview-table>
 
 
-## glyphs 
+## glyph-metrics
 
-the glyphs in the fonts above are all described by a series of quadratic bezier curves and straight lines, 
-but that's not that important. more important are the metrics of a glyph.  
 
 <glyph-metrics-inspector></glyph-metrics-inspector>
 
-the metrics of a glyph are relative to the baseline. that's the axis where the glyphs are aligned.  
-short glyphs like a or x sit directly on the baseline, while f intersects the baseline.  
+there is also the bounding-box (bbox) of a glyph.  
+as far as i know it is not used in tex or katex,  
+but i'm using it in several places.  
 
-todo: width, height and depth can be shown graphically.  
-todo: italic correction.  
-
-the bounding-box (short bbox) is the smallest box that conains the glyph.  
 
 the complete metrics-data is located at "src/font-data/font-metrics-data.js".  
 it's taken directly from [katex](https://github.com/KaTeX/katex-fonts/blob/b4477ffc58391153f8e54231cab4746b9edc349d/fontMetricsData.js).  
@@ -80,7 +72,35 @@ they are located at "src/font-data/font-bbox-data.js".
 
 
 
-todo: glyph lookup
+## glyph-lookup
+
+a char-node in the abstract-formula-description may not have a font-family,  
+so in that case we have to lookup the most appropriate font-family and emphasis (italic/bold/...).  
+
+there is an "alias-map" in src/font-data/katex-font-util.js that maps characters or aliases to a font-family.  
+
+example:    
+\`\`\` { alias: ["plusminus", "+-"], fontFamily: "Main", unicode: 177 } \`\`\`  
+
+aliases are useful because we don't need to find and copy-paste the character.  
+
+if there is no entry, there is a fixed order of font-families to search through until the character is found.  
+
+
+## style
+
+after the layout-algorithm is done, every node has a style-property.  
+a style object has a 
+- type  
+- baseFontSize  
+- fontSize  
+- fontFamily (optional)  
+- emphasis (options)  
+- cramped-flag  
+
+
+
+
 
 
 
@@ -93,12 +113,10 @@ which can then be rendered.
 
 parsing is not implemented yet. the functionality of highest priority is layout.
 
-todo: types of layout
-todo: math-axis
+todo: principles (axis, alignment, boxes)
+todo: types of layout (char, text, mathlist, delimiter, fraction, script, root, accent, matrix)
 
 
-
-## style
 
 
 
@@ -108,9 +126,5 @@ todo: math-axis
 
 (async () => {
     await loadKatexFontFaces();
-    document.body.insertAdjacentHTML("beforeend", "<glyph-metrics-inspector></glyph-metrics-inspector>");
-    // const container = document.createElement("div");
-    // container.style.padding = "20px";
-    // container.innerHTML = converter.makeHtml(markdownStr);
-    // document.body.appendChild(container);
+    document.body.querySelector("#page").innerHTML = converter.makeHtml(markdownStr);
 })();
