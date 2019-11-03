@@ -31,23 +31,41 @@ import { layoutNode } from './layout.js';
 
 async function main(){
 
+	//continued fractions 
+	//matrix2d general inverse
+
 	const formulaData = {
 		type: "mathlist",
 		items: [
-			{ type: "ord", value: "f" },
-			{ type: "open", value: "(" },
-			{ type: "ord", value: "x" },
-			{ type: "close", value: ")" },
+			{ 
+				type: "script",
+				nucleus: { type: "op", value: "sum" },
+				sub: {
+					type: "mathlist",
+					items: [
+						{ type: "ord", value: "n" },
+						{ type: "ord", value: "=" },
+						{ type: "ord", value: "1" }
+					]
+				},
+				sup: { type: "ord", value: "infinity" }
+			},
+			{
+				type: "fraction",
+				numerator: { type: "ord", value: "1" },
+				denominator: {
+					type: "mathlist",
+					items: [
+						{ type: "ord", value: "n" },
+						{ type: "ord", value: "!" },
+					]
+				}
+			},
 			{ type: "rel", value: "=" },
-			{ type: "ord", value: "x" },
-			{ type: "bin", value: "*" },
-			{ type: "open", value: "(" },
-			{ type: "ord", value: "x" },
-			{ type: "ord", value: "+" },
-			{ type: "ord", value: "1" },
-			{ type: "close", value: ")" },
+			{ type: "ord", value: "e" }
 		]
 	};
+
 	
 
 	const defaultStyle = {

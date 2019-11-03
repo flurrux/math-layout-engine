@@ -117,8 +117,8 @@ const layoutScriptNoLimitPosition = (script) => {
 		nucleus: nucleusLayouted
 	};
 
-	const nucleusMetrics = isNodeChar(nucleus) ? getMetricsOfCharNode(nucleusLayouted) : null;
 	const nucleusRight = nucleusLayouted.dimensions.width;
+	const nucleusMetrics = isNodeChar(nucleus) ? getMetricsOfCharNode(nucleusLayouted) : null;
 
 	const supSubTargetY = getSupSubTargetYNoLimits(style, script, nucleusLayouted.dimensions);
 
@@ -135,7 +135,7 @@ const layoutScriptNoLimitPosition = (script) => {
 			return y;
 		})();
 		//add a small spacing
-		const supX = (nucleusMetrics.width + nucleusMetrics.italicCorrection + 0.08) * fontSize;
+		const supX = nucleusMetrics ? (nucleusMetrics.width + nucleusMetrics.italicCorrection + 0.08) * fontSize : nucleusRight;
 		supLayouted.position = [supX, targetY];
 		scriptLayouted.sup = supLayouted;
 	}
