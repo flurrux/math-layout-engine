@@ -2,7 +2,8 @@
 
 ## examples  
 
-```json
+|
+```javascript
 {
     type: "mathlist",
     items: [
@@ -21,5 +22,8 @@
     ]
 }
 ```
+|
 
 ![rendered formula 1](https://github.com/flurrux/math-layout-engine/blob/master/dev/sample-renders/sample-render-11.png)
+
+|
