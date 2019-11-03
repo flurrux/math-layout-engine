@@ -33,19 +33,81 @@ const katexFontFamily = {
 };
 
 export const fontData = [
-    { name: "AMS", emphasis: ["Regular"] },
-    { name: "Caligraphic", emphasis: ["Regular", "Bold"] },
-    { name: "Fraktur", emphasis: ["Regular", "Bold"] },
-    { name: "Main", emphasis: ["Regular", "Bold", "Italic", "BoldItalic"] },
-    { name: "Math", emphasis: ["Italic", "BoldItalic"] },
-    { name: "SansSerif", emphasis: ["Regular", "Bold", "Italic"] },
-    { name: "Script", emphasis: ["Regular"] },
-    { name: "Size1", emphasis: ["Regular"] },
-    { name: "Size2", emphasis: ["Regular"] },
-    { name: "Size3", emphasis: ["Regular"] },
-    { name: "Size4", emphasis: ["Regular"] },
-    { name: "Typewriter", emphasis: ["Regular"] }
+    { 
+        name: "AMS", 
+        emphasis: ["Regular"],
+        styleWeightCombinations: [["normal", "normal"]]
+    },
+    { 
+        name: "Caligraphic", 
+        emphasis: ["Regular", "Bold"], 
+        styleWeightCombinations: [["normal", "normal"], ["normal", "bold"]]
+    },
+    { 
+        name: "Fraktur", 
+        emphasis: ["Regular", "Bold"],
+        styleWeightCombinations: [["normal", "normal"], ["normal", "bold"]]
+    },
+    { 
+        name: "Main", 
+        emphasis: ["Regular", "Bold", "Italic", "BoldItalic"],
+        styleWeightCombinations: [
+            ["normal", "normal"], ["normal", "bold"], ["italic", "normal"], ["italic", "bold"]
+        ]
+    },
+    { 
+        name: "Math", 
+        emphasis: ["Italic", "BoldItalic"],
+        styleWeightCombinations: [["italic", "normal"], ["italic", "bold"]]
+    },
+    { 
+        name: "SansSerif", 
+        emphasis: ["Regular", "Bold", "Italic"],
+        styleWeightCombinations: [["normal", "normal"], ["normal", "bold"], ["italic", "normal"]]
+    },
+    { 
+        name: "Script", 
+        emphasis: ["Regular"],
+        styleWeightCombinations: [["normal", "normal"]]
+    },
+    { 
+        name: "Size1", 
+        emphasis: ["Regular"],
+        styleWeightCombinations: [["normal", "normal"]]
+    },
+    { 
+        name: "Size2", 
+        emphasis: ["Regular"],
+        styleWeightCombinations: [["normal", "normal"]]
+    },
+    { 
+        name: "Size3", 
+        emphasis: ["Regular"],
+        styleWeightCombinations: [["normal", "normal"]]
+    },
+    { 
+        name: "Size4", 
+        emphasis: ["Regular"],
+        styleWeightCombinations: [["normal", "normal"]]
+    },
+    { 
+        name: "Typewriter", 
+        emphasis: ["Regular"],
+        styleWeightCombinations: [["normal", "normal"]]
+    }
 ];
+const styleWeightCombinationToNumber = (style, weight) => (weight === "normal" ? 0 : 2) + (style === "normal" ? 0 : 1);
+export const styleWeightCombinationToEmphasis = (style, weight) => ["Regular", "Italic", "Bold", "BoldItalic"][styleWeightCombinationToNumber(style, weight)];
+export const emphasisToStyleWeightCombination = (emphasis) => {
+    const index = ["Regular", "Italic", "Bold", "BoldItalic"].indexOf(emphasis);
+    return [
+        ["normal", "normal"],
+        ["italic", "normal"],
+        ["normal", "bold"],
+        ["italic", "bold"]
+    ][index];
+};
+
 export const getFontDataByName = (name) => fontData.find(entry => entry.name === name);
 export const getDefaultEmphasis = fontFamily => getFontDataByName(fontFamily).emphasis[0];
 export const fontIdentifiers = fontData.map(entry => entry.emphasis.map(emph => `${entry.name}-${emph}`)).flat();

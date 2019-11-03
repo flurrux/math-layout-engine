@@ -17,10 +17,10 @@
 	matrix
 	accents (dot, hat, ...)
 	
-	multiple primes accent
+	multiple prime accents
+	accents that are not glyphs (overline, underline)
 	ellipsis inner type spacing problem
 	binomials 
-	accents that are not glyphs (overline, underline)
 	manual spaces
 */
 

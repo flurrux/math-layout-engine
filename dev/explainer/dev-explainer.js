@@ -1,13 +1,14 @@
 import { Converter } from 'showdown';
 const converter = new Converter();
 import './fonts-overview.js';
+import './glyph-metrics-inspector.js';
 import { loadKatexFontFaces } from './load-katex-font-faces.js';
 
-import sampleRenderImg from './sample-render.png';
 import parsingToRenderingImg from './parsing-to-rendering.png';
-import { removeIndentation } from './remove-indentation.js';
 
-const result = converter.makeHtml(`
+
+
+const markdownStr = `
 # dev-explainer
 
 this is a kinda in-depth explainer.  
@@ -59,6 +60,8 @@ quick overview of the fonts
 the glyphs in the fonts above are all described by a series of quadratic bezier curves and straight lines, 
 but that's not that important. more important are the metrics of a glyph.  
 
+<glyph-metrics-inspector></glyph-metrics-inspector>
+
 the metrics of a glyph are relative to the baseline. that's the axis where the glyphs are aligned.  
 short glyphs like a or x sit directly on the baseline, while f intersects the baseline.  
 
@@ -75,6 +78,9 @@ i have modified it file at two places so far. i've adjusted the skew-parameter f
 As for the bounding boxes, i generated them myself with the help of [opentypejs](https://opentype.js.org).  
 they are located at "src/font-data/font-bbox-data.js".  
 
+
+
+todo: glyph lookup
 
 
 
@@ -98,9 +104,13 @@ todo: math-axis
 
 
 
-`);
-loadKatexFontFaces();
-const container = document.createElement("div");
-container.style.padding = "20px";
-container.innerHTML = result;
-document.body.appendChild(container);
+`;
+
+(async () => {
+    await loadKatexFontFaces();
+    document.body.insertAdjacentHTML("beforeend", "<glyph-metrics-inspector></glyph-metrics-inspector>");
+    // const container = document.createElement("div");
+    // container.style.padding = "20px";
+    // container.innerHTML = converter.makeHtml(markdownStr);
+    // document.body.appendChild(container);
+})();
