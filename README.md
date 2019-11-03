@@ -23,7 +23,7 @@
 ```
 ![rendered formula 1](https://github.com/flurrux/math-layout-engine/blob/master/dev/sample-renders/sample-render-11.png)
 
-
+---
 
 ```javascript
 {
@@ -52,7 +52,7 @@
 ```
 ![rendered formula 1](https://github.com/flurrux/math-layout-engine/blob/master/dev/sample-renders/sample-render-12.png) 
 
-
+---
 
 
 ```javascript
