@@ -5,42 +5,21 @@ import {
 import { map, multiply } from 'ramda';
 import { createNodeStyle } from "../style";
 
-interface Style {
-	fontSize: number,
-	emphasis: string
-};
+import { Metrics } from '../font-data/katex-font-util';
+import { Style, Dimensions, BoundingBox } from '../types';
 
-interface Dimensions {
-	width: number, 
-	yMin: number,
-	yMax: number
-};
-
-interface Metrics {
-	width: number,
-	height: number,
-	depth: number,
-	italicCorrection: number,
-	skew: number
-};
-
-interface BoundingBox {
-	xMin: number,
-	yMin: number,
-	xMax: number,
-	yMax: number
-};
-
-interface CharNode {
+export interface CharNode {
 	type: string,
 	char: string,
 	unicode: number,
-	style: object,
+	style: Style,
 	dimensions: Dimensions,
 	bbox: BoundingBox
 };
 
-const getDimensionsOfCharNode = (style: any, node: any) : Dimensions => {
+const getMetricsOfCharNode = (charNode: CharNode) => getMetricsObject(charNode.style.fontFamily, charNode.style.emphasis, charNode.unicode);
+
+const getDimensionsOfCharNode = (style: Style, node: any) : Dimensions => {
 	const fontData: any = lookUpGlyphByCharOrAlias(node.value);
 	const metrics: Metrics = getMetricsObject(fontData.fontFamily, getDefaultEmphasis(fontData.fontFamily), fontData.unicode);
 	return map(multiply(style.fontSize))({
