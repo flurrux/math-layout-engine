@@ -26,8 +26,7 @@
 
 
 import { loadKatexFontFaces, renderFormulaLayout, centerNodeOnCanvas } from './rendering/render.js';
-import { layoutNode } from './layout/layout.js';
-
+import { layoutNode } from './layout/layout';
 
 async function main(){
 

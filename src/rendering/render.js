@@ -1,4 +1,4 @@
-import { pickList, isDefined, addFontFaces } from '../util.js';
+import { pickList, isDefined, addFontFaces } from '../util';
 import { fontIdentifiers } from '../font-data/katex-font-util.js';
 import { pathContours } from '../opentype-util.js';
 

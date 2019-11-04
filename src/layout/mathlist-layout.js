@@ -1,5 +1,5 @@
-import { layoutNode, getAxisAlignment } from "./layout";
-import { calcBoundingDimensions } from './layout-util';
+import { layoutNode } from "./layout";
+import { calcBoundingDimensions, getAxisAlignment } from './layout-util';
 import { lookUpHorizontalSpacing } from "./horizontal-layout";
 import { map, pipe } from 'ramda';
 import { withStyle } from "../style";

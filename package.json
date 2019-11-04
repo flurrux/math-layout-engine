@@ -20,7 +20,8 @@
     "@polymer/paper-slider": "^3.0.1",
     "lit-element": "^2.2.1",
     "lit-html": "^1.1.2",
-    "showdown": "^1.9.0"
+    "showdown": "^1.9.0",
+    "typescript": "^3.6.4"
   },
   "browserslist": [
     "chrome 70"

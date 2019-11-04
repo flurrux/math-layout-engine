@@ -1,9 +1,8 @@
-import { nodeType, isNodeTextual, isNodeChar, isNodeText } from "../node-types.js";
-import { map, pipe, range } from 'ramda';
+
 
 
 //pre-processing ###
-
+/*
 const getSubNodePaths = node => {
 	if (node.type === nodeType.mathlist) {
 		return map(index => ["items", index], range(0, node.items.length));
@@ -22,23 +21,36 @@ const getSubNodePaths = node => {
 	}
 	return [];
 };
+*/
 // const mapFormulaTree = (mapFunc, formulaNode) => {};
 // const insertCharCode = node => isNodeChar(node) ? { ...node, unicode:  } : node;
 // const insertCharCodes = parent => mapFormulaTree(insertCharCode, parent);
 
 
-import { layoutScript } from "./script-layout";
-import { layoutFraction } from './fraction-layout.js';
-import { layoutDelimited } from './delimited-layout.js';
-import { layoutRoot } from './root-layout.js';
-import { layoutTextNode } from './text-layout.js';
-import { layoutCharNode } from './char-layout.js';
-import { layoutMathList } from './mathlist-layout.js';
-import { layoutMatrix } from './matrix-layout.js';
-import { layoutAccent } from './accent-layout.js';
-import { withStyle } from "../style.js";
+//layout ###
 
-const nodeLayoutFuncMap = {
+import { FormulaNode, BoxNode } from '../types';
+interface LayoutFunction {
+	(node: FormulaNode): BoxNode
+}
+
+import { nodeType, isNodeTextual, isNodeChar, isNodeText } from "../node-types";
+import { map, pipe, range } from 'ramda';
+
+import { layoutScript } from "./script-layout";
+import { layoutFraction } from './fraction-layout';
+import { layoutDelimited } from './delimited-layout';
+import { layoutRoot } from './root-layout';
+import { layoutTextNode } from './text-layout';
+import { layoutCharNode } from './char-layout';
+import { layoutMathList } from './mathlist-layout';
+import { layoutMatrix } from './matrix-layout';
+import { layoutAccent } from './accent-layout';
+import { withStyle } from "../style";
+
+
+
+const nodeLayoutFuncMap : { [key: string]: LayoutFunction } = {
 	"mathlist": layoutMathList,
 	"fraction": layoutFraction,
 	"script": layoutScript,
@@ -47,12 +59,12 @@ const nodeLayoutFuncMap = {
 	"matrix": layoutMatrix,
 	"accented": layoutAccent
 };
-const getLayoutFuncByNode = node => {
+const getLayoutFuncByNode = (node: FormulaNode): LayoutFunction => {
 	if (Reflect.ownKeys(nodeLayoutFuncMap).includes(node.type)) {
 		return nodeLayoutFuncMap[node.type];
 	}
 	if (isNodeChar(node)) return layoutCharNode;
 	if (isNodeText(node)) return layoutTextNode;
 };
-export const layoutNode = (node) => getLayoutFuncByNode(node)(node);
-export const layoutWithStyle = (style) => pipe(withStyle(style), layoutNode);
+export const layoutNode : LayoutFunction = (node: FormulaNode) : BoxNode => getLayoutFuncByNode(node)(node);
+export const layoutWithStyle = (style: any) : LayoutFunction => pipe(withStyle(style), layoutNode) as LayoutFunction;

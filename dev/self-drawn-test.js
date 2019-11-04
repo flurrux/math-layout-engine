@@ -2,7 +2,7 @@ import {
 	loadFontsAsync, getInterspersedContour, pathContours, getGlyphByIndex, getGlyphIndexByName, pathInterspersedContours, getGlyphByName, getGlyphContours
 } from '../src/opentype-util.js';
 import * as R from 'ramda';
-import { addFontFaces } from '../src/util.js';
+import { addFontFaces } from '../src/util';
 
 import {
 	createDelimiter

@@ -46,7 +46,7 @@ const isNodeAlignedToAxis = (node) => isNodeOfAnyType(node, ["fraction"]) ||
 	(node.type === "root" && isNodeAlignedToAxis(node.radicand));
 
 //if a node is aligned to the axis rather than the baseline, this function will get the vertical offset
-const getAxisAlignment = (style, node) => isNodeAlignedToAxis(node) ? getAxisHeight(style) : 0;
+export const getAxisAlignment = (style, node) => isNodeAlignedToAxis(node) ? getAxisHeight(style) : 0;
 
 
 

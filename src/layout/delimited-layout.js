@@ -1,10 +1,10 @@
 import { layoutNode } from "./layout";
 import { setPosition, calcBoundingDimensions, getAxisHeight, isNodeAlignedToBaseline } from './layout-util';
 import { createDelimiter } from "../glyph-modification/create-delimiter";
-import { accumSum } from "../util.js";
+import { accumSum } from "../util";
 import { map, pipe, multiply, identity } from 'ramda';
 import { withStyle } from "../style.js";
-import { lookUpHorizontalSpacing } from "./horizontal-layout.js";
+import { lookUpHorizontalSpacing } from "./horizontal-layout";
 
 const calculateDelimiterHeight = (delimited, delimitedMetrics, style) => {
 	const axisOffset = isNodeAlignedToBaseline(delimited) ? -getAxisHeight(style) : 0;
