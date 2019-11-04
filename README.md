@@ -188,3 +188,41 @@
 }
 ```
 ![rendered formula](https://github.com/flurrux/math-layout-engine/blob/master/dev/sample-renders/sample-render-14.png) 
+
+
+---
+
+```javascript
+{
+    type: "mathlist",
+    items: [
+        { 
+            type: "script",
+            nucleus: { type: "op", value: "sum" },
+            sub: {
+                type: "mathlist",
+                items: [
+                    { type: "ord", value: "n" },
+                    { type: "ord", value: "=" },
+                    { type: "ord", value: "1" }
+                ]
+            },
+            sup: { type: "ord", value: "infinity" }
+        },
+        {
+            type: "fraction",
+            numerator: { type: "ord", value: "1" },
+            denominator: {
+                type: "mathlist",
+                items: [
+                    { type: "ord", value: "n" },
+                    { type: "ord", value: "!" },
+                ]
+            }
+        },
+        { type: "rel", value: "=" },
+        { type: "ord", value: "e" }
+    ]
+}
+```
+![rendered formula](https://github.com/flurrux/math-layout-engine/blob/master/dev/sample-renders/sample-render-15.png) 

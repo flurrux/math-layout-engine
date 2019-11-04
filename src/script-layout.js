@@ -60,7 +60,7 @@ const layoutSuperScriptInLimitPosition = (parentStyle, supStyle, nucleusDimensio
 	const spacing = parentStyle.fontSize * 0.2;
 	const position = [
 		calcCentering(supDim.width, nucleusDimensions.width),
-		nucleusDimensions.yMin - supDim.yMax - spacing
+		nucleusDimensions.yMax - supDim.yMin + spacing
 	];
 	return withPosition(supLayouted, position);
 };
