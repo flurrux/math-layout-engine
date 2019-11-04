@@ -1,12 +1,13 @@
 import { 
 	getAxisHeight, layoutNode, calcBoundingDimensions, 
-	isNodeAlignedToBaseline, withPosition 
+	isNodeAlignedToBaseline 
 } from "./layout";
-import { createDelimiter } from "./create-delimiter";
-import { identity, accumSum, scaleMap } from "./util";
+import { setPosition } from './layout-util';
+import { createDelimiter } from "../glyph-modification/create-delimiter";
+import { identity, accumSum, scaleMap } from "../util.js";
 import { map, pipe } from 'ramda';
-import { withStyle } from "./style";
-import { lookUpHorizontalSpacing } from "./horizontal-layout";
+import { withStyle } from "../style.js";
+import { lookUpHorizontalSpacing } from "./horizontal-layout.js";
 
 const calculateDelimiterHeight = (delimited, delimitedMetrics, style) => {
 	const axisOffset = isNodeAlignedToBaseline(delimited) ? -getAxisHeight(style) : 0;
@@ -34,11 +35,11 @@ export const layoutDelimited = (delimNode) => {
 		delimitedLayouted.dimensions.width + lookUpHorizontalSpacing(delimited.type, "close")
 	]);
 	const items = [
-		withPosition(leftDelim, [itemXs[0], 0]),
-		withPosition(delimitedLayouted, [
+		setPosition([itemXs[0], 0])(leftDelim),
+		setPosition([
 			itemXs[1], isNodeAlignedToBaseline(delimited) ? 0 : getAxisHeight(style)
-		]),
-		withPosition(rightDelim, [itemXs[2], 0])
+		])(delimitedLayouted),
+		setPosition([itemXs[2], 0])(rightDelim)
 	];
 	return {
 		type: "mathlist",

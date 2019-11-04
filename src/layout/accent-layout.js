@@ -1,6 +1,7 @@
-import { layoutWithStyle, calcCentering, withPosition, calcBoundingDimensions } from "./layout";
-import { isNodeChar } from "./node-types";
-import { getMetricsObject } from "./font-data/katex-font-util";
+import { layoutWithStyle, calcBoundingDimensions } from "./layout";
+import { center, setPosition } from './layout-util';
+import { isNodeChar } from "../node-types";
+import { getMetricsObject } from "../font-data/katex-font-util";
 
 /*
     node: {
@@ -36,13 +37,13 @@ export const layoutAccent = (node) => {
     
     const { accentWidth, accentOffsetX } = getAccentWidthAndOffset(style, nucleusMetrics, accent, accentLayouted);
 
-    const accentX = calcCentering(accentWidth, nucleusWidth) + accentOffsetX;
+    const accentX = center(accentWidth, nucleusWidth) + accentOffsetX;
     const verticalSpacing = 0.1 * fontSize;
     const accentY = nucleusLayouted.dimensions.yMax - accentLayouted.bbox.yMin + verticalSpacing;
 
     const horizontalShift = Math.max(0, -accentX);
-    const nucleusPositioned = withPosition(nucleusLayouted, [horizontalShift, 0]);
-    const accentPositioned = withPosition(accentLayouted, [accentX, accentY]);
+    const nucleusPositioned = setPosition([horizontalShift, 0])(nucleusLayouted);
+    const accentPositioned = setPosition([accentX, accentY])(accentLayouted);
 
     const dimensions = calcBoundingDimensions([nucleusPositioned, accentPositioned]);
     return {

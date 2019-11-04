@@ -1,6 +1,7 @@
-import { layoutWithStyle, isNodeAlignedToBaseline, getAxisHeight, withPosition } from "./layout";
+import { layoutWithStyle, isNodeAlignedToBaseline, getAxisHeight } from "./layout";
+import { setPosition } from './layout-util';
 import { map, filter, range, pipe, pick, reduce, add } from 'ramda';
-import { identity, sum, accumSum, scaleMap } from "./util";
+import { identity, sum, accumSum, scaleMap } from "../util";
 
 const lookUpMatrixItem = (array, colCount, row, col) => array[row * colCount + col];
 
@@ -65,10 +66,10 @@ export const layoutMatrix = (matrixNode) => {
 
 	itemsLayouted = itemsLayouted.map((layoutedItem, index) => {
 		const [rowIndex, colIndex] = getPositionInMatrix(colCount, index);
-		return withPosition(layoutedItem, [
+		return setPosition([
 			colPositions[colIndex], 
 			rowPositions[rowIndex] + yOffsetMap.get(layoutedItem) 
-		]);
+		], layoutedItem);
 	});
 
 	const dimensions = {

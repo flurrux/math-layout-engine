@@ -1,6 +1,8 @@
-import { incrementStyle, withStyle } from "./style";
-import { withPosition, layoutNode, calcCentering } from "./layout";
-import { isNodeTextual } from "./node-types";
+import { incrementStyle, withStyle } from "../style";
+import { layoutNode } from "./layout";
+import { setPosition } from './layout-util';
+import { center as calcCentering } from './layout-util';
+import { isNodeTextual } from "../node-types";
 import { map, pipe } from 'ramda';
 
 const normalizedRuleThickness = 0.05;
@@ -40,8 +42,8 @@ export const layoutFraction = (fraction) => {
 
 	return {
 		type: "fraction", style,
-		numerator: withPosition(num, numPos),
-		denominator: withPosition(denom, denomPos),
+		numerator: setPosition(numPos)(num),
+		denominator: setPosition(denomPos)(denom),
 		ruleThickness,
 		dimensions: {
 			yMin: denomPos[1] + denom.dimensions.yMin, 

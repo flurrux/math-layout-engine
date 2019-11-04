@@ -1,9 +1,9 @@
 import { 
 	lookUpGlyphByCharOrAlias, getMetricsObject, getDefaultEmphasis, lookUpBoundingBox 
-} from "./font-data/katex-font-util";
-import { scaleMap } from "./util";
+} from "../font-data/katex-font-util.js";
+import { scaleMap } from "../util.js";
 import { map } from 'ramda';
-import { createNodeStyle } from "./style";
+import { createNodeStyle } from "../style.js";
 
 const getDimensionsOfCharNode = (style, node) => {
 	const fontData = lookUpGlyphByCharOrAlias(node.value);

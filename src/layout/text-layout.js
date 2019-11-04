@@ -1,6 +1,6 @@
 import { sum, pipe, map } from 'ramda';
-import { getMetricsObject } from './font-data/katex-font-util';
-import { createNodeStyle } from './style';
+import { getMetricsObject } from '../font-data/katex-font-util';
+import { createNodeStyle } from '../style';
 
 const maxTextualHeight = 0.685;
 const maxTextualDepth = -0.205;

@@ -26,13 +26,12 @@
 
 
 import { loadKatexFontFaces, renderFormulaLayout, centerNodeOnCanvas } from './rendering/render.js';
-import { layoutNode } from './layout.js';
+import { layoutNode } from './layout/layout.js';
 
 
 async function main(){
 
 	//continued fractions 
-	//matrix2d general inverse
 
 	
 	const formulaData = {

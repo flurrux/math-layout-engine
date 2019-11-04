@@ -1,8 +1,9 @@
-import { layoutNode, dimensionHeight, withPosition, calcBoundingDimensions } from "./layout";
-import { scaleMap, isDefined } from "./util";
+import { layoutNode, dimensionHeight, calcBoundingDimensions } from "./layout";
+import { setPosition } from './layout-util';
+import { scaleMap, isDefined } from "../util";
 import { map, pipe } from 'ramda';
-import { createRadical } from "./create-radical";
-import { switchStyleType, withStyle } from "./style";
+import { createRadical } from "../glyph-modification/create-radical";
+import { switchStyleType, withStyle } from "../style";
 
 export const layoutRoot = (root) => {
 	const { style } = root;
@@ -50,7 +51,7 @@ export const layoutRoot = (root) => {
 			rightBottomPosition[0] - indexLayouted.dimensions.width,
 			rightBottomPosition[1] - indexLayouted.dimensions.yMin
 		];
-		return withPosition(indexLayouted, indexPosition);
+		return setPosition(indexPosition)(indexLayouted);
 	})() : undefined;
 
 	const shift = (indexLayouted && indexLayouted.position[0] < 0) ? -indexLayouted.position[0] : 0;

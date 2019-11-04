@@ -1,7 +1,7 @@
 import { layoutNode, getAxisAlignment, calcBoundingDimensions } from "./layout";
 import { lookUpHorizontalSpacing } from "./horizontal-layout";
 import { map, pipe } from 'ramda';
-import { withStyle } from "./style";
+import { withStyle } from "../style";
 
 const calculateHorizontalSpacing = (style, index, itemCount, node1, node2) => {
 	return (index >= itemCount - 1 || ["S", "SS"].includes(style.type)) ? 0 : lookUpHorizontalSpacing(node1, node2) * style.fontSize;

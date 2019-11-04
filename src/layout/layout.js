@@ -1,18 +1,17 @@
-import { scaleMap, identity, isDefined } from "./util";
-import { nodeType, glyphTypes, isNodeTextual, compositeTypes, isNodeChar, isNodeText } from "./node-types";
+import { scaleMap, identity } from "../util.js";
+import { nodeType, isNodeTextual, isNodeChar, isNodeText } from "../node-types.js";
 import * as R from 'ramda';
 import { layoutScript } from "./script-layout";
 
 
 //layout util ###
 
-export const calcCentering = (size, availableSize) => (availableSize - size) / 2;
-
 export const dimensionHeight = dimensions => dimensions.yMax - dimensions.yMin;
 
 export const boxRight = boxNode => boxNode.position[0] + boxNode.dimensions.width;
 export const boxTop = boxNode => boxNode.position[1] + boxNode.dimensions.yMax;
 export const boxBottom = boxNode => boxNode.position[1] + boxNode.dimensions.yMin;
+export const boxLeft = boxNode => boxNode.position[0];
 
 export const calcBoundingDimensions = objs => identity({
 	width: Math.max(...objs.map(boxRight)),
@@ -20,15 +19,9 @@ export const calcBoundingDimensions = objs => identity({
 	yMax: Math.max(...objs.map(boxTop)),
 });
 
-const offsetDimensionsVertically = (dimensions, offset) => identity({
-	...dimensions,
-	yMin: dimensions.yMin + offset,
-	yMax: dimensions.yMax + offset
-});
 
-const scaleMetrics = (metrics, scale) => R.map(scaleMap(scale), metrics);
 
-export const withPosition = (layoutNode, position) => R.assoc("position", position, layoutNode);
+
 
 
 const isNodeOfAnyType = (node, types) => types.includes(node.type);
@@ -48,9 +41,7 @@ const isNodeAlignedToAxis = (node) => isNodeOfAnyType(node, ["fraction"]) ||
 //if a node is aligned to the axis rather than the baseline, this function will get the vertical offset
 export const getAxisAlignment = (style, node) => isNodeAlignedToAxis(node) ? getAxisHeight(style) : 0;
 
-const getHeightAndDepthFromAxis = (node, dim, axisHeight) => {
-	return isNodeAlignedToBaseline(node) ? [dim.yMax - axisHeight, dim.yMin - axisHeight] : [dim.yMax, dim.yMin];
-};
+
 
 
 
@@ -87,7 +78,7 @@ import { layoutCharNode } from './char-layout.js';
 import { layoutMathList } from './mathlist-layout.js';
 import { layoutMatrix } from './matrix-layout.js';
 import { layoutAccent } from './accent-layout.js';
-import { withStyle } from "./style";
+import { withStyle } from "../style.js";
 
 const nodeLayoutFuncMap = {
 	"mathlist": layoutMathList,
