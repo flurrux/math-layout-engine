@@ -89,6 +89,7 @@
 ```
 ![rendered formula](https://github.com/flurrux/math-layout-engine/blob/master/dev/sample-renders/sample-render-13.png) 
 
+---
 
 ```javascript
 {
