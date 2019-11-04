@@ -1,7 +1,7 @@
-import { layoutWithStyle, isNodeAlignedToBaseline, getAxisHeight } from "./layout";
-import { setPosition } from './layout-util';
-import { map, filter, range, pipe, pick, reduce, add } from 'ramda';
-import { identity, sum, accumSum, scaleMap } from "../util";
+import { layoutWithStyle } from "./layout";
+import { setPosition, getAxisHeight, isNodeAlignedToBaseline } from './layout-util';
+import { map, filter, range, pipe, pick, add, multiply, identity } from 'ramda';
+import { sum, accumSum } from "../util";
 
 const lookUpMatrixItem = (array, colCount, row, col) => array[row * colCount + col];
 
@@ -50,7 +50,7 @@ export const layoutMatrix = (matrixNode) => {
 		partitionIntoRows(colCount), 
 		map(row => maxHeightAndDepth(map(item => map(add(yOffsetMap.get(item)), heightOfNode(item)), row)))
 	)(itemsLayouted);
-	const { rowSpacing, colSpacing } = pipe(pick(["rowSpacing", "colSpacing"]), map(scaleMap(fontSize)))(matrixNode);
+	const { rowSpacing, colSpacing } = pipe(pick(["rowSpacing", "colSpacing"]), map(multiply(fontSize)))(matrixNode);
 	const totalWidth = sum(colWidths) + (colCount - 1) * colSpacing;
 	const totalHeight = sum(map(dim => dim.yMax - dim.yMin)(rowDims)) + (rowCount - 1) * rowSpacing;
 	const halfHeight = totalHeight / 2;

@@ -20,15 +20,17 @@ const getTargetYOfGlyphNucleus = (fontFamily, unicode) => {
 
 
 import { smallerStyle, smallestStyle, withStyle } from "../style";
-import { pickList, scaleMap, isDefined, identity } from "../util";
+import { pickList, isDefined } from "../util";
 import { 
-	layoutNode, calcBoundingDimensions, 
-	getAxisAlignment, boxBottom, getAxisHeight, layoutWithStyle 
+	layoutNode, 
+	getAxisAlignment, layoutWithStyle 
 } from "./layout";
-import { center as calcCentering, setPosition } from './layout-util';
+import { 
+	center, setPosition, calcBoundingDimensions, getAxisHeight 
+} from './layout-util';
 
 import { lookUpUnicode, lookUpGlyphByCharOrAlias, getMetricsObject, getMetricsOfCharNode } from "../font-data/katex-font-util";
-import { pipe, filter, map } from 'ramda';
+import { pipe, filter, map, multiply, identity } from 'ramda';
 
 const getSubOrSupStyle = (scriptStyle, subOrSupNode) => {
 	return subOrSupNode.type === "fraction" ? smallestStyle(scriptStyle) : smallerStyle(scriptStyle);
@@ -46,7 +48,7 @@ const getSupSubTargetYNoLimits = (style, script, nucleusDim) => {
 	}
 	else if (isNodeText(nucleus)){
 		const fontFamily = style.fontFamily || "Main";
-		return pickList(["supY", "subY"], fontFamilyToTargetY[fontFamily]).map(scaleMap(fontSize));
+		return pickList(["supY", "subY"], fontFamilyToTargetY[fontFamily]).map(multiply(fontSize));
 	}
 	else {
 		return [
@@ -64,7 +66,7 @@ const layoutSuperScriptInLimitPosition = (parentStyle, supStyle, nucleusDimensio
 	const supDim = supLayouted.dimensions;
 	const spacing = parentStyle.fontSize * 0.2;
 	const position = [
-		calcCentering(supDim.width, nucleusDimensions.width),
+		center(supDim.width, nucleusDimensions.width),
 		nucleusDimensions.yMax - supDim.yMin + spacing
 	];
 	return setPosition(position)(supLayouted);
@@ -74,7 +76,7 @@ const layoutSubScriptInLimitPosition = (parentStyle, subStyle, nucleusDimensions
 	const subDim = subLayouted.dimensions;
 	const spacing = parentStyle.fontSize * 0.2;
 	const position = [
-		calcCentering(subDim.width, nucleusDimensions.width),
+		center(subDim.width, nucleusDimensions.width),
 		nucleusDimensions.yMin - subDim.yMax - spacing
 	];
 	return setPosition(position)(subLayouted);

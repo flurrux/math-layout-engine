@@ -19,12 +19,7 @@ export const clamp = (min, max, val) => {
 	if (val > max) return max;
 	return val;
 };
-export const scaleMap = scale => (num => num * scale);
 export const isDefined = obj => obj !== undefined;
-
-//identity can be used to return object literals from lambda expressions:
-//const func = { return { prop1: val1 } } becomes const func = identity({ prop1: val1 })
-export const identity = t => t;
 
 const spread = func => (arr => func(...arr));
 export const min = spread(Math.min);

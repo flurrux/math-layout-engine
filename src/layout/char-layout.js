@@ -1,14 +1,13 @@
 import { 
 	lookUpGlyphByCharOrAlias, getMetricsObject, getDefaultEmphasis, lookUpBoundingBox 
 } from "../font-data/katex-font-util.js";
-import { scaleMap } from "../util.js";
-import { map } from 'ramda';
+import { map, multiply } from 'ramda';
 import { createNodeStyle } from "../style.js";
 
 const getDimensionsOfCharNode = (style, node) => {
 	const fontData = lookUpGlyphByCharOrAlias(node.value);
 	const metrics = getMetricsObject(fontData.fontFamily, getDefaultEmphasis(fontData.fontFamily), fontData.unicode);
-	return map(scaleMap(style.fontSize))({
+	return map(multiply(style.fontSize))({
 		width: metrics.width,
 		yMin: -metrics.depth,
 		yMax: metrics.height
@@ -24,6 +23,6 @@ export const layoutCharNode = (node) => {
 	return {
 		type: "char", char, unicode, style,
 		dimensions: getDimensionsOfCharNode(style, node),
-		bbox: map(scaleMap(style.fontSize))(lookUpBoundingBox(fontFamily, unicode, style.emphasis))
+		bbox: map(multiply(style.fontSize))(lookUpBoundingBox(fontFamily, unicode, style.emphasis))
 	};
 };

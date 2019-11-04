@@ -1,5 +1,5 @@
-import { layoutWithStyle, calcBoundingDimensions } from "./layout";
-import { center, setPosition } from './layout-util';
+import { layoutWithStyle } from "./layout";
+import { center, setPosition, calcBoundingDimensions } from './layout-util';
 import { isNodeChar } from "../node-types";
 import { getMetricsObject } from "../font-data/katex-font-util";
 

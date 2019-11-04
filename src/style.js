@@ -1,4 +1,4 @@
-import { identity } from "./util";
+import { identity } from "ramda";
 
 export const styleType = {
 	D: "D", T: "T", S: "S", SS: "SS"

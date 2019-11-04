@@ -1,11 +1,8 @@
-import { 
-	getAxisHeight, layoutNode, calcBoundingDimensions, 
-	isNodeAlignedToBaseline 
-} from "./layout";
-import { setPosition } from './layout-util';
+import { layoutNode } from "./layout";
+import { setPosition, calcBoundingDimensions, getAxisHeight, isNodeAlignedToBaseline } from './layout-util';
 import { createDelimiter } from "../glyph-modification/create-delimiter";
-import { identity, accumSum, scaleMap } from "../util.js";
-import { map, pipe } from 'ramda';
+import { accumSum } from "../util.js";
+import { map, pipe, multiply, identity } from 'ramda';
 import { withStyle } from "../style.js";
 import { lookUpHorizontalSpacing } from "./horizontal-layout.js";
 
@@ -27,7 +24,7 @@ export const layoutDelimited = (delimNode) => {
 	const [leftDelim, rightDelim] = ["leftDelim", "rightDelim"]
 		.map(propName => createDelimiter(delimNode[propName].value.charCodeAt(0), delimiterHeight))
 		.map(delim => identity({ 
-			...delim, dimensions: map(scaleMap(style.fontSize), delim.metrics), style 
+			...delim, dimensions: map(multiply(style.fontSize), delim.metrics), style 
 		}));
 
 	const itemXs = accumSum([

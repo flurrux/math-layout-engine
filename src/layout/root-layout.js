@@ -1,7 +1,7 @@
-import { layoutNode, dimensionHeight, calcBoundingDimensions } from "./layout";
-import { setPosition } from './layout-util';
-import { scaleMap, isDefined } from "../util";
-import { map, pipe } from 'ramda';
+import { layoutNode } from "./layout";
+import { setPosition, dimensionHeight, calcBoundingDimensions } from './layout-util';
+import { isDefined } from "../util";
+import { map, pipe, multiply } from 'ramda';
 import { createRadical } from "../glyph-modification/create-radical";
 import { switchStyleType, withStyle } from "../style";
 
@@ -11,7 +11,7 @@ export const layoutRoot = (root) => {
 	let radicandLayouted = pipe(withStyle(style), layoutNode)(root.radicand);
 
 	const radicandDim = radicandLayouted.dimensions;
-	const radicandDimEm = map(scaleMap(1 / fontSize), radicandLayouted.dimensions);
+	const radicandDimEm = map(multiply(1 / fontSize), radicandLayouted.dimensions);
 	const margin = [0.07, 0.18];
 	const [radicandWidth, radicandHeight] = [
 		margin[0] * 2 + radicandDimEm.width,
@@ -19,7 +19,7 @@ export const layoutRoot = (root) => {
 	];
 
 	const radical = createRadical(radicandWidth, radicandHeight, fontSize / 50);
-	const rootMetrics = map(scaleMap(fontSize), radical.metrics);
+	const rootMetrics = map(multiply(fontSize), radical.metrics);
 	const rootContours = radical.contours;
 
 	const spareYHalf = (radical.innerHeight * fontSize - radicandDim.yMax + radicandDim.yMin) * 0.7;
@@ -42,7 +42,7 @@ export const layoutRoot = (root) => {
 	//index
 	let indexLayouted = root.index ? (function () {
 		const indexLayouted = pipe(withStyle(switchStyleType(style, "SS")), layoutNode)(root.index);
-		const scaledCorner = radical.indexCorner.map(scaleMap(style.fontSize));
+		const scaledCorner = radical.indexCorner.map(multiply(style.fontSize));
 		const rightBottomPosition = [
 			contoursOffset[0] + scaledCorner[0],
 			contoursOffset[1] + scaledCorner[1]
