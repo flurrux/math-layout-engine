@@ -1,6 +1,7 @@
 
 import * as R from 'ramda';
-import { BoxNode, Dimensions, Vector2, Style, FormulaNode, RootNode } from '../types';
+import { Style } from '../style';
+import { BoxNode, Dimensions, Vector2, FormulaNode, RootNode } from '../types';
 import { Metrics } from '../font-data/katex-font-util';
 import { min } from '../util';
 import { isNodeTextual } from '../node-types';
@@ -22,7 +23,7 @@ export const dimensionHeight = (dimensions: Dimensions) => dimensions.yMax - dim
 
 export const center = (size: number, availableSize: number) => (availableSize - size) / 2;
 
-export const setPosition = (position: Vector2): ((obj: object) => object) => R.assoc("position", position);
+export const setPosition = <T extends BoxNode>(position: Vector2): ((obj: T) => T) => R.assoc("position", position);
 
 export const moveBox = (positionDelta: Vector2) : ((box: BoxNode) => BoxNode) => ((box: BoxNode) => R.assoc("position", [
 	box.position[0] + positionDelta[0],

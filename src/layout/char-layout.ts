@@ -6,9 +6,10 @@ import { map, multiply } from 'ramda';
 import { createNodeStyle } from "../style";
 
 import { Metrics } from '../font-data/katex-font-util';
-import { Style, Dimensions, BoundingBox, CharNode as FormulaCharNode } from '../types';
+import { Dimensions, BoundingBox, CharNode as FormulaCharNode, BoxNode } from '../types';
+import { Style } from '../style';
 
-export interface BoxCharNode {
+export interface BoxCharNode extends BoxNode {
 	type: string,
 	char: string,
 	unicode: number,

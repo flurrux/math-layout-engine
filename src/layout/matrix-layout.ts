@@ -1,36 +1,44 @@
 import { layoutWithStyle } from "./layout";
 import { setPosition, getAxisHeight, isNodeAlignedToBaseline } from './layout-util';
 import { map, filter, range, pipe, pick, add, multiply, identity } from 'ramda';
-import { sum, accumSum } from "../util";
+import { sum, accumSum, max } from "../util";
+import { BoxNode, MatrixNode as FormulaMatrixNode, FormulaNode, Vector2 } from "../types";
 
-const lookUpMatrixItem = (array, colCount, row, col) => array[row * colCount + col];
 
-const lookUpColItems = (colCount, colIndex, array) => filter((obj, ind) => ind % colCount === colIndex)(array);
-const lookUpRowItems = (colCount, rowIndex, array) => filter((obj, ind) => Math.floor(ind / colCount) === rowIndex)(array);
-const getPositionInMatrix = (colCount, flatIndex) => [Math.floor(flatIndex / colCount), flatIndex % colCount];
+interface BoxMatrixNode extends BoxNode {
+	items: BoxNode[],
+	rowCount: number,
+	colCount: number
+}
 
-const partitionIntoCols = (colCount) => (array => array.reduce((cols, item, ind) => {
+
+const getPositionInMatrix = (colCount: number, flatIndex: number) => [Math.floor(flatIndex / colCount), flatIndex % colCount];
+
+const partitionIntoCols = <T>(colCount: number) => ((array: T[]) : T[][] => array.reduce((cols: T[][], item: T, ind) => {
 	const colInd = ind % cols.length;
 	cols[colInd].push(item);
 	return cols;
 }, map(() => [], range(0, colCount))));
-const partitionIntoRows = (colCount) => (array => array.reduce((rows, item, ind) => {
+
+const partitionIntoRows = <T>(colCount: number) => ((array: T[]): T[][] => array.reduce((rows, item, ind) => {
 	const rowInd = Math.floor(ind / colCount);
 	rows[rowInd].push(item);
 	return rows;
 }, map(() => [], range(0, array.length / colCount))));
 
-const calcOffsetY = (node, layoutedNode) => isNodeAlignedToBaseline(node) ? 0 : getAxisHeight(layoutedNode.style);
-const heightOfNode = node => pick(["yMin", "yMax"], node.dimensions);
-const widthOfNode = node => node.dimensions.width;
-const max = array => Math.max(...array);
-const maxHeightAndDepth = heightsAndDepths => identity({
+const calcOffsetY = (node: FormulaNode, layoutedNode: BoxNode) => isNodeAlignedToBaseline(node) ? 0 : getAxisHeight(layoutedNode.style);
+interface HeightAndDepth {
+	yMin: number, yMax: number
+};
+const heightOfNode = (node: BoxNode): HeightAndDepth => pick(["yMin", "yMax"], node.dimensions);
+const widthOfNode = (node: BoxNode) => node.dimensions.width;
+const maxHeightAndDepth = (heightsAndDepths: HeightAndDepth[]) => identity({
 	yMin: Math.min(...heightsAndDepths.map(obj => obj.yMin)),
 	yMax: Math.max(...heightsAndDepths.map(obj => obj.yMax)),
 });
 
 //every item is aligned to the baseline
-export const layoutMatrix = (matrixNode) => {
+export const layoutMatrix = (matrixNode: FormulaMatrixNode) : BoxMatrixNode => {
 	const { style } = matrixNode;
 	const { fontSize } = style;
 	matrixNode = {
@@ -39,23 +47,24 @@ export const layoutMatrix = (matrixNode) => {
 		...matrixNode
 	};
 	const { rowCount, colCount, items } = matrixNode;
-	let itemsLayouted = map(layoutWithStyle(style), items);
+	let itemsLayouted: BoxNode[] = map(layoutWithStyle(style), items);
 
 	const yOffsetMap = new Map();
 	for (const [index, layoutItem] of itemsLayouted.entries()){
 		yOffsetMap.set(layoutItem, calcOffsetY(items[index], layoutItem));
 	}
-	const colWidths = pipe(partitionIntoCols(colCount), map(col => pipe(map(widthOfNode), max)(col)))(itemsLayouted);
-	const rowDims = pipe(
+	const colWidths: number[] = pipe(partitionIntoCols(colCount), map((col: BoxNode[]) => pipe(map(widthOfNode), max)(col)))(itemsLayouted);
+	const rowDims: HeightAndDepth[] = pipe(
 		partitionIntoRows(colCount), 
-		map(row => maxHeightAndDepth(map(item => map(add(yOffsetMap.get(item)), heightOfNode(item)), row)))
+		map((row: BoxNode[]) => maxHeightAndDepth(map((item: BoxNode) => map(add(yOffsetMap.get(item)), heightOfNode(item)), row)))
 	)(itemsLayouted);
-	const { rowSpacing, colSpacing } = pipe(pick(["rowSpacing", "colSpacing"]), map(multiply(fontSize)))(matrixNode);
+	const rowAndColSpacing: { rowSpacing: number, colSpacing: number } = pipe(pick(["rowSpacing", "colSpacing"]), map(multiply(fontSize)))(matrixNode);
+	const { rowSpacing, colSpacing } = rowAndColSpacing;
 	const totalWidth = sum(colWidths) + (colCount - 1) * colSpacing;
 	const totalHeight = sum(map(dim => dim.yMax - dim.yMin)(rowDims)) + (rowCount - 1) * rowSpacing;
 	const halfHeight = totalHeight / 2;
-	const colPositions = pipe(map(add(colSpacing)), accumSum)(colWidths);
-	const rowPositions = rowDims.reduce((posArr, rowDim, rowInd) => {
+	const colPositions: number[] = pipe(map(add(colSpacing)), accumSum)(colWidths);
+	const rowPositions: number[] = rowDims.reduce((posArr, rowDim, rowInd) => {
 		if (rowInd === colCount - 1) return posArr;
 		const lastVal = posArr[posArr.length - 1];
 		const [curDim, nextDim] = [rowDim, rowDims[rowInd + 1]];
@@ -69,7 +78,7 @@ export const layoutMatrix = (matrixNode) => {
 		return setPosition([
 			colPositions[colIndex], 
 			rowPositions[rowIndex] + yOffsetMap.get(layoutedItem) 
-		], layoutedItem);
+		])(layoutedItem);
 	});
 
 	const dimensions = {
@@ -80,6 +89,7 @@ export const layoutMatrix = (matrixNode) => {
 
 	return {
 		type: "matrix",
+		rowCount, colCount,
 		dimensions, style,
 		items: itemsLayouted
 	};

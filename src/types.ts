@@ -1,14 +1,12 @@
 
+import { Style } from './style';
+
 export interface Vector2 {
 	[0]: number,
 	[1]: number
 };
 
-export interface Style {
-	fontSize: number,
-	emphasis?: string,
-	fontFamily?: string
-};
+
 
 export interface Dimensions {
 	width: number, 
@@ -27,6 +25,7 @@ export interface FormulaNode {
     type: string,
     style?: Style
 };
+
 
 export interface TextualNode extends FormulaNode {
 	value?: string,
@@ -50,6 +49,23 @@ export interface FractionNode extends FormulaNode {
 	numerator: FormulaNode,
 	denominator: FormulaNode
 };
+
+export interface MatrixNode extends FormulaNode {
+	rowCount: number,
+	colCount: number,
+	items: FormulaNode[],
+
+	//move to style?
+	rowSpacing?: number,
+	colSpacing?: number
+};
+
+export interface DelimitedNode extends FormulaNode {
+	leftDelim: FormulaNode,
+	rightDelim: FormulaNode,
+	delimited: FormulaNode
+};
+
 
 
 

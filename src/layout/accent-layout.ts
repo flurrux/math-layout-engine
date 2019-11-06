@@ -3,7 +3,8 @@ import { center, setPosition, calcBoundingDimensions } from './layout-util';
 import { isNodeChar } from "../node-types";
 import { getMetricsObject, Metrics } from "../font-data/katex-font-util";
 
-import { FormulaNode, BoxNode, CharNode, Style } from '../types';
+import { FormulaNode, BoxNode, CharNode } from '../types';
+import { Style } from '../style';
 import { BoxCharNode } from './char-layout';
 interface FormulaAccentNode extends FormulaNode {
     nucleus: FormulaNode,
@@ -62,7 +63,7 @@ export const layoutAccent = (node: FormulaAccentNode) : BoxAccentNode => {
 
     const horizontalShift = Math.max(0, -accentX);
     const nucleusPositioned: BoxNode = setPosition([horizontalShift, 0])(nucleusLayouted);
-    const accentPositioned: BoxCharNode = setPosition([accentX, accentY])(accentLayouted);
+    const accentPositioned: BoxCharNode = setPosition<BoxCharNode>([accentX, accentY])(accentLayouted);
 
     const dimensions = calcBoundingDimensions([nucleusPositioned, accentPositioned]);
     return {
