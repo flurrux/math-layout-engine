@@ -5,7 +5,13 @@ import { map, pipe, multiply } from 'ramda';
 import { createRadical } from "../glyph-modification/create-radical";
 import { switchStyleType, withStyle } from "../style";
 
-export const layoutRoot = (root) => {
+import { BoxNode, RootNode as FormulaRootNode, BoxContoursNode } from '../types';
+
+export interface BoxRootNode {
+	radicand: BoxNode
+};
+
+export const layoutRoot = (root: FormulaRootNode) => {
 	const { style } = root;
 	const { fontSize } = style;
 	let radicandLayouted = pipe(withStyle(style), layoutNode)(root.radicand);
@@ -18,7 +24,7 @@ export const layoutRoot = (root) => {
 		margin[1] * 2 + dimensionHeight(radicandDimEm)
 	];
 
-	const radical = createRadical(radicandWidth, radicandHeight, fontSize / 50);
+	const radical = createRadical(radicandWidth, radicandHeight);
 	const rootMetrics = map(multiply(fontSize), radical.metrics);
 	const rootContours = radical.contours;
 
@@ -31,7 +37,7 @@ export const layoutRoot = (root) => {
 	];
 	Object.assign(radicandLayouted, { position: radicandPosition });
 
-	let radicalLayouted = {
+	let radicalLayouted : BoxContoursNode = {
 		type: "contours", style,
 		contours: rootContours,
 		position: [contoursOffset[0], contoursOffset[1] + radicandPosition[1]],
@@ -40,19 +46,19 @@ export const layoutRoot = (root) => {
 
 
 	//index
-	let indexLayouted = root.index ? (function () {
-		const indexLayouted = pipe(withStyle(switchStyleType(style, "SS")), layoutNode)(root.index);
-		const scaledCorner = radical.indexCorner.map(multiply(style.fontSize));
+	let indexLayouted : BoxNode = root.index ? (function () {
+		const indexLayouted : BoxNode = pipe(withStyle(switchStyleType(style, "SS")), layoutNode)(root.index);
+		const scaledCorner : [number, number] = radical.indexCorner.map(multiply(style.fontSize)) as [number, number];
 		const rightBottomPosition = [
 			contoursOffset[0] + scaledCorner[0],
 			contoursOffset[1] + scaledCorner[1]
 		];
-		const indexPosition = [
+		const indexPosition : [number, number] = [
 			rightBottomPosition[0] - indexLayouted.dimensions.width,
 			rightBottomPosition[1] - indexLayouted.dimensions.yMin
 		];
 		return setPosition(indexPosition)(indexLayouted);
-	})() : undefined;
+	})() as BoxNode : undefined;
 
 	const shift = (indexLayouted && indexLayouted.position[0] < 0) ? -indexLayouted.position[0] : 0;
 	if (shift > 0){

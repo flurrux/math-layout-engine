@@ -24,7 +24,7 @@ export const objectifyMetrics = (metric: number[]) : Metrics => {
 };
 export const getMetricsObject = (fontFamily: string, emphasis: string, unicode: number): Metrics => objectifyMetrics(getMetrics(fontFamily, emphasis, unicode));
 
-const katexFontFamily = {
+const katexFontFamily : { [key: string]: string } = {
     AMS: "AMS", 
     Caligraphic: "Caligraphic",
     Fraktur: "Fraktur",

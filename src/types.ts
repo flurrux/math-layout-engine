@@ -1,4 +1,8 @@
 
+export interface Vector2 {
+	[0]: number,
+	[1]: number
+};
 
 export interface Style {
 	fontSize: number,
@@ -24,13 +28,44 @@ export interface FormulaNode {
     style?: Style
 };
 
+export interface TextualNode extends FormulaNode {
+	value?: string,
+	text?: string
+};
+export interface CharNode extends FormulaNode {
+	value?: string
+};
+export interface TextNode extends FormulaNode {
+	text?: string
+};
+export interface RootNode extends FormulaNode {
+	radicand: FormulaNode,
+	index?: FormulaNode
+};
+
+export interface MathListNode extends FormulaNode {
+	items: FormulaNode[]
+};
+export interface FractionNode extends FormulaNode {
+	numerator: FormulaNode,
+	denominator: FormulaNode
+};
+
+
+
 export interface BoxNode {
 	type: string,
 	position?: [number, number],
-	dimensions: {
-		width: number,
-		yMin: number,
-		yMax: number
-	},
-	style?: object
+	dimensions: Dimensions,
+	style?: Style
 };
+
+interface GlyphPoint {
+	x: number,
+	y: number,
+	onCurve: boolean,
+	[key: string]: any
+}
+export interface BoxContoursNode extends BoxNode {
+	contours: GlyphPoint[][]
+}

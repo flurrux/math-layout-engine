@@ -6,9 +6,9 @@ import { map, multiply } from 'ramda';
 import { createNodeStyle } from "../style";
 
 import { Metrics } from '../font-data/katex-font-util';
-import { Style, Dimensions, BoundingBox } from '../types';
+import { Style, Dimensions, BoundingBox, CharNode as FormulaCharNode } from '../types';
 
-export interface CharNode {
+export interface BoxCharNode {
 	type: string,
 	char: string,
 	unicode: number,
@@ -17,10 +17,9 @@ export interface CharNode {
 	bbox: BoundingBox
 };
 
-const getMetricsOfCharNode = (charNode: CharNode) => getMetricsObject(charNode.style.fontFamily, charNode.style.emphasis, charNode.unicode);
-
-const getDimensionsOfCharNode = (style: Style, node: any) : Dimensions => {
-	const fontData: any = lookUpGlyphByCharOrAlias(node.value);
+const getMetricsOfCharNode = (charNode: BoxCharNode) : Metrics => getMetricsObject(charNode.style.fontFamily, charNode.style.emphasis, charNode.unicode);
+const getDimensionsOfCharNode = (style: Style, node: FormulaCharNode) : Dimensions => {
+	const fontData = lookUpGlyphByCharOrAlias(node.value);
 	const metrics: Metrics = getMetricsObject(fontData.fontFamily, getDefaultEmphasis(fontData.fontFamily), fontData.unicode);
 	return map(multiply(style.fontSize))({
 		width: metrics.width,
@@ -28,7 +27,7 @@ const getDimensionsOfCharNode = (style: Style, node: any) : Dimensions => {
 		yMax: metrics.height
 	});
 };
-export const layoutCharNode = (node: any) : CharNode => {
+export const layoutCharNode = (node: FormulaCharNode) : BoxCharNode => {
 	//todo: use fontFamily if it's defined in style
 	const { fontFamily, unicode } = lookUpGlyphByCharOrAlias(node.value);
 	const emphasis : string = getDefaultEmphasis(fontFamily);

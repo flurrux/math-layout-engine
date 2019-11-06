@@ -25,5 +25,5 @@ export const clamp = (min: number, max: number, val: number): number => {
 export const isDefined = (obj: any) : boolean => obj !== undefined;
 
 const spread = (func: Function) => ((arr: any[]) => func(...arr));
-export const min = spread(Math.min);
-export const max = spread(Math.max);
+export const min: ((input: number[]) => number) = spread(Math.min);
+export const max: ((input: number[]) => number) = spread(Math.max);

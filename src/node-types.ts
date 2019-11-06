@@ -21,7 +21,9 @@ export const nodeType = {
 export const glyphTypes = ["ord", "op", "bin", "rel", "open", "close", "punct"];
 export const compositeTypes = ["mathlist", "fraction", "root", "script", "delimited"];
 
-export const isNodeTextual = (node) => isNodeChar(node) || isNodeText(node);
-export const isNodeChar = (node) => glyphTypes.includes(node.type) && node.text === undefined;
-export const isNodeText = (node) => (node.type === "ord" || node.type === "op") && node.text !== undefined;
-export const isNodeComposite = (node) => compositeTypes.includes(node.type);
+import { FormulaNode, TextNode } from './types';
+
+export const isNodeTextual = (node: FormulaNode) : boolean => isNodeChar(node) || isNodeText(node);
+export const isNodeChar = (node: FormulaNode) : boolean => glyphTypes.includes(node.type) && (node as TextNode).text === undefined;
+export const isNodeText = (node: FormulaNode) : boolean => (node.type === "ord" || node.type === "op") && (node as TextNode).text !== undefined;
+export const isNodeComposite = (node: FormulaNode) : boolean => compositeTypes.includes(node.type);
