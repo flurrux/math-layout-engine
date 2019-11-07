@@ -1,7 +1,16 @@
-import { scaleContours } from "../opentype-util";
+import { scaleContours, Contour, GlyphPoint } from "../opentype-util";
 import { map } from 'ramda';
+import { BoundingBox, Vector2, ContoursNode } from '../types';
 
-const rootData = [
+interface GlyphData {
+    fontFamily: string,
+    innerHeight: number
+    bbox: BoundingBox,
+    contours: Contour[],
+    advanceWidth?: number
+};
+
+const rootData : GlyphData[] = [
     {
 		"fontFamily": "Size1",
 		"innerHeight": 1.146,
@@ -945,20 +954,28 @@ const rootData = [
         ]
     }
 ];
-const extensionIndices = [
+const extensionIndices : Vector2[] = [
     [9, 10], [1, 2], [21, 22], [5, 6], [22, 25]
 ];
 
-const indexPositions = [
+const indexPositions : Vector2[] = [
     [0.52, 0.29], [0.52, 0.29], [0.52, 0.29], [0.52, 0.29], [0.54, 0.8]
 ];
 const roofThickness = 0.054;
 
-const moveContourPoints = (contour, movedPoints) => contour.map((glyphPoint, index) => {
-	const point = (movedPoints.find(mov => mov.index === index) || { point: { x: glyphPoint.x, y: glyphPoint.y } }).point;
+interface ModifiedGlyphPoint {
+    index: number,
+    point: {
+        x: number, 
+        y: number
+    }
+};
+
+const moveContourPoints = (contour: Contour, movedPoints: ModifiedGlyphPoint[]) : Contour => contour.map((glyphPoint, index) => {
+	const point : { x: number, y: number } = (movedPoints.find(mov => mov.index === index) || { point: { x: glyphPoint.x, y: glyphPoint.y } }).point;
 	return { ...glyphPoint, ...point }
 });
-export const extendRootTail = (rootIndex, width) => {
+export const extendRootTail = (rootIndex: number, width: number) : Contour => {
 	const extendInds = extensionIndices[rootIndex];
 	const rootEntry = rootData[rootIndex];
 	const contour = rootEntry.contours[0];
@@ -968,7 +985,7 @@ export const extendRootTail = (rootIndex, width) => {
 		{ index: extendInds[1], point: { x: tailX, y: contour[extendInds[1]].y } },
 	]);
 };
-export const extendRootBrella = (height, width) => {
+export const extendRootBrella = (height: number, width: number) : Contour => {
 	const rootEntry = rootData[4];
 	const bottomY = rootEntry.bbox.yMin;
 	const lowerRoofY = bottomY + height;
@@ -984,7 +1001,7 @@ export const extendRootBrella = (height, width) => {
 };
 
 //height means distance from lowest point to bottom of root-"roof"
-const getRootIndexByHeight = (height) => {
+const getRootIndexByHeight = (height: number) : number => {
 	for (let i = 0; i < 4; i++){
 		if (rootData[i].innerHeight > height){
 			return i;
@@ -993,8 +1010,14 @@ const getRootIndexByHeight = (height) => {
 	return 4;
 };
 
+export interface RootContoursNode extends ContoursNode {
+    innerStartX: number,
+    innerHeight: number, 
+    indexCorner: Vector2
+};
+
 //{ contours, innerStartX, metrics }
-export const createRadical = (width, height) => {
+export const createRadical = (width: number, height: number) : RootContoursNode => {
 	const rootIndex = getRootIndexByHeight(height);
 	const rootEntry = rootData[rootIndex];
 	const { bbox } = rootEntry;
@@ -1005,11 +1028,12 @@ export const createRadical = (width, height) => {
 		const contour = extendRootTail(rootIndex, width / scale);
 		const scaledContours = scaleContours(scale, [contour]);
 		return {
+            type: "contours",
 			contours: scaledContours,
 			innerStartX: scaledBbox.xMax,
             innerHeight: scale * rootEntry.innerHeight,
             indexCorner: indexPositions[rootIndex],
-			metrics: {
+			dimensions: {
 				width: scaledBbox.xMax + width,
 				yMin: scaledBbox.yMin,
 				yMax: scaledBbox.yMax
@@ -1019,11 +1043,12 @@ export const createRadical = (width, height) => {
 	else {
 		const startX = rootData[rootIndex].advanceWidth;
 		return {
+            type: "contours",
 			contours: [extendRootBrella(height, width)],
 			innerStartX: startX,
             innerHeight: height - bbox.yMin,
             indexCorner: indexPositions[rootIndex],
-			metrics: {
+			dimensions: {
 				width: startX + width,
 				yMin: bbox.yMin,
 				yMax: bbox.yMin + height

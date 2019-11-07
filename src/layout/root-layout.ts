@@ -5,7 +5,7 @@ import { map, pipe, multiply } from 'ramda';
 import { createRadical } from "../glyph-modification/create-radical";
 import { switchStyleType, withStyle } from "../style";
 
-import { BoxNode, RootNode as FormulaRootNode, BoxContoursNode } from '../types';
+import { BoxNode, RootNode as FormulaRootNode, ContoursNode, Vector2 } from '../types';
 
 export interface BoxRootNode {
 	radicand: BoxNode
@@ -25,7 +25,7 @@ export const layoutRoot = (root: FormulaRootNode) => {
 	];
 
 	const radical = createRadical(radicandWidth, radicandHeight);
-	const rootMetrics = map(multiply(fontSize), radical.metrics);
+	const rootMetrics = map(multiply(fontSize), radical.dimensions);
 	const rootContours = radical.contours;
 
 	const spareYHalf = (radical.innerHeight * fontSize - radicandDim.yMax + radicandDim.yMin) * 0.7;
@@ -37,7 +37,7 @@ export const layoutRoot = (root: FormulaRootNode) => {
 	];
 	Object.assign(radicandLayouted, { position: radicandPosition });
 
-	let radicalLayouted : BoxContoursNode = {
+	let radicalLayouted : ContoursNode = {
 		type: "contours", style,
 		contours: rootContours,
 		position: [contoursOffset[0], contoursOffset[1] + radicandPosition[1]],
@@ -48,12 +48,12 @@ export const layoutRoot = (root: FormulaRootNode) => {
 	//index
 	let indexLayouted : BoxNode = root.index ? (function () {
 		const indexLayouted : BoxNode = pipe(withStyle(switchStyleType(style, "SS")), layoutNode)(root.index);
-		const scaledCorner : [number, number] = radical.indexCorner.map(multiply(style.fontSize)) as [number, number];
+		const scaledCorner : Vector2 = map(multiply(style.fontSize))(radical.indexCorner) as Vector2;
 		const rightBottomPosition = [
 			contoursOffset[0] + scaledCorner[0],
 			contoursOffset[1] + scaledCorner[1]
 		];
-		const indexPosition : [number, number] = [
+		const indexPosition : Vector2 = [
 			rightBottomPosition[0] - indexLayouted.dimensions.width,
 			rightBottomPosition[1] - indexLayouted.dimensions.yMin
 		];

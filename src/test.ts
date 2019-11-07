@@ -25,8 +25,10 @@
 */
 
 
-import { loadKatexFontFaces, renderFormulaLayout, centerNodeOnCanvas } from './rendering/render.js';
+import { loadKatexFontFaces, renderFormulaLayout, centerNodeOnCanvas } from './rendering/render';
 import { layoutNode } from './layout/layout';
+
+import { Style } from './style';
 
 async function main(){
 
@@ -65,9 +67,7 @@ async function main(){
 		]
 	};
 	
-
-
-	const defaultStyle = {
+	const defaultStyle: Style = {
 		type: "D", 
 		baseFontSize: 40,
 		fontSize: 40,

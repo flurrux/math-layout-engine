@@ -1,5 +1,6 @@
-import { transformContour, transformBbox } from "../opentype-util";
+import { transformContour, transformBbox, BoundingBox, Contour, GlyphPoint } from "../opentype-util";
 import { pick } from 'ramda';
+import { Vector2, ContoursNode, Dimensions } from '../types';
 
 /*
 delimiters:
@@ -16,9 +17,16 @@ floor: 8970 8971
 
 */
 
-const lastInArray = (array) => array[array.length - 1];
+const lastInArray = <T>(array: T[]) : T => array[array.length - 1];
 
-export const delimiterFontData = {
+interface GlyphData {
+    fontId: string,
+    bbox: BoundingBox,
+    contours: Contour[],
+    advanceWidth: number
+};
+
+export const delimiterFontData : { [unicode: string]: GlyphData[] } = {
     "40": [
         {
             "fontId": "Main-Regular",
@@ -10324,8 +10332,12 @@ export const delimiterFontData = {
     ]
 };
 
+interface ShiftData {
+    downShifted: Vector2,
+    upShifted: Vector2
+};
 
-const extensionData = {
+const extensionData: { [unicode: string]: ShiftData } = {
 	"40": {
 		downShifted: [25, 10],
 		upShifted: [10, 25]
@@ -10386,45 +10398,45 @@ const extensionData = {
 	}
 };
 
-const isNumInLoopingRange = (start, end, num) => {
+const isNumInLoopingRange = (start: number, end: number, num: number) : boolean => {
 	return (end > start) ? (num >= start && num < end) : (num >= start || num < end);
 };
-const translateGlyphPoint = (glyphPoint, translation) => {
+const translateGlyphPoint = (glyphPoint: GlyphPoint, translation: Vector2) : GlyphPoint => {
 	return {
 		...glyphPoint, 
 		x: glyphPoint.x + translation[0],
 		y: glyphPoint.y + translation[1]
 	}
 };
-const getGlyphTranslationByShiftData = (index, shiftData, extension) => {
-	if (isNumInLoopingRange(...shiftData.downShifted, index)) return -extension;
-	if (isNumInLoopingRange(...shiftData.upShifted, index)) return extension;
+const getGlyphTranslationByShiftData = (index: number, shiftData: ShiftData, extension: number) : number => {
+	if (isNumInLoopingRange(shiftData.downShifted[0], shiftData.downShifted[1], index)) return -extension;
+	if (isNumInLoopingRange(shiftData.upShifted[0], shiftData.upShifted[1], index)) return extension;
 	return 0;
 };
-const extendContour = (contour, shiftData, extension) => contour.map((glyphPoint, index) => {
+const extendContour = (contour: Contour, shiftData: ShiftData, extension: number) : Contour => contour.map((glyphPoint, index) => {
 	return translateGlyphPoint(glyphPoint, [0, getGlyphTranslationByShiftData(index, shiftData, extension)]);
 });
 
 //the height and depth should be the same for all delimiters, 
 //here only height is returned, so half of the vertical size
 const axisHeight = 0.25;
-const getHeightOfDelimiterToAxis = (bbox) => bbox.yMax - axisHeight;
+const getHeightOfDelimiterToAxis = (bbox: BoundingBox) : number => bbox.yMax - axisHeight;
 
-const lookUpGlyphByHeightToAxis = (unicode, heightFromAxis) => delimiterFontData[unicode]
+const lookUpGlyphByHeightToAxis = (unicode: number, heightFromAxis: number) : GlyphData => delimiterFontData[unicode]
 	.find((entry, index) => index === delimiterFontData[unicode].length - 1 || getHeightOfDelimiterToAxis(entry.bbox) >= heightFromAxis);
 
-const generateDelimiterContours = (unicode, heightFromAxis) => {
+const generateDelimiterContours = (unicode: number, heightFromAxis: number) : { contours: Contour[], dimensions: Dimensions } => {
 	const entry = lookUpGlyphByHeightToAxis(unicode, heightFromAxis);
 	const { bbox } = entry;
 	const entryHeight = getHeightOfDelimiterToAxis(bbox);
 	if (entryHeight >= heightFromAxis) {
 		const sizeRatio = heightFromAxis / entryHeight;
-		const matrix = [sizeRatio, 0, 0, sizeRatio, 0, (1 - sizeRatio) * axisHeight];
+		const matrix : [number, number, number, number, number, number] = [sizeRatio, 0, 0, sizeRatio, 0, (1 - sizeRatio) * axisHeight];
 		const scaledContours = entry.contours.map(contour => transformContour(matrix, contour));
 		const scaledBbox = transformBbox(matrix, entry.bbox);
 		return {
 			contours: scaledContours,
-			metrics: {
+			dimensions: {
 				...pick(["yMin", "yMax"], scaledBbox),
 				width: entry.advanceWidth * sizeRatio
 			}
@@ -10436,7 +10448,7 @@ const generateDelimiterContours = (unicode, heightFromAxis) => {
 		const extendedContour = extendContour(extendableEntry.contours[0], extensionData[unicode], remainingHeight);
 		return {
 			contours: [extendedContour],
-			metrics: {
+			dimensions: {
 				yMin: bbox.yMin - remainingHeight, 
 				yMax: bbox.yMax + remainingHeight, 
 				width: entry.advanceWidth
@@ -10444,7 +10456,7 @@ const generateDelimiterContours = (unicode, heightFromAxis) => {
 		};
 	}
 };
-export const createDelimiter = (unicode, heightFromAxis) => {
+export const createDelimiter = (unicode: number, heightFromAxis: number) : ContoursNode => {
 	const contoursData = generateDelimiterContours(unicode, heightFromAxis);
 	if (!contoursData) return;
 	return {

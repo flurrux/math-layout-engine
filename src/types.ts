@@ -1,5 +1,6 @@
 
 import { Style } from './style';
+import { Contour } from './opentype-util';
 
 export interface Vector2 {
 	[0]: number,
@@ -20,6 +21,11 @@ export interface BoundingBox {
 	xMax: number,
 	yMax: number
 };
+
+
+
+
+//formula nodes ###
 
 export interface FormulaNode {
     type: string,
@@ -66,6 +72,12 @@ export interface DelimitedNode extends FormulaNode {
 	delimited: FormulaNode
 };
 
+export interface ScriptNode extends FormulaNode {
+	nucleus: FormulaNode,
+	sup: FormulaNode,
+	sub: FormulaNode
+};
+
 
 
 
@@ -76,12 +88,6 @@ export interface BoxNode {
 	style?: Style
 };
 
-interface GlyphPoint {
-	x: number,
-	y: number,
-	onCurve: boolean,
-	[key: string]: any
-}
-export interface BoxContoursNode extends BoxNode {
-	contours: GlyphPoint[][]
-}
+export interface ContoursNode extends BoxNode {
+	contours: Contour[]
+};

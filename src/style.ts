@@ -2,9 +2,9 @@ import { identity } from "ramda";
 import { FormulaNode } from "./types";
 
 export interface Style {
-	type: string,
-	baseFontSize: number,
-	fontSize: number,
+	type?: string,
+	baseFontSize?: number,
+	fontSize?: number,
 	emphasis?: string,
 	fontFamily?: string,
 	cramped?: boolean

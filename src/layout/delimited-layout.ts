@@ -28,7 +28,7 @@ export const layoutDelimited = (delimNode: FormulaDelimitedNode) : BoxMathListNo
 	const [leftDelim, rightDelim] = ["leftDelim", "rightDelim"]
 		.map(propName => createDelimiter(delimNode[propName].value.charCodeAt(0), delimiterHeight))
 		.map(delim => identity({ 
-			...delim, dimensions: map(multiply(style.fontSize), delim.metrics), style 
+			...delim, dimensions: map(multiply(style.fontSize), delim.dimensions), style 
 		})) as [BoxNode, BoxNode];
 
 	const itemXs = accumSum([

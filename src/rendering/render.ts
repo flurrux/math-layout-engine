@@ -4,6 +4,7 @@ import { pathContours } from '../opentype-util';
 import { BoxNode, Style } from '../types';
 import { BoxCharNode } from '../layout/char-layout';
 import { BoxTextNode } from '../layout/text-layout';
+import { setPosition } from '../layout/layout-util';
 
 export const loadKatexFontFaces = async () => {
 	const baseUrl = "https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/fonts/";
@@ -121,15 +122,10 @@ const renderNode = (ctx: CanvasRenderingContext2D, node: BoxNode) => {
 
 	ctx.restore();
 };
-export const centerNodeOnCanvas = (canvas: HTMLCanvasElement, node: BoxNode) => {
-	return {
-		...node,
-		position: [
-			(canvas.width - node.dimensions.width) / 2,
-			(canvas.height - node.dimensions.yMax - node.dimensions.yMin) / 2
-		]
-	}
-};
+export const centerNodeOnCanvas = (canvas: HTMLCanvasElement, node: BoxNode) : BoxNode => setPosition([
+	(canvas.width - node.dimensions.width) / 2,
+	(canvas.height - node.dimensions.yMax - node.dimensions.yMin) / 2
+])(node);
 export const renderFormulaLayout = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, formulaLayout: BoxNode) => {
 	ctx.save();
 	Object.assign(ctx, { fillStyle: "black", strokeStyle: "black" });
