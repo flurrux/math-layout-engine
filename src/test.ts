@@ -18,17 +18,25 @@
 	accents (dot, hat, ...)
 	
 	multiple prime accents
-	accents that are not glyphs (overline, underline)
+	accents that are not glyphs (overline, underline, arrows, ...)
+	alignment in matrix	
 	ellipsis inner type spacing problem
 	binomials 
-	manual spaces
+	manual spaces, maybe something like margin in style
+	strike-through	
+
+	todo:
+	- error messages
+	- make different-sized contours like delimiters and radicals have the same topology, 
+	so they can be interpolated.
+	- thorough documentation (tex-algorithm, own algorithm, ...)
+	- parser
+
 */
 
 
 import { loadKatexFontFaces, renderFormulaLayout, centerNodeOnCanvas } from './rendering/render';
 import { layoutNode } from './layout/layout';
-
-import { Style } from './style';
 
 async function main(){
 
@@ -67,7 +75,7 @@ async function main(){
 		]
 	};
 	
-	const defaultStyle: Style = {
+	const defaultStyle = {
 		type: "D", 
 		baseFontSize: 40,
 		fontSize: 40,

@@ -3,7 +3,7 @@ import { setPosition, calcBoundingDimensions, getAxisHeight, isNodeAlignedToBase
 import { createDelimiter } from "../glyph-modification/create-delimiter";
 import { accumSum } from "../util";
 import { map, pipe, multiply, identity } from 'ramda';
-import { withStyle } from "../style.js";
+import { withStyle } from "../style";
 import { lookUpHorizontalSpacing } from "./horizontal-layout";
 
 import { DelimitedNode as FormulaDelimitedNode, FormulaNode, Dimensions, BoxNode } from '../types';

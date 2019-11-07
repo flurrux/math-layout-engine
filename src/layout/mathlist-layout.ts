@@ -14,7 +14,10 @@ const calculateHorizontalSpacing = (style: Style, index: number, itemCount: numb
 	return (index >= itemCount - 1 || ["S", "SS"].includes(style.type)) ? 0 : lookUpHorizontalSpacing(node1, node2) * style.fontSize;
 };
 export const layoutMathList = (mathList: MathListNode) : BoxMathListNode => {
-	const items = mathList.items;
+	const { items } = mathList;
+	if (!Array.isArray(items)){
+		throw `the property "items" in this MathListNode is not an array.`;
+	}
 	const { style } = mathList;
 	const layoutItems : BoxNode[] = map(pipe(withStyle(style), layoutNode))(items);
 

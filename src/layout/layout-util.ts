@@ -3,7 +3,7 @@ import * as R from 'ramda';
 import { Style } from '../style';
 import { BoxNode, Dimensions, Vector2, FormulaNode, RootNode } from '../types';
 import { Metrics } from '../font-data/katex-font-util';
-import { min } from '../util';
+import { min, max } from '../util';
 import { isNodeTextual } from '../node-types';
 
 type ObjectOrArrayOfBoxNodes = { [key: string]: BoxNode } | BoxNode[];
@@ -14,9 +14,9 @@ export const boxBottom = (boxNode: BoxNode) : number => boxNode.position[1] + bo
 export const boxLeft = (boxNode: BoxNode) : number => boxNode.position[0];
 
 export const calcBoundingDimensions = (objs: ObjectOrArrayOfBoxNodes) : Dimensions => R.identity({
-	width: Math.max(R.map(boxRight, objs)),
-	yMin: Math.min(R.map(boxBottom, objs)),
-	yMax: Math.max(R.map(boxTop, objs))
+	width: max(R.map(boxRight, objs)),
+	yMin: min(R.map(boxBottom, objs)),
+	yMax: max(R.map(boxTop, objs))
 });
 
 export const dimensionHeight = (dimensions: Dimensions) => dimensions.yMax - dimensions.yMin;

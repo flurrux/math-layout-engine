@@ -59,12 +59,39 @@ const nodeLayoutFuncMap : { [key: string]: LayoutFunction } = {
 	"matrix": layoutMatrix,
 	"accented": layoutAccent
 };
+
+class InvalidNodeError extends Error {
+	constructor(message: string){
+		super(message);
+		this.name = "InvalidNodeError";
+	}
+}
+class UntypedNodeError extends Error {
+	constructor(message: string){
+		super(message);
+		this.name = "UntypedNodeError";
+	}
+}
+
 const getLayoutFuncByNode = (node: FormulaNode): LayoutFunction => {
+	if (typeof(node) !== "object"){
+		throw 'this node is not an object!';
+	}
+	if (node.type === undefined){
+		throw new UntypedNodeError("this node is lacking a type.");
+	}
+
+
 	if (Reflect.ownKeys(nodeLayoutFuncMap).includes(node.type)) {
 		return nodeLayoutFuncMap[node.type];
 	}
 	if (isNodeChar(node)) return layoutCharNode;
 	if (isNodeText(node)) return layoutTextNode;
+	
+
+	throw new InvalidNodeError(node.type === "char" ? 
+		"char is not a valid node-type. use ord, bin, ... instead." : 
+		`"${node.type}" is not a valid node-type`);
 };
 export const layoutNode : LayoutFunction = (node: FormulaNode) : BoxNode => getLayoutFuncByNode(node)(node);
 export const layoutWithStyle = (style: any) : LayoutFunction => pipe(withStyle(style), layoutNode) as LayoutFunction;
