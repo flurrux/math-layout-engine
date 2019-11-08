@@ -31,6 +31,7 @@ export const switchStyleType = (style: Style, nextStyleType: string): Style => i
 export const incrementStyle = (style: Style) => switchStyleType(style, incrementStyleType(style.type));
 export const smallerStyle = (style: Style) => switchStyleType(style, getSmallerStyleType(style.type));
 export const smallestStyle = (style: Style) => switchStyleType(style, styleType.SS);
+export const isDisplayStyle = (style: Style) => style.type === styleType.D;
 
 //if the node already has a style, merge the supplied style with it
 export const createNodeStyle = (node: FormulaNode, style: Style) => identity({

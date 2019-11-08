@@ -1,0 +1,32 @@
+
+
+over (fraction) ###
+
+the numerator and denominator are placed at a fixed position relative to the baseline (not axis!).
+the denominators target-position is downwards for positive values!
+
+this position depends on the current style: 
+num1 and denom1: if display-style
+num2 and denom2: otherwise
+
+there is a certain axis-height and rule-thickness. 
+the minimal allowed spacing between both nodes and the rule-stroke is 3*rulethickness if 
+display-style and 1*rulethickness if inline-style. 
+the spacing between numerator and the rule-stroke will be the distance from the bottom
+of the numerator to the top of the rule (axisheight + rule-thickness / 2).
+
+position the numerator and denominator, but if the spacing is violated, shift the nodes up/down 
+to preserve the spacing. 
+
+position of numerator: top(rule) + max(position(num) - depth(num) - top(rule), halfRuleThickness)
+
+
+
+atop (binomial) ###
+
+minimal-spacing: 7*default_rule_thickness if display-style, otherwise: 3*default_rule_thickness
+use the same target-positions as in fractions. 
+if the spacing between the nodes is smaller than the minimal-spacing, shift both nodes by the 
+same amount until the spacing is correct.
+
+
