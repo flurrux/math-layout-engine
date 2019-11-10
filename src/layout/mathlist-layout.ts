@@ -24,7 +24,6 @@ export const layoutMathList = (mathList: MathListNode) : BoxMathListNode => {
 	let curX = 0;
 	const positions: [number, number][] = [];
 	for (let i = 0; i < items.length; i++) {
-		const item = items[i];
 		const layoutItem = layoutItems[i];
 
 		positions.push([curX, 0]);

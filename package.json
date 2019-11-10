@@ -9,15 +9,16 @@
   "author": "Christian Hoffmann <christianhoffmann@outlook.com>",
   "license": "ISC",
   "dependencies": {
-    "@polymer/paper-item": "^3.0.1",
-    "@polymer/paper-listbox": "^3.0.1",
     "opentype.js": "^1.1.0",
     "ramda": "^0.26.1"
   },
   "devDependencies": {
     "@polymer/marked-element": "^3.0.1",
     "@polymer/paper-dropdown-menu": "^3.0.1",
-    "@polymer/paper-slider": "^3.0.1",
+	"@polymer/paper-slider": "^3.0.1",
+	"@polymer/paper-item": "^3.0.1",
+	"@polymer/paper-listbox": "^3.0.1",
+    "codemirror": "^5.49.2",
     "lit-element": "^2.2.1",
     "lit-html": "^1.1.2",
     "showdown": "^1.9.0",
