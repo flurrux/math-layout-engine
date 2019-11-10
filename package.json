@@ -21,7 +21,7 @@
     "lit-element": "^2.2.1",
     "lit-html": "^1.1.2",
     "showdown": "^1.9.0",
-    "typescript": "^3.6.4"
+    "typescript": "^3.7.2"
   },
   "browserslist": [
     "chrome 70"

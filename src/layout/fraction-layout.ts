@@ -9,10 +9,11 @@ import { FormulaNode, FractionNode as FormulaFractionNode, BoxNode, Dimensions, 
 import { Style } from '../style';
 import { max } from "../util";
 
-interface BoxFractionNode extends BoxNode {
+export interface BoxFractionNode extends BoxNode {
 	numerator: BoxNode,
 	denominator: BoxNode,
-	ruleThickness: number
+	ruleThickness: number,
+	ruleY: number
 };
 
 /*
@@ -29,12 +30,13 @@ const getRuleThickness = (style: Style) => style.fontSize * defaultRuleThickness
 
 const maxTextualHeight = 0.685;
 const maxTextualDepth = -0.205
+const axisHeight = 0.25;
 
-const numeratorYDisplayStyle = 0;
-const numeratorYInlineStyle = 0;
+const numeratorYDisplayStyle = axisHeight - maxTextualDepth;
+const numeratorYInlineStyle = numeratorYDisplayStyle;
 
-const denominatorYDisplayStyle = 0;
-const denominatorYInlineStyle = 0;
+const denominatorYDisplayStyle = axisHeight - maxTextualHeight;
+const denominatorYInlineStyle = denominatorYDisplayStyle;
 
 const horizontalPadding = 0.2;
 
@@ -55,8 +57,8 @@ export const layoutFraction = (fraction: FormulaFractionNode) : BoxFractionNode 
 	const { fontSize } = style;
 	const isDisplay = isDisplayStyle(style);
 	const subStyle = incrementStyle(style);
-	const num: BoxNode = pipe(withStyle(subStyle), layoutNode)(fraction.numerator);
-	const denom: BoxNode = pipe(withStyle({ ...subStyle, cramped: true }), layoutNode)(fraction.denominator);
+	let num: BoxNode = pipe(withStyle(subStyle), layoutNode)(fraction.numerator);
+	let denom: BoxNode = pipe(withStyle({ ...subStyle, cramped: true }), layoutNode)(fraction.denominator);
 
 	const ruleThickness = getRuleThickness(subStyle);
 	const halfRuleThickness = ruleThickness / 2;
@@ -64,16 +66,16 @@ export const layoutFraction = (fraction: FormulaFractionNode) : BoxFractionNode 
 
 	const axisHeight = getAxisHeight(style);
 
-	const numeratorY = calculateNumeratorPositionY(num, fontSize, isDisplay, axisHeight + halfRuleThickness);
-	const denomY = calculateDenominatorPositionY(denom, fontSize, isDisplay, axisHeight - halfRuleThickness);
+	const numeratorY = calculateNumeratorPositionY(num, fontSize, isDisplay, axisHeight + halfRuleThickness + minSpacing);
+	const denomY = calculateDenominatorPositionY(denom, fontSize, isDisplay, axisHeight - halfRuleThickness - minSpacing);
 
 	//calculate width and center items horizontally
 	const maxWidth = max([num, denom].map(n => n.dimensions.width));
 	const width = maxWidth + (2 * horizontalPadding * style.fontSize);
 	const middleXs = [num, denom].map(n => calcCentering(n.dimensions.width, width));
 
-	const numPos: Vector2 = [middleXs[0], numeratorY];
-	const denomPos: Vector2 = [middleXs[1], denomY];
+	num = setPosition([middleXs[0], numeratorY])(num);
+	denom = setPosition([middleXs[1], denomY])(denom);
 
 	const dimensions = {
 		width,
@@ -83,9 +85,9 @@ export const layoutFraction = (fraction: FormulaFractionNode) : BoxFractionNode 
 
 	return {
 		type: "fraction", style,
-		numerator: setPosition(numPos)(num),
-		denominator: setPosition(denomPos)(denom),
-		ruleThickness,
+		numerator: num,
+		denominator: denom,
+		ruleThickness, ruleY: axisHeight,
 		dimensions
 	};
 };

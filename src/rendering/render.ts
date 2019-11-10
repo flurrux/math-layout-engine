@@ -1,9 +1,11 @@
 import { pickList, isDefined, addFontFaces } from '../util';
 import { fontIdentifiers } from '../font-data/katex-font-util';
 import { pathContours } from '../opentype-util';
-import { BoxNode, Style } from '../types';
+import { BoxNode, ContoursNode } from '../types';
+import { Style } from '../style';
 import { BoxCharNode } from '../layout/char-layout';
 import { BoxTextNode } from '../layout/text-layout';
+import { BoxFractionNode } from '../layout/fraction-layout';
 import { setPosition } from '../layout/layout-util';
 
 export const loadKatexFontFaces = async () => {
@@ -60,7 +62,7 @@ const renderText = (ctx: CanvasRenderingContext2D, style: Style, text: string) =
 const renderChar = (ctx: CanvasRenderingContext2D, node: BoxCharNode) => renderText(ctx, node.style, node.char);
 const renderTextNode = (ctx: CanvasRenderingContext2D, node: BoxTextNode) => renderText(ctx, node.style, node.text);
 
-const renderContours = (ctx: CanvasRenderingContext2D, node) => {
+const renderContours = (ctx: CanvasRenderingContext2D, node: ContoursNode) => {
 	ctx.save();
 	const { fontSize } = node.style;
 	ctx.scale(fontSize, fontSize);
@@ -69,16 +71,16 @@ const renderContours = (ctx: CanvasRenderingContext2D, node) => {
 	ctx.fill();
 	ctx.restore();
 };
-const renderFractionRule = (ctx: CanvasRenderingContext2D, width, thickness: number) => {
+const renderFractionRule = (ctx: CanvasRenderingContext2D, y: number, width: number, thickness: number) => {
 	ctx.beginPath();
-	ctx.moveTo(0, 0);
-	ctx.lineTo(width, 0);
+	ctx.moveTo(0, y);
+	ctx.lineTo(width, y);
 	ctx.lineWidth = thickness;
 	ctx.stroke();
 };
-const renderFraction = (ctx: CanvasRenderingContext2D, node) => {
+const renderFraction = (ctx: CanvasRenderingContext2D, node: BoxFractionNode) => {
 	renderSubNodes(ctx, node, ["numerator", "denominator"]);
-	renderFractionRule(ctx, node.dimensions.width, node.ruleThickness);
+	renderFractionRule(ctx, node.ruleY, node.dimensions.width, node.ruleThickness);
 };
 const renderSubNodes = (ctx: CanvasRenderingContext2D, node: BoxNode, props: string[]) => pickList(props, node)
 	.filter(isDefined).forEach((subNode => renderNode(ctx, subNode)));
@@ -99,13 +101,13 @@ const renderNode = (ctx: CanvasRenderingContext2D, node: BoxNode) => {
 		renderTextNode(ctx, node as BoxTextNode);
 	}
 	else if (nodeType === "contours") {
-		renderContours(ctx, node);
+		renderContours(ctx, node as ContoursNode);
 	}
 	else if (nodeType === "mathlist") {
 		renderNodes(ctx, (node as any).items as BoxNode[]);
 	}
 	else if (nodeType === "fraction") {
-		renderFraction(ctx, node);
+		renderFraction(ctx, node as BoxFractionNode);
 	}
 	else if (nodeType === "script") {
 		renderSubNodes(ctx, node, ["nucleus", "sup", "sub"]);
