@@ -49,11 +49,6 @@ const isNodeOfAnyType = (node: FormulaNode, types: string[]) : boolean => types.
 export const isNodeAlignedToBaseline = (node: FormulaNode) : boolean => isNodeOfAnyType(node, ["mathlist", "script"]) ||
 	isNodeTextual(node) || (node.type === "root" && isNodeAlignedToBaseline((node as RootNode).radicand));
 
-const isNodeAlignedToAxis = (node: FormulaNode) => (node.type === "root" && isNodeAlignedToAxis((node as RootNode).radicand));
-
-//if a node is aligned to the axis rather than the baseline, this function will get the vertical offset
-export const getAxisAlignment = (style: Style, node: FormulaNode) => isNodeAlignedToAxis(node) ? getAxisHeight(style) : 0;
-
 
 
 const offsetDimensionsVertically = (dimensions: Dimensions, offset: number): Dimensions => R.identity({

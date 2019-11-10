@@ -1,5 +1,5 @@
 import { layoutNode } from "./layout";
-import { calcBoundingDimensions, getAxisAlignment } from './layout-util';
+import { calcBoundingDimensions } from './layout-util';
 import { lookUpHorizontalSpacing } from "./horizontal-layout";
 import { map, pipe } from 'ramda';
 import { withStyle } from "../style";
@@ -26,9 +26,8 @@ export const layoutMathList = (mathList: MathListNode) : BoxMathListNode => {
 	for (let i = 0; i < items.length; i++) {
 		const item = items[i];
 		const layoutItem = layoutItems[i];
-		const y = getAxisAlignment(style, item);
 
-		positions.push([curX, y]);
+		positions.push([curX, 0]);
 		curX += layoutItem.dimensions.width;
 
 		//spacing

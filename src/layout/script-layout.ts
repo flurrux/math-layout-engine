@@ -33,7 +33,7 @@ import { smallerStyle, smallestStyle, withStyle, Style } from "../style";
 import { pickList, isDefined, min } from "../util";
 import { layoutNode, layoutWithStyle } from "./layout";
 import { 
-	center, setPosition, calcBoundingDimensions, getAxisHeight, getAxisAlignment, alignToYAxis
+	center, setPosition, calcBoundingDimensions, getAxisHeight, alignToYAxis
 } from './layout-util';
 
 import { lookUpUnicode, lookUpGlyphByCharOrAlias, getMetricsObject, Metrics } from "../font-data/katex-font-util";
@@ -141,7 +141,7 @@ const layoutScriptNoLimitPosition = (script: FormulaScriptNode) : BoxScriptNode 
 		const supStyle = getSubOrSupStyle(style, sup);
 		const supLayouted: BoxNode = pipe(withStyle(supStyle), layoutNode)(sup);
 		const targetY = (() => {
-			let y = supSubTargetY[0] - getAxisAlignment(style, sup) + getCrampedTargetYOffset(style);
+			let y = supSubTargetY[0] + getCrampedTargetYOffset(style);
 
 			//if bottom of superscript is too close to baseline, shift it up
 			const minBottomToBaselineGap = fontSize * 0.3;
