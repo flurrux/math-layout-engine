@@ -65,6 +65,10 @@ export const layoutAccent = (node: FormulaAccentNode) : BoxAccentNode => {
     const nucleusPositioned: BoxNode = setPosition([horizontalShift, 0])(nucleusLayouted);
     const accentPositioned: BoxCharNode = setPosition<BoxCharNode>([accentX, accentY])(accentLayouted);
 
+    if (accentLayouted.unicode === 8407){
+        accentLayouted.dimensions.width -= accentPlacementData.accentOffsetX;
+    }
+
     const dimensions = calcBoundingDimensions([nucleusPositioned, accentPositioned]);
     return {
         type: "accented",

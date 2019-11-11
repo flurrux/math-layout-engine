@@ -143,7 +143,11 @@ class LiveMathLayoutEditor extends LitElement {
 								{ "type": "ord", "value": "q" },
 								{ "type": "bin", "value": "+" },
 								{
-								   	"type": "fraction",
+									"type": "fraction",
+									"style": {
+										"baseFontSize": 25,
+										"fontSize": 25
+									},
 									"numerator": { 
 										"type": "script",
 										"nucleus": {
@@ -162,7 +166,11 @@ class LiveMathLayoutEditor extends LitElement {
 				   	},
 					{ "type": "bin", "value": "-" },
 				   	{
-					   	"type": "fraction",
+						"type": "fraction",
+						"style": {
+							"baseFontSize": 25,
+							"fontSize": 25
+						},
 					   	"numerator": { 
 						   	"type": "ord", "value": "p"
 					   	},
@@ -171,7 +179,29 @@ class LiveMathLayoutEditor extends LitElement {
 					   	}
 				   	}
 			   	]      
-		   	}
+			},
+			"accent": {
+				"type": "mathlist",
+				"items": [
+					{
+						"type": "accented",
+						"nucleus": { "type": "ord", "value": "L" },
+						"accent": { "type": "ord", "value": "vector" }
+					},
+					{ "type": "rel", "value": "=" },
+					{
+						"type": "accented",
+						"nucleus": { "type": "ord", "value": "I" },
+						"accent": { "type": "ord", "value": "~" }
+					},
+					{ "type": "bin", "value": "*" },
+					{
+						"type": "accented",
+						"nucleus": { "type": "ord", "value": "w" },
+						"accent": { "type": "ord", "value": "vector" }
+					},
+				]
+			}   
 		}
 	}
 	constructor(){
@@ -181,7 +211,7 @@ class LiveMathLayoutEditor extends LitElement {
 			currentError: "",
 			outputText: "",
 			codeExampleIndex: -1,
-			outputMode: "json"
+			outputMode: "rendered"
 		});
 		loadKatexFontFaces();
 	}

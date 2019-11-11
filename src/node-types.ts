@@ -19,7 +19,7 @@ export const nodeType = {
 };
 
 export const glyphTypes = ["ord", "op", "bin", "rel", "open", "close", "punct"];
-export const compositeTypes = ["mathlist", "fraction", "root", "script", "delimited"];
+export const compositeTypes = ["mathlist", "fraction", "root", "script", "delimited", "accented"];
 
 import { FormulaNode, TextNode } from './types';
 
