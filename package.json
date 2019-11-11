@@ -13,11 +13,14 @@
     "ramda": "^0.26.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.7.2",
+    "@babel/plugin-transform-classes": "^7.7.0",
     "@polymer/marked-element": "^3.0.1",
     "@polymer/paper-dropdown-menu": "^3.0.1",
-	"@polymer/paper-slider": "^3.0.1",
-	"@polymer/paper-item": "^3.0.1",
-	"@polymer/paper-listbox": "^3.0.1",
+    "@polymer/paper-item": "^3.0.1",
+    "@polymer/paper-listbox": "^3.0.1",
+    "@polymer/paper-slider": "^3.0.1",
+    "babel-preset-es2017": "^6.24.1",
     "codemirror": "^5.49.2",
     "lit-element": "^2.2.1",
     "lit-html": "^1.1.2",
@@ -25,6 +28,6 @@
     "typescript": "^3.7.2"
   },
   "browserslist": [
-    "chrome 70"
+    "last 1 chrome versions"
   ]
 }

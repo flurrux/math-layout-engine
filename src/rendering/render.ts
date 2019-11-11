@@ -131,7 +131,6 @@ export const centerNodeOnCanvas = (canvas: HTMLCanvasElement, node: BoxNode) : B
 export const renderFormulaLayout = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, formulaLayout: BoxNode) => {
 	ctx.save();
 	Object.assign(ctx, { fillStyle: "black", strokeStyle: "black" });
-
 	ctx.setTransform(1, 0, 0, -1, 0, canvas.height);
 	renderNode(ctx, formulaLayout);
 	ctx.restore();

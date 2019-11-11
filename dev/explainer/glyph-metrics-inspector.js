@@ -1,6 +1,8 @@
 import { LitElement, html, css } from 'lit-element';
 import { getMetricsObject, styleWeightCombinationToEmphasis, fontData, lookUpGlyphByCharOrAlias } from '../../src/font-data/katex-font-util';
 import fontMetricsData from '../../src/font-data/font-metrics-data';
+import '../resizable-canvas';
+import '../select-element';
 
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
 import '@polymer/paper-item/paper-item.js';
@@ -66,75 +68,10 @@ const fillCanvasCenteredText = (canvas, ctx, text) => {
 };
 
 
-class SelectElement extends LitElement {
-    static get properties(){
-        return {
-            selectedIndex: { type: Number },
-            options: { type: Array }
-        }
-    }
-    constructor(){
-        super();
-        Object.assign(this, {
-            selectedIndex: 0,
-            options: [] 
-        });
-    }
-    render(){
-        return html`
-            <select @input=${e => this.dispatchEvent(new CustomEvent("index-changed", { detail: { selectedIndex: e.srcElement.selectedIndex } }))}>
-                ${this.options.map(opt => html`<option>${opt}</option>`)}
-            </select>
-        `;
-    }
-    updated(){
-        const select = this.shadowRoot.querySelector("select");
-        select.selectedIndex = this.selectedIndex;
-    }
-}
-customElements.define("select-element", SelectElement);
 
 
-class ResizableCanvas extends LitElement {
-    static get styles(){
-        return css`
-            :host {
-                display: block;
-                position: relative;
-            }
-            .container {
-                overflow: hidden;
-                width: 100%;
-                height: 100%;
-            }
-            canvas {
-                position: absolute;
-            }
-        `;
-    }
-    render(){
-        return html`
-            <div class="container">
-                <canvas></canvas>
-            </div>
-        `;
-    }
-    firstUpdated(){
-        const canvas = this.shadowRoot.querySelector("canvas");
-        const outerEl = this.shadowRoot.querySelector(".container");
-        const updateCanvasSize = () => {
-            const [width, height] = [outerEl.clientWidth, outerEl.clientHeight];
-            Object.assign(canvas, { width, height });
-            canvas.style.width = width + "px";
-            canvas.style.height = height + "px";
-            this.dispatchEvent(new CustomEvent("canvas-resized"));
-        };
-        const resizeObserver = new ResizeObserver(updateCanvasSize);
-        resizeObserver.observe(outerEl);
-        this.dispatchEvent(new CustomEvent("first-updated"));
-    }
-}
-customElements.define("resizable-canvas", ResizableCanvas);
+
+
 
 
 class GlyphMetricsInspector extends LitElement {
