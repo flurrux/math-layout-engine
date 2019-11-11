@@ -26,6 +26,7 @@
 	strike-through	
 
 	todo:
+	- remove baseFontSize from output-style
 	- error messages
 	- make different-sized contours like delimiters and radicals have the same topology, 
 	so they can be interpolated.

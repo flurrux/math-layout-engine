@@ -27,3 +27,8 @@ export const isDefined = (obj: any) : boolean => obj !== undefined;
 const spread = (func: Function) => ((arr: any[]) => func(...arr));
 export const min: ((input: number[]) => number) = spread(Math.min);
 export const max: ((input: number[]) => number) = spread(Math.max);
+
+import { fromPairs } from 'ramda';
+export const removeKeys = (keys: string[]) => ((obj: object) => {
+	return fromPairs((Object as any).entries(obj).filter((entry: string) => !keys.includes(entry[0])));
+});

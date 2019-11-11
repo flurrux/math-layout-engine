@@ -3,13 +3,19 @@ import { setPosition, getAxisHeight, isNodeAlignedToBaseline } from './layout-ut
 import { map, filter, range, pipe, pick, add, multiply, identity } from 'ramda';
 import { sum, accumSum, max } from "../util";
 import { BoxNode, MatrixNode as FormulaMatrixNode, FormulaNode, Vector2 } from "../types";
+import { Style } from "../style";
 
+
+interface MatrixStyle extends Style {
+	rowSpacing: number,
+	colSpacing: number
+};
 
 interface BoxMatrixNode extends BoxNode {
 	items: BoxNode[],
 	rowCount: number,
-	colCount: number
-}
+	colCount: number,
+};
 
 
 const getPositionInMatrix = (colCount: number, flatIndex: number) => [Math.floor(flatIndex / colCount), flatIndex % colCount];
@@ -26,7 +32,6 @@ const partitionIntoRows = <T>(colCount: number) => ((array: T[]): T[][] => array
 	return rows;
 }, map(() => [], range(0, array.length / colCount))));
 
-const calcOffsetY = (node: FormulaNode, layoutedNode: BoxNode) => isNodeAlignedToBaseline(node) ? 0 : getAxisHeight(layoutedNode.style);
 interface HeightAndDepth {
 	yMin: number, yMax: number
 };
@@ -39,26 +44,21 @@ const maxHeightAndDepth = (heightsAndDepths: HeightAndDepth[]) => identity({
 
 //every item is aligned to the baseline
 export const layoutMatrix = (matrixNode: FormulaMatrixNode) : BoxMatrixNode => {
-	const { style } = matrixNode;
-	const { fontSize } = style;
-	matrixNode = {
-		rowSpacing: 0.1,
-		colSpacing: 0.1,
-		...matrixNode
+	const style = matrixNode.style;
+	const spacings = {
+		rowSpacing: 0.2, 
+		colSpacing: 0.2,
+		...matrixNode.style
 	};
+	const { fontSize } = style;
 	const { rowCount, colCount, items } = matrixNode;
 	let itemsLayouted: BoxNode[] = map(layoutWithStyle(style), items);
-
-	const yOffsetMap = new Map();
-	for (const [index, layoutItem] of itemsLayouted.entries()){
-		yOffsetMap.set(layoutItem, calcOffsetY(items[index], layoutItem));
-	}
 	const colWidths: number[] = pipe(partitionIntoCols(colCount), map((col: BoxNode[]) => pipe(map(widthOfNode), max)(col)))(itemsLayouted);
 	const rowDims: HeightAndDepth[] = pipe(
 		partitionIntoRows(colCount), 
-		map((row: BoxNode[]) => maxHeightAndDepth(map((item: BoxNode) => map(add(yOffsetMap.get(item)), heightOfNode(item)), row)))
+		map((row: BoxNode[]) => maxHeightAndDepth(map((item: BoxNode) => heightOfNode(item), row)))
 	)(itemsLayouted);
-	const rowAndColSpacing: { rowSpacing: number, colSpacing: number } = pipe(pick(["rowSpacing", "colSpacing"]), map(multiply(fontSize)))(matrixNode);
+	const rowAndColSpacing: { rowSpacing: number, colSpacing: number } = pipe(pick(["rowSpacing", "colSpacing"]), map(multiply(fontSize)))(spacings);
 	const { rowSpacing, colSpacing } = rowAndColSpacing;
 	const totalWidth = sum(colWidths) + (colCount - 1) * colSpacing;
 	const totalHeight = sum(map(dim => dim.yMax - dim.yMin)(rowDims)) + (rowCount - 1) * rowSpacing;
@@ -77,7 +77,7 @@ export const layoutMatrix = (matrixNode: FormulaMatrixNode) : BoxMatrixNode => {
 		const [rowIndex, colIndex] = getPositionInMatrix(colCount, index);
 		return setPosition([
 			colPositions[colIndex], 
-			rowPositions[rowIndex] + yOffsetMap.get(layoutedItem) 
+			rowPositions[rowIndex] 
 		])(layoutedItem);
 	});
 

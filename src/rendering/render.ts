@@ -67,7 +67,6 @@ const renderContours = (ctx: CanvasRenderingContext2D, node: ContoursNode) => {
 	const { fontSize } = node.style;
 	ctx.scale(fontSize, fontSize);
 	pathContours(ctx, node.contours);
-	ctx.fillStyle = "black";
 	ctx.fill();
 	ctx.restore();
 };
@@ -130,7 +129,6 @@ export const centerNodeOnCanvas = (canvas: HTMLCanvasElement, node: BoxNode) : B
 ])(node);
 export const renderFormulaLayout = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, formulaLayout: BoxNode) => {
 	ctx.save();
-	Object.assign(ctx, { fillStyle: "black", strokeStyle: "black" });
 	ctx.setTransform(1, 0, 0, -1, 0, canvas.height);
 	renderNode(ctx, formulaLayout);
 	ctx.restore();

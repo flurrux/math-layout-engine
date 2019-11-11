@@ -107,7 +107,7 @@ const layoutScriptLimitPosition = (script: FormulaScriptNode) : BoxScriptNode =>
 		nucleus: setPosition([0, 0])(nucleusLayouted),
 		sup: script.sup ? layoutSuperScriptInLimitPosition(style, scriptStyle, nucleusDim, script.sup) : undefined,
 		sub: script.sub ? layoutSubScriptInLimitPosition(style, scriptStyle, nucleusDim, script.sub) : undefined,
-	});
+	}) as { nucleus: BoxNode, sup?: BoxNode, sub?: BoxNode };
 	
 	const dimensions = calcBoundingDimensions(valuesInObject(scriptLayouted));
 	return {
@@ -172,7 +172,7 @@ const layoutScriptNoLimitPosition = (script: FormulaScriptNode) : BoxScriptNode 
 			return y;
 		})();
 
-		const subX = isNodeChar(nucleus) ? (fontSize * getMetricsOfCharNode(nucleus as BoxCharNode).width) : nucleusRight;
+		const subX = isNodeChar(nucleus) ? (fontSize * getMetricsOfCharNode(nucleusLayouted as BoxCharNode).width) : nucleusRight;
 		subLayouted.position = [subX, targetY];
 		scriptLayouted.sub = subLayouted;
 	}
