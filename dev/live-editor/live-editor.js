@@ -198,6 +198,7 @@ class LiveMathLayoutEditor extends LitElement {
 					type: "D", 
 					baseFontSize: 40,
 					fontSize: 40,
+					...(node.style || {})
 				};
 				const nodeLayouted = layoutNode({ ...node, style: defaultStyle });
 				this._layoutedNode = nodeLayouted;
