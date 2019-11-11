@@ -1,3 +1,10 @@
+## description
+
+this is a small engine for calculating the layout of math-formulae.  
+unlike (katex)[https://katex.org/] it produces a fixed layout in pojo format which can  
+be rendered to canvas.  
+
+[try it live!](https://tender-brattain-a839fc.netlify.com/)
 
 
 ## examples  
