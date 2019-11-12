@@ -8,6 +8,7 @@ import { createNodeStyle } from "../style";
 import { Metrics } from '../font-data/katex-font-util';
 import { Dimensions, BoundingBox, CharNode as FormulaCharNode, BoxNode } from '../types';
 import { Style } from '../style';
+import { validateProperties } from "./error";
 
 export interface BoxCharNode extends BoxNode {
 	type: string,
@@ -29,9 +30,10 @@ const getDimensionsOfCharNode = (style: Style, node: FormulaCharNode) : Dimensio
 	});
 };
 export const layoutCharNode = (node: FormulaCharNode) : BoxCharNode => {
-	if (typeof(node.value) !== "string"){
-		throw 'the value-property of this CharNode is either missing or not a string';
-	}
+	validateProperties({
+		value: "string"
+	})(node);
+	
 	const { fontFamily, unicode } = lookUpGlyphByCharOrAlias(node.value);
 	const emphasis : string = getDefaultEmphasis(fontFamily);
 	const style = createNodeStyle(node, { fontFamily, emphasis });

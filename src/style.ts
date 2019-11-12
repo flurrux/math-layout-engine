@@ -33,7 +33,7 @@ export const smallestStyle = (style: Style) => switchStyleType(style, styleType.
 export const isDisplayStyle = (style: Style) => style.type === styleType.D;
 
 //if the node already has a style, merge the supplied style with it
-export const createNodeStyle = (node: FormulaNode, style: Style) => identity({
+export const createNodeStyle = (node: FormulaNode, style: Style) : Style => identity({
 	...style, ...(node.style || {})
 });
 

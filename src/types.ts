@@ -74,8 +74,8 @@ export interface DelimitedNode extends FormulaNode {
 
 export interface ScriptNode extends FormulaNode {
 	nucleus: FormulaNode,
-	sup: FormulaNode,
-	sub: FormulaNode
+	sup?: FormulaNode,
+	sub?: FormulaNode
 };
 
 

@@ -4,6 +4,7 @@ import { map, filter, range, pipe, pick, add, multiply, identity } from 'ramda';
 import { sum, accumSum, max } from "../util";
 import { BoxNode, MatrixNode as FormulaMatrixNode, FormulaNode, Vector2 } from "../types";
 import { Style } from "../style";
+import { validateProperties } from "./error";
 
 
 interface MatrixStyle extends Style {
@@ -44,6 +45,13 @@ const maxHeightAndDepth = (heightsAndDepths: HeightAndDepth[]) => identity({
 
 //every item is aligned to the baseline
 export const layoutMatrix = (matrixNode: FormulaMatrixNode) : BoxMatrixNode => {
+	validateProperties({
+		rowCount: "number", 
+		colCount: "number",
+		items: "array"
+	});
+
+
 	const style = matrixNode.style;
 	const spacings = {
 		rowSpacing: 0.2, 

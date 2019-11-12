@@ -1,7 +1,9 @@
-import { sum, pipe, map } from 'ramda';
+import { sum, pipe, map, multiply } from 'ramda';
 import { getMetricsObject } from '../font-data/katex-font-util';
 import { createNodeStyle } from '../style';
-import { Style, BoxNode, TextNode as FormulaTextNode } from '../types';
+import { BoxNode, TextNode as FormulaTextNode } from '../types';
+import { Style } from '../style';
+import { validateProperties } from './error';
 
 export interface BoxTextNode extends BoxNode {
 	text: string
@@ -16,17 +18,23 @@ const calculateTextWidth = (style: Style, text:  string) => pipe(
 )(text);
 
 export const layoutTextNode = (textNode: FormulaTextNode) : BoxTextNode => {
+	validateProperties({
+		text: "string"
+	})(textNode);
+	
+	const { text } = textNode;
 	const style = createNodeStyle(textNode, {
 		fontFamily: "Main", 
 		emphasis: "Regular",
 	});
-	const dimensions = {
-		width: calculateTextWidth(style, textNode.text) * style.fontSize,
-		yMax: maxTextualHeight * style.fontSize,
-		yMin: maxTextualDepth * style.fontSize,
-	};
+	const { fontSize } = style;
+	const dimensions = map(multiply(fontSize))({
+		width: calculateTextWidth(style, text),
+		yMax: maxTextualHeight,
+		yMin: maxTextualDepth,
+	});
 	return {
-		type: "text", text: textNode.text,
+		type: "text", text,
 		dimensions, style
 	};
 };

@@ -46,35 +46,42 @@ async function main(){
 
 	
 	const formulaData = {
-		type: "mathlist",
-		items: [
-			{ 
-				type: "script",
-				nucleus: { type: "op", value: "sum" },
-				sub: {
-					type: "mathlist",
-					items: [
-						{ type: "ord", value: "n" },
-						{ type: "ord", value: "=" },
-						{ type: "ord", value: "1" }
-					]
-				},
-				sup: { type: "ord", value: "infinity" }
-			},
-			{
-				type: "fraction",
-				numerator: { type: "ord", value: "1" },
-				denominator: {
-					type: "mathlist",
-					items: [
-						{ type: "ord", value: "n" },
-						{ type: "ord", value: "!" },
-					]
+		"type": "fraction",
+		"numerator": {
+				"type": "ord", "value": "1" 
+		},
+		"denominator": {
+			"type": "mathlist",
+			"items": [
+				{ "type": "ord", "value": "1" },
+				{ "type": "bin", "value": "+" },
+				{
+					"type": "fraction",
+					"numerator": {
+						"type": "ord", "value": "1" 
+					},
+					"denominator": {
+						"type": "mathlist",
+						"items": [
+							{ "type": "ord", "value": "1" },
+							{ "type": "bin", "value": "+" },
+							{
+								"type": "fraction",
+								"numerator": {
+									"type": "ord", "value": "1" 
+								},
+								"denominator": {
+									"type": "mathlist",
+									"items": [
+										{ "type": "ord", "value": "1" }
+									]
+								}
+							}
+						]
+					}
 				}
-			},
-			{ type: "rel", value: "=" },
-			{ type: "ord", value: "e" }
-		]
+			]
+		}
 	};
 	
 	const defaultStyle = {

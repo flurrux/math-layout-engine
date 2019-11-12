@@ -219,28 +219,7 @@ class LiveMathLayoutEditor extends LitElement {
 	}
 	updated(changedProps){
 		if (changedProps.has("text")){
-			this.currentError = "";
-			try {
-				const node = JSON.parse(this.text);
-				const defaultStyle = {
-					type: "D", 
-					fontSize: 40,
-					...(node.style || {})
-				};
-				const style = {
-					...defaultStyle,
-					...(node.style || {})
-				};
-				const nodeLayouted = layoutNode({ ...node, style});
-				this._layoutedNode = nodeLayouted;
-				this.outputText = JSON.stringify(nodeLayouted, null, 4);
-				this._outputEditor.setValue(this.outputText);
-				this._renderLayoutedNode();
-			}
-			catch (e){
-				console.log(e);
-				this.currentError = e.message;
-			}
+			this._tryProcessingText();
 		}
 		if (changedProps.has("codeExampleIndex")){
 			if (this.codeExampleIndex >= 0){
@@ -249,6 +228,30 @@ class LiveMathLayoutEditor extends LitElement {
 		}
 		if (changedProps.has("outputMode")){
 			this._outputEditor.refresh();
+		}
+	}
+	_tryProcessingText(){
+		this.currentError = "";
+		try {
+			const node = JSON.parse(this.text);
+			const defaultStyle = {
+				type: "D", 
+				fontSize: 40,
+				...(node.style || {})
+			};
+			const style = {
+				...defaultStyle,
+				...(node.style || {})
+			};
+			const nodeLayouted = layoutNode({ ...node, style});
+			this._layoutedNode = nodeLayouted;
+			this.outputText = JSON.stringify(nodeLayouted, null, 4);
+			this._outputEditor.setValue(this.outputText);
+			this._renderLayoutedNode();
+		}
+		catch (e){
+			console.log(e);
+			this.currentError = e.message;
 		}
 	}
 	_initCanvas(canvas){

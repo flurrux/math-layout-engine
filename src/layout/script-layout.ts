@@ -39,6 +39,7 @@ import {
 import { lookUpUnicode, lookUpGlyphByCharOrAlias, getMetricsObject, Metrics } from "../font-data/katex-font-util";
 import { pipe, filter, map, multiply, identity } from 'ramda';
 import { BoxCharNode } from './char-layout';
+import { validateProperties } from "./error";
 
 
 const getMetricsOfCharNode = (node: BoxCharNode) => getMetricsObject(node.style.fontFamily, node.style.emphasis, node.unicode);
@@ -122,6 +123,10 @@ const layoutScriptLimitPosition = (script: FormulaScriptNode) : BoxScriptNode =>
 //nolimit position ###
 
 const layoutScriptNoLimitPosition = (script: FormulaScriptNode) : BoxScriptNode => {
+	validateProperties({
+		nucleus: "object"
+	})(script);
+
 	const { style } = script;
 	const { nucleus, sup, sub } = script;
 

@@ -5,6 +5,7 @@ import { map, pipe } from 'ramda';
 import { withStyle } from "../style";
 import { FormulaNode, MathListNode, BoxNode } from '../types';
 import { Style } from '../style';
+import { WrongPropertyTypeError, validateProperties } from './error';
 
 export interface BoxMathListNode extends BoxNode {
 	items: BoxNode[]
@@ -14,10 +15,11 @@ const calculateHorizontalSpacing = (style: Style, index: number, itemCount: numb
 	return (index >= itemCount - 1 || ["S", "SS"].includes(style.type)) ? 0 : lookUpHorizontalSpacing(node1, node2) * style.fontSize;
 };
 export const layoutMathList = (mathList: MathListNode) : BoxMathListNode => {
+	validateProperties({
+		items: "array"
+	})(mathList);
+	
 	const { items } = mathList;
-	if (!Array.isArray(items)){
-		throw `the property "items" in this MathListNode is not an array.`;
-	}
 	const { style } = mathList;
 	const layoutItems : BoxNode[] = map(pipe(withStyle(style), layoutNode))(items);
 

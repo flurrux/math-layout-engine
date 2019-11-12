@@ -8,6 +8,7 @@ import { map, pipe } from 'ramda';
 import { FormulaNode, FractionNode as FormulaFractionNode, BoxNode, Dimensions, Vector2 } from '../types';
 import { Style } from '../style';
 import { max } from "../util";
+import { validateProperties } from "./error";
 
 export interface BoxFractionNode extends BoxNode {
 	numerator: BoxNode,
@@ -53,6 +54,11 @@ const calculateDenominatorPositionY = (denom: BoxNode, fontSize: number, isDispl
 
 
 export const layoutFraction = (fraction: FormulaFractionNode) : BoxFractionNode => {
+	validateProperties({
+		numerator: "object",
+		denominator: "object"
+	})(fraction);
+	
 	const { style } = fraction;
 	const { fontSize } = style;
 	const isDisplay = isDisplayStyle(style);

@@ -6,6 +6,7 @@ import { getMetricsObject, Metrics } from "../font-data/katex-font-util";
 import { FormulaNode, BoxNode, CharNode } from '../types';
 import { Style } from '../style';
 import { BoxCharNode } from './char-layout';
+import { validateProperties } from "./error";
 
 export interface FormulaAccentNode extends FormulaNode {
     nucleus: FormulaNode,
@@ -50,10 +51,14 @@ const getAccentPlacementData = (style: Style, nucleus: FormulaNode, nucleusLayou
 };
 
 export const layoutAccent = (node: FormulaAccentNode) : BoxAccentNode => {
-    const { nucleus, accent, style } = node;
-
+    validateProperties({
+        nucleus: "object",
+        accent: "object"
+    })(node);
     
-    const fontSize = style.fontSize;
+    const { nucleus, accent } = node;
+    const { style } = node;
+    const { fontSize } = style;
     const nucleusLayouted = layoutWithStyle(style)(nucleus);
     const accentLayouted = layoutWithStyle(style)(accent) as BoxCharNode;
 

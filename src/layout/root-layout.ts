@@ -6,12 +6,17 @@ import { createRadical } from "../glyph-modification/create-radical";
 import { switchStyleType, withStyle } from "../style";
 
 import { BoxNode, RootNode as FormulaRootNode, ContoursNode, Vector2 } from '../types';
+import { validateProperties } from "./error";
 
 export interface BoxRootNode {
 	radicand: BoxNode
 };
 
 export const layoutRoot = (root: FormulaRootNode) => {
+	validateProperties({
+		radicand: "object"
+	})(root);
+
 	const { style } = root;
 	const { fontSize } = style;
 	let radicandLayouted = pipe(withStyle(style), layoutNode)(root.radicand);
