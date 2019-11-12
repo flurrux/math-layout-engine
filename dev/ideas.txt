@@ -60,7 +60,6 @@ font-styles:
 		style: {
 			type: D | T | S | SS,
 			cramped: bool,
-			baseFontSize: number
 		}
 		font-size and axis-height can be infered from style.
 

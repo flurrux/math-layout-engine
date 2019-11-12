@@ -92,7 +92,6 @@ if there is no entry, there is a fixed order of font-families to search through 
 after the layout-algorithm is done, every node has a style-property.  
 a style object has a 
 - type  
-- baseFontSize  
 - fontSize  
 - fontFamily (optional)  
 - emphasis (options)  

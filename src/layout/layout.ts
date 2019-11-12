@@ -94,15 +94,6 @@ const getLayoutFuncByNode = (node: FormulaNode): LayoutFunction => {
 		"char is not a valid node-type. use ord, bin, ... instead." : 
 		`"${node.type}" is not a valid node-type`);
 };
-const cleanStyle = (node: BoxNode) : BoxNode => {
-	return {
-		...node,
-		...(
-			node.style !== undefined ? {
-				style: removeKeys(["baseFontSize"])(node.style),
-			} : {}
-		),
-	};
-};
-export const layoutNode : LayoutFunction = (node: FormulaNode) : BoxNode => pipe(getLayoutFuncByNode(node))(node);
+
+export const layoutNode : LayoutFunction = (node: FormulaNode) : BoxNode => getLayoutFuncByNode(node)(node);
 export const layoutWithStyle = (style: any) : LayoutFunction => pipe(withStyle(style), layoutNode) as LayoutFunction;

@@ -145,7 +145,6 @@ class LiveMathLayoutEditor extends LitElement {
 								{
 									"type": "fraction",
 									"style": {
-										"baseFontSize": 25,
 										"fontSize": 25
 									},
 									"numerator": { 
@@ -168,7 +167,6 @@ class LiveMathLayoutEditor extends LitElement {
 				   	{
 						"type": "fraction",
 						"style": {
-							"baseFontSize": 25,
 							"fontSize": 25
 						},
 					   	"numerator": { 
@@ -226,11 +224,14 @@ class LiveMathLayoutEditor extends LitElement {
 				const node = JSON.parse(this.text);
 				const defaultStyle = {
 					type: "D", 
-					baseFontSize: 40,
 					fontSize: 40,
 					...(node.style || {})
 				};
-				const nodeLayouted = layoutNode({ ...node, style: defaultStyle });
+				const style = {
+					...defaultStyle,
+					...(node.style || {})
+				};
+				const nodeLayouted = layoutNode({ ...node, style});
 				this._layoutedNode = nodeLayouted;
 				this.outputText = JSON.stringify(nodeLayouted, null, 4);
 				this._outputEditor.setValue(this.outputText);

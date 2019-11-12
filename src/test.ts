@@ -26,11 +26,12 @@
 	strike-through	
 
 	todo:
-	- remove baseFontSize from output-style
 	- error messages
+	- understand tex-layout
 	- make different-sized contours like delimiters and radicals have the same topology, 
 	so they can be interpolated.
-	- thorough documentation (tex-algorithm, own algorithm, ...)
+	- documentation for usage
+	- thorough dev-documentation (tex-algorithm, own algorithm, ...)
 	- parser
 
 */
@@ -78,7 +79,6 @@ async function main(){
 	
 	const defaultStyle = {
 		type: "D", 
-		baseFontSize: 40,
 		fontSize: 40,
 	};
 	

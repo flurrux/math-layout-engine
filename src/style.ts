@@ -3,7 +3,6 @@ import { FormulaNode } from "./types";
 
 export interface Style {
 	type?: string,
-	baseFontSize?: number,
 	fontSize?: number,
 	emphasis?: string,
 	fontFamily?: string,
@@ -23,10 +22,10 @@ const styleTypeToFontScale = {
 };
 export const fontSizeOfStyleType = (defaultFontSize: number, styleType: string) => defaultFontSize * styleTypeToFontScale[styleType];
 
-
+const getBaseFontSize = (style: Style) : number => style.fontSize / styleTypeToFontScale[style.type];
 export const switchStyleType = (style: Style, nextStyleType: string): Style => identity({
 	...style, type: nextStyleType,
-	fontSize: fontSizeOfStyleType(style.baseFontSize, nextStyleType)
+	fontSize: fontSizeOfStyleType(getBaseFontSize(style), nextStyleType)
 });
 export const incrementStyle = (style: Style) => switchStyleType(style, incrementStyleType(style.type));
 export const smallerStyle = (style: Style) => switchStyleType(style, getSmallerStyleType(style.type));

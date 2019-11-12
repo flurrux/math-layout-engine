@@ -29,14 +29,15 @@ const getDimensionsOfCharNode = (style: Style, node: FormulaCharNode) : Dimensio
 	});
 };
 export const layoutCharNode = (node: FormulaCharNode) : BoxCharNode => {
-	//todo: use fontFamily if it's defined in style
+	if (typeof(node.value) !== "string"){
+		throw 'the value-property of this CharNode is either missing or not a string';
+	}
 	const { fontFamily, unicode } = lookUpGlyphByCharOrAlias(node.value);
 	const emphasis : string = getDefaultEmphasis(fontFamily);
-
-	const char: string = String.fromCharCode(unicode);
-	const style: Style = createNodeStyle(node, { fontFamily, emphasis });
+	const style = createNodeStyle(node, { fontFamily, emphasis });
 	return {
-		type: "char", char, unicode, style,
+		type: "char", unicode, style,
+		char: String.fromCharCode(unicode), 
 		dimensions: getDimensionsOfCharNode(style, node),
 		bbox: map(multiply(style.fontSize))(lookUpBoundingBox(fontFamily, unicode, style.emphasis))
 	};
