@@ -152,6 +152,7 @@ const aliasMap : { alias: string[], fontFamily: string, unicode: number }[] = [
 	{ alias: ["to", "->"], fontFamily: "Main", unicode: 8594 },
     { alias: ["dot", "."], fontFamily: "Main", unicode: 46 },
     { alias: ["times", "cross"], fontFamily: "Main", unicode: 215 },
+    { alias: ["dotdotdot", "..."], fontFamily: "Main", unicode: 8943 },
 
     { alias: ["integral"], fontFamily: "Size2", unicode: 8747 },
     { alias: ["sum"], fontFamily: "Size2", unicode: 8721 },

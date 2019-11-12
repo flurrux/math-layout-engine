@@ -1,10 +1,67 @@
 ## description
 
 this is a small engine for calculating the layout of math-formulae.  
-unlike [katex](https://katex.org/) it produces a fixed layout in pojo format which can  
-be rendered to canvas.  
+unlike [katex](https://katex.org/) it produces a fixed layout in pojo format which can then be rendered to canvas.  
 
 [try it live!](https://tender-brattain-a839fc.netlify.com/)
+
+
+## installation  
+
+for now this library can only be included in a node-project  
+
+```json
+// package.json
+...
+"dependencies": {
+    "math-layout": "flurrux/math-layout-engine#master",
+}
+...
+```
+
+
+## usage  
+
+layout a formula and render it
+
+```javascript
+import { layout } from 'math-layout';
+import { centerNodeOnCanvas, renderFormulaLayout, loadKatexFontFaces } from 'math-layout/rendering/render';
+
+const formula = {
+    "type": "mathlist",
+    "items": [
+        { "type": "ord", "value": "1" },
+        { "type": "bin", "value": "+" },
+        { "type": "ord", "value": "2" },
+        { "type": "bin", "value": "+" },
+        { "type": "ord", "value": "3" },
+        { "type": "bin", "value": "+" },
+        { "type": "ord", "value": "⋯" },
+        { "type": "rel", "value": "=" },
+        { "type": "ord", "value": "-" },
+        {
+            "type": "fraction",
+            "numerator": { "type": "ord", "value": "1" },
+            "denominator": { "type": "ord", "text": "12" }
+        }
+    ]
+};
+const layoutedFormula = layout(formula);
+
+//render the formula
+document.body.insertAdjacentHTML("beforeend", `
+    <canvas id="math-canvas" width=800 height=400></canvas>
+`);
+const canvas = document.querySelector("#math-canvas");
+const ctx = canvas.getContext("2d");
+//loading the fonts is asynchronous
+loadKatexFontFaces().then(
+    () => renderFormulaLayout(canvas, ctx, centerNodeOnCanvas(canvas, layoutedFormula))
+);
+
+```
+
 
 
 ## examples  
