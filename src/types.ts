@@ -1,6 +1,6 @@
 
 import { Style } from './style';
-import { Contour } from './opentype-util';
+import { Contour } from './opentype';
 
 export interface Vector2 {
 	[0]: number,

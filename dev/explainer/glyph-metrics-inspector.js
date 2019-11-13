@@ -1,8 +1,8 @@
 import { LitElement, html, css } from 'lit-element';
 import { getMetricsObject, styleWeightCombinationToEmphasis, fontData, lookUpGlyphByCharOrAlias } from '../../src/font-data/katex-font-util';
 import fontMetricsData from '../../src/font-data/font-metrics-data';
-import '../resizable-canvas';
-import '../select-element';
+import '../elements/resizable-canvas';
+import '../elements/select-element';
 
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
 import '@polymer/paper-item/paper-item.js';

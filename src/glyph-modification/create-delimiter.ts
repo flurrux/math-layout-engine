@@ -1,4 +1,4 @@
-import { transformContour, transformBbox, BoundingBox, Contour, GlyphPoint } from "../opentype-util";
+import { transformContour, transformBbox, BoundingBox, Contour, GlyphPoint } from "../opentype";
 import { pick } from 'ramda';
 import { Vector2, ContoursNode, Dimensions } from '../types';
 

@@ -1,6 +1,6 @@
 export const sum = (nums: number[]): number => nums.reduce((_sum: number, num: number) => _sum + num, 0);
 export const objectToArray = (obj: object): any[] => Reflect.ownKeys(obj).map(key => obj[key]);
-export const pickList = (keys, obj) => keys.map(key => obj[key]);
+export const pickList = (keys: string[], obj: object) => keys.map(key => obj[key]);
 export const addFontFaces = async (fontMap: object) => {
 	const FontFace = (window as any).FontFace;
 	const fonts = (document as any).fonts;

@@ -30,12 +30,9 @@ const getSubNodePaths = node => {
 //layout ###
 
 import { FormulaNode, BoxNode } from '../types';
-interface LayoutFunction {
-	(node: FormulaNode): BoxNode
-}
 
-import { nodeType, isNodeTextual, isNodeChar, isNodeText } from "../node-types";
-import { map, pipe, range } from 'ramda';
+import { isNodeChar, isNodeText } from "../node-types";
+import { pipe } from 'ramda';
 
 import { layoutScript } from "./script-layout";
 import { layoutFraction } from './fraction-layout';
@@ -46,10 +43,11 @@ import { layoutCharNode } from './char-layout';
 import { layoutMathList } from './mathlist-layout';
 import { layoutMatrix } from './matrix-layout';
 import { layoutAccent } from './accent-layout';
-import { withStyle } from "../style";
-import { removeKeys } from '../util';
+import { Style, withStyle } from "../style";
 
-
+interface LayoutFunction {
+	(node: FormulaNode): BoxNode
+}
 
 const nodeLayoutFuncMap : { [key: string]: LayoutFunction } = {
 	"mathlist": layoutMathList,
@@ -97,3 +95,10 @@ const getLayoutFuncByNode = (node: FormulaNode): LayoutFunction => {
 
 export const layoutNode : LayoutFunction = (node: FormulaNode) : BoxNode => getLayoutFuncByNode(node)(node);
 export const layoutWithStyle = (style: any) : LayoutFunction => pipe(withStyle(style), layoutNode) as LayoutFunction;
+
+//this is the main function to call for layouting the root-node (root as in tree) of a formula
+const defaultStyle : Style = {
+	type: "D", 
+	fontSize: 40
+};
+export const layout = (formulaNode: FormulaNode) : BoxNode => layoutWithStyle(defaultStyle)(formulaNode);

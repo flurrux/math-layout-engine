@@ -1,8 +1,8 @@
 import { LitElement, html, css } from 'lit-element';
 
 import './code-mirror-element';
-import '../resizable-canvas';
-import '../select-element';
+import '../elements/resizable-canvas';
+import '../elements/select-element';
 
 import '@polymer/paper-tabs/paper-tabs.js';
 import '@polymer/paper-tabs/paper-tab.js';

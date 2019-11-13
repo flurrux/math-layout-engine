@@ -30,7 +30,7 @@ export interface BoxScriptNode extends BoxNode {
 
 import { ScriptNode as FormulaScriptNode, BoxNode, FormulaNode, CharNode, TextNode, Dimensions, Vector2 } from '../types';
 import { smallerStyle, smallestStyle, withStyle, Style } from "../style";
-import { pickList, isDefined, min } from "../util";
+import { pickList, isDefined, min } from "../util/util";
 import { layoutNode, layoutWithStyle } from "./layout";
 import { 
 	center, setPosition, calcBoundingDimensions, getAxisHeight, alignToYAxis

@@ -25,8 +25,10 @@ for now this library can only be included in a node-project
 layout a formula and render it
 
 ```javascript
-import { layout } from 'math-layout';
-import { centerNodeOnCanvas, renderFormulaLayout, loadKatexFontFaces } from 'math-layout/rendering/render';
+import { 
+    layoutFormula, 
+    centerNodeOnCanvas, renderFormulaLayout, loadKatexFontFaces
+} from 'math-layout';
 
 const formula = {
     "type": "mathlist",

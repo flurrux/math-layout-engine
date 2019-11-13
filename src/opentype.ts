@@ -1,6 +1,6 @@
 import { load as loadOpentype } from 'opentype.js';
 import { identity, map } from 'ramda';
-import { Vector2, MatrixNode } from './types';
+import { Vector2 } from './types';
 
 export interface GlyphPoint {
 	x: number, 

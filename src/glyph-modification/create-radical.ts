@@ -1,4 +1,4 @@
-import { scaleContours, Contour, GlyphPoint } from "../opentype-util";
+import { scaleContours, Contour, GlyphPoint } from "../opentype";
 import { map } from 'ramda';
 import { BoundingBox, Vector2, ContoursNode } from '../types';
 

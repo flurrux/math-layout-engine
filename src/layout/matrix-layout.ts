@@ -1,7 +1,7 @@
 import { layoutWithStyle } from "./layout";
 import { setPosition, getAxisHeight, isNodeAlignedToBaseline } from './layout-util';
 import { map, filter, range, pipe, pick, add, multiply, identity } from 'ramda';
-import { sum, accumSum, max } from "../util";
+import { sum, accumSum, max } from "../util/util";
 import { BoxNode, MatrixNode as FormulaMatrixNode, FormulaNode, Vector2 } from "../types";
 import { Style } from "../style";
 import { validateProperties } from "./error";

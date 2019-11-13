@@ -2,12 +2,11 @@ import { incrementStyle, withStyle, isDisplayStyle } from "../style";
 import { layoutNode } from "./layout";
 import { setPosition, getAxisHeight, boxBottom, boxTop } from './layout-util';
 import { center as calcCentering } from './layout-util';
-import { isNodeTextual } from "../node-types";
-import { map, pipe } from 'ramda';
+import { pipe } from 'ramda';
 
-import { FormulaNode, FractionNode as FormulaFractionNode, BoxNode, Dimensions, Vector2 } from '../types';
+import { FractionNode as FormulaFractionNode, BoxNode } from '../types';
 import { Style } from '../style';
-import { max } from "../util";
+import { max } from "../util/util";
 import { validateProperties } from "./error";
 
 export interface BoxFractionNode extends BoxNode {

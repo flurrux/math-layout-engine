@@ -3,7 +3,7 @@ import * as R from 'ramda';
 import { Style } from '../style';
 import { BoxNode, Dimensions, Vector2, FormulaNode, RootNode } from '../types';
 import { Metrics } from '../font-data/katex-font-util';
-import { min, max } from '../util';
+import { min, max } from '../util/util';
 import { isNodeTextual } from '../node-types';
 
 type ObjectOrArrayOfBoxNodes = { [key: string]: BoxNode } | BoxNode[];

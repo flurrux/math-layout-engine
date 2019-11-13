@@ -37,14 +37,11 @@
 */
 
 
-import { loadKatexFontFaces, renderFormulaLayout, centerNodeOnCanvas } from './rendering/render';
-import { layoutNode } from './layout/layout';
+import { loadKatexFontFaces, renderFormulaLayout, centerNodeOnCanvas } from '../../src/rendering/render';
+import { layout } from '../../src/layout/layout';
 
 async function main(){
 
-	//continued fractions 
-
-	
 	const formulaData = {
 		"type": "fraction",
 		"numerator": {
@@ -84,12 +81,7 @@ async function main(){
 		}
 	};
 	
-	const defaultStyle = {
-		type: "D", 
-		fontSize: 40,
-	};
-	
-	const layoutData = layoutNode({ ...formulaData, style: defaultStyle });
+	const layoutData = layout(formulaData);
 	console.log(layoutData);
 
 	document.body.insertAdjacentHTML("beforeend", `<canvas width=800 height=400></canvas>`);

@@ -1,7 +1,7 @@
 import { layoutNode } from "./layout";
 import { setPosition, calcBoundingDimensions, getAxisHeight, isNodeAlignedToBaseline } from './layout-util';
 import { createDelimiter } from "../glyph-modification/create-delimiter";
-import { accumSum } from "../util";
+import { accumSum } from "../util/util";
 import { map, pipe, multiply, identity } from 'ramda';
 import { withStyle } from "../style";
 import { lookUpHorizontalSpacing } from "./horizontal-layout";

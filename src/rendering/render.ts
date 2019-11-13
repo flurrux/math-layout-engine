@@ -1,6 +1,6 @@
-import { pickList, isDefined, addFontFaces } from '../util';
+import { pickList, isDefined, addFontFaces } from '../util/util';
 import { fontIdentifiers } from '../font-data/katex-font-util';
-import { pathContours } from '../opentype-util';
+import { pathContours } from '../opentype';
 import { BoxNode, ContoursNode } from '../types';
 import { Style } from '../style';
 import { BoxCharNode } from '../layout/char-layout';
@@ -127,6 +127,7 @@ export const centerNodeOnCanvas = (canvas: HTMLCanvasElement, node: BoxNode) : B
 	(canvas.width - node.dimensions.width) / 2,
 	(canvas.height - node.dimensions.yMax - node.dimensions.yMin) / 2
 ])(node);
+
 export const renderFormulaLayout = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, formulaLayout: BoxNode) => {
 	ctx.save();
 	ctx.setTransform(1, 0, 0, -1, 0, canvas.height);

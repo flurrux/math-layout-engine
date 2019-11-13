@@ -1,4 +1,4 @@
-import { FormulaNode } from "./types";
+import { FormulaNode } from "../types";
 
 interface ValidationData {
     valid: boolean

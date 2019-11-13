@@ -1,6 +1,6 @@
 import { layoutNode } from "./layout";
 import { setPosition, dimensionHeight, calcBoundingDimensions } from './layout-util';
-import { isDefined } from "../util";
+import { isDefined } from "../util/util";
 import { map, pipe, multiply } from 'ramda';
 import { createRadical } from "../glyph-modification/create-radical";
 import { switchStyleType, withStyle } from "../style";
