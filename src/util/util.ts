@@ -32,3 +32,8 @@ import { fromPairs } from 'ramda';
 export const removeKeys = (keys: string[]) => ((obj: object) => {
 	return fromPairs((Object as any).entries(obj).filter((entry: string) => !keys.includes(entry[0])));
 });
+
+
+import { BoxCharNode } from '../layout/char-layout';
+import { getMetricsObject } from '../font-data/katex-font-util';
+export const getMetricsOfCharNode = (node: BoxCharNode) => getMetricsObject(node.style.fontFamily, node.style.emphasis, node.unicode);

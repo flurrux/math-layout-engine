@@ -28,55 +28,47 @@ export interface BoxScriptNode extends BoxNode {
 	sub?: BoxNode
 };
 
-import { ScriptNode as FormulaScriptNode, BoxNode, FormulaNode, CharNode, TextNode, Dimensions, Vector2 } from '../types';
+import { ScriptNode as FormulaScriptNode, BoxNode, FormulaNode, CharNode, TextNode, Dimensions, Vector2, ScriptNode } from '../types';
 import { smallerStyle, smallestStyle, withStyle, Style } from "../style";
-import { pickList, isDefined, min } from "../util/util";
+import { pickList, isDefined, min, getMetricsOfCharNode } from "../util/util";
 import { layoutNode, layoutWithStyle } from "./layout";
 import { 
-	center, setPosition, calcBoundingDimensions, getAxisHeight, alignToYAxis
+	center, setPosition, calcBoundingDimensions, getAxisHeight, alignToYAxis, boxRight
 } from './layout-util';
 
-import { lookUpUnicode, lookUpGlyphByCharOrAlias, getMetricsObject, Metrics } from "../font-data/katex-font-util";
-import { pipe, filter, map, multiply, identity } from 'ramda';
+import { lookUpUnicode, lookUpGlyphByCharOrAlias } from "../font-data/katex-font-util";
+import { pipe, filter, map, multiply, identity, pick, add } from 'ramda';
 import { BoxCharNode } from './char-layout';
 import { validateProperties } from "./error";
 
 
-const getMetricsOfCharNode = (node: BoxCharNode) => getMetricsObject(node.style.fontFamily, node.style.emphasis, node.unicode);
-
-const getSubOrSupStyle = (scriptStyle: Style, subOrSupNode: FormulaNode) : Style => {
-	return subOrSupNode.type === "fraction" ? smallestStyle(scriptStyle) : smallerStyle(scriptStyle);
+//useful function for layouting optional nodes
+//supply a map with layout-functions for all possible nodes and get back 
+//the layouted nodes that actually exist
+interface BoxNodeObject {
+	[key: string]: BoxNode
 };
-const getSupSubTargetYNoLimits = (style: Style, script: FormulaScriptNode, nucleusDim: Dimensions) : [number, number] => {
-	const { nucleus } = script;
-	const { fontSize } = style;
-	if (isNodeChar(nucleus)){
-		const nucleusGlyphData = lookUpGlyphByCharOrAlias((nucleus as CharNode).value);
-		const targetYs = getTargetYOfGlyphNucleus(nucleusGlyphData.fontFamily, nucleusGlyphData.unicode);
-		return [
-			targetYs.supY * fontSize,
-			targetYs.subY * fontSize
-		]
+interface FormulaNodeObject {
+	[key: string]: FormulaNode
+}
+type LayoutFunction = (node: FormulaNode) => BoxNode;
+const layoutByMap = (layoutMap: { [key: string]: LayoutFunction }) => ((inputMap: FormulaNodeObject) : BoxNodeObject => {
+	const layouted : BoxNodeObject = {};
+	const keys: string[] = Reflect.ownKeys(inputMap) as string[];
+	for (const key of keys){
+		layouted[key] = layoutMap[key](inputMap[key]);
 	}
-	else if (isNodeText(nucleus)){
-		const fontFamily = style.fontFamily || "Main";
-		return pickList(["supY", "subY"], fontFamilyToTargetY[fontFamily]).map(multiply(fontSize));
-	}
-	else {
-		return [
-			nucleusDim.yMax,
-			nucleusDim.yMin - fontSize * 0.06
-		]
-	}
-};
-const getCrampedTargetYOffset = (style: Style) : number => style.cramped ? (-style.fontSize * 0.1) : 0;
-
+	return layouted;
+});
 const valuesInObject = (obj: object) : any[] => (Object as any).values(obj);
+
+
+
 
 
 //limit position ###
 
-const layoutSuperScriptInLimitPosition = (parentStyle: Style, supStyle: Style, nucleusDimensions: Dimensions, sup: FormulaNode) : BoxNode => {
+const layoutSupLim = (parentStyle: Style, supStyle: Style, nucleusDimensions: Dimensions) => ((sup: FormulaNode) : BoxNode => {
 	const supLayouted : BoxNode = pipe(withStyle(supStyle), layoutNode)(sup);
 	const supDim = supLayouted.dimensions;
 	const spacing = parentStyle.fontSize * 0.2;
@@ -85,8 +77,8 @@ const layoutSuperScriptInLimitPosition = (parentStyle: Style, supStyle: Style, n
 		nucleusDimensions.yMax - supDim.yMin + spacing
 	];
 	return setPosition(position)(supLayouted);
-};
-const layoutSubScriptInLimitPosition = (parentStyle: Style, subStyle: Style, nucleusDimensions: Dimensions, sub: FormulaNode) : BoxNode => {
+});
+const layoutSubLim = (parentStyle: Style, subStyle: Style, nucleusDimensions: Dimensions) => ((sub: FormulaNode) : BoxNode => {
 	const subLayouted = pipe(withStyle(subStyle), layoutNode)(sub);
 	const subDim = subLayouted.dimensions;
 	const spacing = parentStyle.fontSize * 0.2;
@@ -95,7 +87,7 @@ const layoutSubScriptInLimitPosition = (parentStyle: Style, subStyle: Style, nuc
 		nucleusDimensions.yMin - subDim.yMax - spacing
 	];
 	return setPosition(position)(subLayouted);
-};
+});
 
 const layoutScriptLimitPosition = (script: FormulaScriptNode) : BoxScriptNode => {
 	const { style } = script;
@@ -104,11 +96,13 @@ const layoutScriptLimitPosition = (script: FormulaScriptNode) : BoxScriptNode =>
 	const nucleusDim = nucleusLayouted.dimensions;
 
 	const scriptStyle = smallerStyle(style);
-	let scriptLayouted : { nucleus: BoxNode, sup?: BoxNode, sub?: BoxNode } = pipe(filter(isDefined), alignToYAxis)({
-		nucleus: setPosition([0, 0])(nucleusLayouted),
-		sup: script.sup ? layoutSuperScriptInLimitPosition(style, scriptStyle, nucleusDim, script.sup) : undefined,
-		sub: script.sub ? layoutSubScriptInLimitPosition(style, scriptStyle, nucleusDim, script.sub) : undefined,
-	}) as { nucleus: BoxNode, sup?: BoxNode, sub?: BoxNode };
+	const scriptLayouted = {
+		nucleus: nucleusLayouted,
+		...layoutByMap({
+			sup: layoutSupLim(style, scriptStyle, nucleusDim),
+			sub: layoutSubLim(style, scriptStyle, nucleusDim)
+		})
+	};
 	
 	const dimensions = calcBoundingDimensions(valuesInObject(scriptLayouted));
 	return {
@@ -120,7 +114,82 @@ const layoutScriptLimitPosition = (script: FormulaScriptNode) : BoxScriptNode =>
 
 
 
+
 //nolimit position ###
+
+const getSubOrSupStyle = (scriptStyle: Style, subOrSupNode: FormulaNode) : Style => {
+	return subOrSupNode.type === "fraction" ? smallestStyle(scriptStyle) : smallerStyle(scriptStyle);
+};
+
+const getSupSubTargetYNoLimits = (style: Style, script: FormulaScriptNode, nucleusDim: Dimensions) : [number, number] => {
+	const { nucleus } = script;
+	const { fontSize } = style;
+	if (isNodeChar(nucleus)){
+		const nucleusGlyphData = lookUpGlyphByCharOrAlias((nucleus as CharNode).value);
+		const targetYs = getTargetYOfGlyphNucleus(nucleusGlyphData.fontFamily, nucleusGlyphData.unicode);
+		return map(multiply(fontSize))([ targetYs.supY, targetYs.subY ])
+	}
+	else if (isNodeText(nucleus)){
+		const fontFamily = style.fontFamily || "Main";
+		return (pickList(["supY", "subY"], fontFamilyToTargetY[fontFamily]) as [number, number]).map(multiply(fontSize)) as [number, number];
+	}
+	else {
+		return [
+			nucleusDim.yMax,
+			nucleusDim.yMin - fontSize * 0.06
+		]
+	}
+};
+const getCrampedTargetYOffset = (style: Style) : number => style.cramped ? (-style.fontSize * 0.1) : 0;
+
+
+//if bottom of superscript is too close to baseline, shift it up
+const correctSupNoLimPosition = (mainFontSize: number, supLayouted: BoxNode) => ((positionY: number) => {
+	const minBottomToBaselineGap = mainFontSize * 0.3;
+	const bottomToSupBaseline = positionY + supLayouted.dimensions.yMin;
+	return positionY + Math.max(0, -bottomToSupBaseline + minBottomToBaselineGap);
+});
+const getPositionXOfSupAtCharNucleus = (nucleus: BoxCharNode, mainStyle: Style) => {
+	const metrics = getMetricsOfCharNode(nucleus);
+	return (metrics.width + metrics.italicCorrection) * mainStyle.fontSize;
+};
+const layoutSupNoLim = (mainStyle: Style, nucleusLayouted: BoxNode, targetY: number) => ((sup: FormulaNode) : BoxNode => {
+	const supStyle = getSubOrSupStyle(mainStyle, sup);
+	const supLayouted: BoxNode = layoutWithStyle(supStyle)(sup);
+	
+	const positionY = pipe(
+		add(getCrampedTargetYOffset(mainStyle)), 
+		correctSupNoLimPosition(mainStyle.fontSize, supLayouted)
+	)(targetY);
+
+	//add a small spacing
+	const mainFontSize = mainStyle.fontSize;
+	const horizontalSpacing = 0.08 * mainFontSize;
+	const positionX = (nucleusLayouted.type === "char" ? 
+		getPositionXOfSupAtCharNucleus(nucleusLayouted as BoxCharNode, mainStyle) : 
+		nucleusLayouted.dimensions.width
+	) + horizontalSpacing;
+
+	return setPosition([positionX, positionY])(supLayouted);
+});
+
+
+//if the top of the subscript is overflowing too much above the baseline, shift it down
+const correctSubNoLimPosition = (mainStyle: Style, subLayouted: BoxNode) => ((positionY: number) : number => {
+	const maxTop = mainStyle.fontSize * 0.15;
+	const top = positionY + subLayouted.dimensions.yMax;
+	return positionY + Math.min(0, maxTop - top);
+});
+const layoutSubNoLim = (mainStyle: Style, nucleusLayouted: BoxNode, targetY: number, hasSup: boolean) => ((sub: FormulaNode) : BoxNode => {
+	const subLayouted = layoutWithStyle(getSubOrSupStyle(mainStyle, sub))(sub);
+	return setPosition([
+		boxRight(nucleusLayouted),
+		pipe(
+			add(hasSup ? mainStyle.fontSize * 0.08 : 0), 
+			correctSubNoLimPosition(mainStyle, subLayouted)
+		)(targetY)
+	])(subLayouted);
+});
 
 const layoutScriptNoLimitPosition = (script: FormulaScriptNode) : BoxScriptNode => {
 	validateProperties({
@@ -128,91 +197,53 @@ const layoutScriptNoLimitPosition = (script: FormulaScriptNode) : BoxScriptNode 
 	})(script);
 
 	const { style } = script;
-	const { nucleus, sup, sub } = script;
 
-	const nucleusLayouted: BoxNode = pipe(layoutWithStyle(style), setPosition([0, 0]))(nucleus);
-	const { fontSize } = style;
-
-	const scriptLayouted : { nucleus: BoxNode, sup?: BoxNode, sub?: BoxNode } = {
-		nucleus: nucleusLayouted
-	};
-
-	const nucleusRight = nucleusLayouted.dimensions.width;
-	const nucleusMetrics : Metrics = isNodeChar(nucleus) ? getMetricsOfCharNode(nucleusLayouted as BoxCharNode) : null;
-
+	const nucleusLayouted: BoxNode = pipe(layoutWithStyle(style), setPosition([0, 0]))(script.nucleus);
 	const supSubTargetY = getSupSubTargetYNoLimits(style, script, nucleusLayouted.dimensions);
 
-	if (sup) {
-		const supStyle = getSubOrSupStyle(style, sup);
-		const supLayouted: BoxNode = pipe(withStyle(supStyle), layoutNode)(sup);
-		const targetY = (() => {
-			let y = supSubTargetY[0] + getCrampedTargetYOffset(style);
-
-			//if bottom of superscript is too close to baseline, shift it up
-			const minBottomToBaselineGap = fontSize * 0.3;
-			const bottomToSupBaseline = (y + supLayouted.dimensions.yMin);
-			y += Math.max(0, -(bottomToSupBaseline - minBottomToBaselineGap));
-			return y;
-		})();
-		//add a small spacing
-		const supX = nucleusMetrics ? (nucleusMetrics.width + nucleusMetrics.italicCorrection + 0.08) * fontSize : nucleusRight;
-		supLayouted.position = [supX, targetY];
-		scriptLayouted.sup = supLayouted;
-	}
-
-	if (sub) {
-		const subStyle = getSubOrSupStyle(style, sub);
-		const subLayouted = pipe(withStyle(subStyle), layoutNode)(sub);
-		const targetY = (() => {
-			let y = supSubTargetY[1];
-
-			if (sup) y -= fontSize * 0.08;
-
-			//if top of subscript is too close to the axis, shift it down
-			const nucleusAxisY = getAxisHeight(style);
-			const minTopToAxisGap = -fontSize * 0.1;
-			const topToAxisGap = nucleusAxisY - (y + subLayouted.dimensions.yMax);
-			y += Math.min(0, topToAxisGap - minTopToAxisGap);
-
-			return y;
-		})();
-
-		const subX = isNodeChar(nucleus) ? (fontSize * getMetricsOfCharNode(nucleusLayouted as BoxCharNode).width) : nucleusRight;
-		subLayouted.position = [subX, targetY];
-		scriptLayouted.sub = subLayouted;
-	}
+	const scriptLayouted = {
+		nucleus: nucleusLayouted,
+		...pipe(pick(["sup, sub"], layoutByMap({
+			sup: layoutSupNoLim(style, nucleusLayouted, supSubTargetY[0]),
+			sub: layoutSubNoLim(style, nucleusLayouted, supSubTargetY[1], script.sup !== undefined)
+		})))(script)
+	};
 
 	const dimensions = calcBoundingDimensions(pickList(["nucleus", "sup", "sub"], scriptLayouted).filter(isDefined));
 
 	return {
-		type: "script",
-		...scriptLayouted, style, dimensions
+		type: "script", style, dimensions,
+		...scriptLayouted
 	};
 };
-const isScriptLimitPosition = (style: Style, nucleus: FormulaNode) : boolean => (
-	(
-		isNodeChar(nucleus) && nucleus.type === "op" && 
-		style.type === "D" && 
-		lookUpUnicode((nucleus as CharNode).value) !== 8747 //integral: ∫
-	) || 
-	isNodeText(nucleus) && (nucleus as TextNode).text === "lim"
-);
 
+const isNodeDisplayOperator = (style: Style, node: FormulaNode) : boolean => {
+	return isNodeChar(node) && node.type === "op" && style.type === "D";
+};
+//the integral operator can only have sub- and superscripts in nolimit-position
+const isDisplayOperatorLimitException = (node: CharNode) => lookUpUnicode(node.value) !== 8747 /*integral: ∫*/;
+const isScriptLimitPosition = (style: Style, nucleus: FormulaNode) : boolean => {
+	return (nucleus.style !== undefined && nucleus.style.fontFamily !== undefined && nucleus.style.fontFamily === "Size2") ||
+		(isNodeDisplayOperator(style, nucleus) && !isDisplayOperatorLimitException(nucleus as CharNode)) || 
+		isNodeText(nucleus) && (nucleus as TextNode).text === "lim";
+};
 
+const withLimitStyle = (scriptNode: ScriptNode) : ScriptNode => {
+	return {
+		...scriptNode,
+		nucleus: {
+			...scriptNode.nucleus,
+			style: {
+				...(scriptNode.nucleus.style || {}),
+				fontFamily: "Size2"
+			}
+		}
+	};
+};
 export const layoutScript = (script: FormulaScriptNode) : BoxScriptNode => {
 	const { nucleus } = script;
 	const limitPosition = isScriptLimitPosition(script.style, nucleus);
-	if (limitPosition) {
-		script = {
-			...script,
-			nucleus: {
-				...script.nucleus,
-				style: {
-					...(script.nucleus.style || {}),
-					fontFamily: "Size2"
-				}
-			}
-		};
-	}
-	return limitPosition ? layoutScriptLimitPosition(script) : layoutScriptNoLimitPosition(script);
+	if (limitPosition) script = withLimitStyle(script);
+	const layoutFunc = limitPosition ? layoutScriptLimitPosition : layoutScriptNoLimitPosition;
+	return layoutFunc(script);
 };
