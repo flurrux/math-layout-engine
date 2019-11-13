@@ -36,8 +36,8 @@ import { pipe } from 'ramda';
 
 import { layoutScript } from "./script-layout";
 import { layoutFraction } from './fraction-layout';
-import { layoutDelimited } from './delimited-layout';
-import { layoutRoot } from './root-layout';
+import { layoutDelimited } from './delimiter/delimited-layout';
+import { layoutRoot } from './root/root-layout';
 import { layoutTextNode } from './text-layout';
 import { layoutCharNode } from './char-layout';
 import { layoutMathList } from './mathlist-layout';

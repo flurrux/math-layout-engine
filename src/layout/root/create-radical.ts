@@ -1,6 +1,6 @@
-import { scaleContours, Contour, GlyphPoint } from "../opentype";
+import { scaleContours, Contour } from "../../opentype";
 import { map } from 'ramda';
-import { BoundingBox, Vector2, ContoursNode } from '../types';
+import { BoundingBox, Vector2, ContoursNode } from '../../types';
 
 interface GlyphData {
     fontFamily: string,

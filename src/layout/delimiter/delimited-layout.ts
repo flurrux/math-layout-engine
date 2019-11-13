@@ -1,16 +1,16 @@
-import { layoutNode } from "./layout";
-import { setPosition, calcBoundingDimensions, getAxisHeight, isNodeAlignedToBaseline } from './layout-util';
-import { createDelimiter } from "../glyph-modification/create-delimiter";
-import { accumSum } from "../util/util";
+import { layoutNode } from "../layout";
+import { setPosition, calcBoundingDimensions, getAxisHeight, isNodeAlignedToBaseline } from '../layout-util';
+import { createDelimiter } from "./create-delimiter";
+import { accumSum } from "../../util/util";
 import { map, pipe, multiply, identity } from 'ramda';
-import { withStyle } from "../style";
-import { lookUpHorizontalSpacing } from "./horizontal-layout";
+import { withStyle } from "../../style";
+import { lookUpHorizontalSpacing } from "../horizontal-layout";
 
-import { DelimitedNode as FormulaDelimitedNode, FormulaNode, Dimensions, BoxNode, CharNode } from '../types';
-import { Style } from '../style';
-import { BoxMathListNode } from './mathlist-layout';
-import { lookUpGlyphByCharOrAlias } from "../font-data/katex-font-util";
-import { validateProperties } from "./error";
+import { DelimitedNode as FormulaDelimitedNode, FormulaNode, Dimensions, BoxNode, CharNode } from '../../types';
+import { Style } from '../../style';
+import { BoxMathListNode } from '../mathlist-layout';
+import { lookUpGlyphByCharOrAlias } from "../../font-data/katex-font-util";
+import { validateProperties } from "../error";
 
 const calculateDelimiterHeight = (delimited: FormulaNode, delimitedMetrics: Dimensions, style: Style): number => {
 	const axisOffset = isNodeAlignedToBaseline(delimited) ? -getAxisHeight(style) : 0;

@@ -1,12 +1,12 @@
-import { layoutNode } from "./layout";
-import { setPosition, dimensionHeight, calcBoundingDimensions } from './layout-util';
-import { isDefined } from "../util/util";
+import { layoutNode } from "../layout";
+import { setPosition, dimensionHeight, calcBoundingDimensions } from '../layout-util';
+import { isDefined } from "../../util/util";
 import { map, pipe, multiply } from 'ramda';
-import { createRadical } from "../glyph-modification/create-radical";
-import { switchStyleType, withStyle } from "../style";
+import { createRadical } from "./create-radical";
+import { switchStyleType, withStyle } from "../../style";
 
-import { BoxNode, RootNode as FormulaRootNode, ContoursNode, Vector2 } from '../types';
-import { validateProperties } from "./error";
+import { BoxNode, RootNode as FormulaRootNode, ContoursNode, Vector2 } from '../../types';
+import { validateProperties } from "../error";
 
 export interface BoxRootNode {
 	radicand: BoxNode
