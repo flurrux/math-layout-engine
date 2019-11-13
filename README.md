@@ -49,7 +49,7 @@ const formula = {
         }
     ]
 };
-const layoutedFormula = layout(formula);
+const layoutedFormula = layoutFormula(formula);
 
 //render the formula
 document.body.insertAdjacentHTML("beforeend", `
