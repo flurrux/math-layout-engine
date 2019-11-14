@@ -52,7 +52,7 @@ interface FormulaNodeObject {
 	[key: string]: FormulaNode
 }
 type LayoutFunction = (node: FormulaNode) => BoxNode;
-const layoutByMap = (layoutMap: { [key: string]: LayoutFunction }) => ((inputMap: FormulaNodeObject) : BoxNodeObject => {
+const layoutByMap = (layoutMap: { [key: string]: LayoutFunction }) => ((inputMap: any) : BoxNodeObject => {
 	const layouted : BoxNodeObject = {};
 	const keys: string[] = Reflect.ownKeys(inputMap) as string[];
 	for (const key of keys){
@@ -176,16 +176,20 @@ const layoutSupNoLim = (mainStyle: Style, nucleusLayouted: BoxNode, targetY: num
 
 //if the top of the subscript is overflowing too much above the baseline, shift it down
 const correctSubNoLimPosition = (mainStyle: Style, subLayouted: BoxNode) => ((positionY: number) : number => {
-	const maxTop = mainStyle.fontSize * 0.15;
+	const maxTop = mainStyle.fontSize * 0.25;
 	const top = positionY + subLayouted.dimensions.yMax;
 	return positionY + Math.min(0, maxTop - top);
 });
 const layoutSubNoLim = (mainStyle: Style, nucleusLayouted: BoxNode, targetY: number, hasSup: boolean) => ((sub: FormulaNode) : BoxNode => {
 	const subLayouted = layoutWithStyle(getSubOrSupStyle(mainStyle, sub))(sub);
 	return setPosition([
-		boxRight(nucleusLayouted),
 		pipe(
-			add(hasSup ? mainStyle.fontSize * 0.08 : 0), 
+			boxRight,
+			add(subLayouted.type === "char" ? 
+				-(subLayouted as BoxCharNode).bbox.xMin + 0.02 * mainStyle.fontSize : 0)
+		)(nucleusLayouted),
+		pipe(
+			add(hasSup ? mainStyle.fontSize * -0.08 : 0), 
 			correctSubNoLimPosition(mainStyle, subLayouted)
 		)(targetY)
 	])(subLayouted);
@@ -203,10 +207,13 @@ const layoutScriptNoLimitPosition = (script: FormulaScriptNode) : BoxScriptNode 
 
 	const scriptLayouted = {
 		nucleus: nucleusLayouted,
-		...pipe(pick(["sup, sub"], layoutByMap({
-			sup: layoutSupNoLim(style, nucleusLayouted, supSubTargetY[0]),
-			sub: layoutSubNoLim(style, nucleusLayouted, supSubTargetY[1], script.sup !== undefined)
-		})))(script)
+		...pipe(
+			pick(["sup", "sub"]), 
+			layoutByMap({
+				sup: layoutSupNoLim(style, nucleusLayouted, supSubTargetY[0]),
+				sub: layoutSubNoLim(style, nucleusLayouted, supSubTargetY[1], script.sup !== undefined)
+			})
+		)(script)
 	};
 
 	const dimensions = calcBoundingDimensions(pickList(["nucleus", "sup", "sub"], scriptLayouted).filter(isDefined));

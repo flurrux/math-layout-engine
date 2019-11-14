@@ -292,3 +292,11 @@ loadKatexFontFaces().then(
 }
 ```
 ![rendered formula](https://github.com/flurrux/math-layout-engine/blob/master/dev/sample-renders/sample-render-15.png) 
+
+
+## credits  
+
+i used [katex](https://katex.org/#demo) as a reference for my renderings.  
+also the [font-data](https://github.com/KaTeX/katex-fonts/blob/b4477ffc58391153f8e54231cab4746b9edc349d/fontMetricsData.js) and [fonts](https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/fonts/) are directly taken from katex.  
+
+furthermore i tried to implement the algorithms as described in the texbook (starting at page 440) where it was possible. it still differs at some places though and i'm not sure if i understand them correctly.  

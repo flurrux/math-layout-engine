@@ -41,6 +41,7 @@ export const layoutMathList = (mathList: MathListNode) : BoxMathListNode => {
 
 	return {
 		type: "mathlist",
+		style,
 		dimensions: calcBoundingDimensions(positionedItems),
 		items: positionedItems
 	};
