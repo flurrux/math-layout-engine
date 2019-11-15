@@ -69,7 +69,7 @@ if (superscript exists):
     style(superscript) = scriptUp(style(script))
     marginRight(superscript) = scriptspace
 
-    positionX(superscript) = italicCorrection(nucleus)
+    positionX(superscript) = width(nucleus) + italicCorrection(nucleus)
     supPosition = if isCramped(style) : sup3, if isDisplay(style) : sup1, otherwise : sup2
     positionY(superscript) = max(heightShift, supPosition, depth(superscript) + 1/4 * x_height)
 
