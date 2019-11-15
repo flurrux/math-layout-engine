@@ -16,40 +16,40 @@ import { BoxScriptNode } from './script-layout';
 
 //parameters ###
 
-const defaultRuleThickness = 0;
+const defaultRuleThickness = 0.04;
 const xHeight = 0.45;
 
 
 //how much is the superscript shifted up relative 
 //to the top of the (non-char)nucleus box.
 //use negative values to shift down!
-const supLift = 0;
+const supLift = -0.16;
 
 //how much is the subscript shifted up relative
 //to the bottom of the (non-char)nucleus box
-const subLift = 0;
+const subLift = 0.12;
 
 
 //fixed y-coordinate for superscript in cramped style (priority 1)
 //is called "sup3" in tex
-const supYCramped = 0;
+const supYCramped = 0.3;
 
 //fixed y-coordinate for superscript in display-style (priority 2)
 //is called "sup1" in tex
-const supYDisplay = 0;
+const supYDisplay = 0.42;
 
 //default fixed y-coordinate for superscript (priority 3)
 //is called "sup2" in tex
-const supYDefault = 0;
+const supYDefault = 0.35;
 
 
 //fixed y-coordinate for subscript when superscript is empty
 //is called "sub1" in tex
-const subYSupEmpty = 0;
+const subYSupEmpty = -0.15;
 
 //fixed y-coordinate for subscript when superscript is not empty
 //is called "sub2" in tex
-const subYSupNotEmpty = 0;
+const subYSupNotEmpty = -0.28;
 
 
 
@@ -71,15 +71,15 @@ const getFixedSupY = (mainStyle: Style) => {
 const layoutSup = (mainStyle: Style, nucleusLayouted: BoxNode) => ((sup: FormulaNode) : BoxNode => {
 	const supStyle = getSubOrSupStyle(mainStyle, sup);
 	const supLayouted: BoxNode = layoutWithStyle(supStyle)(sup);
-	
+    const mainFontSize = mainStyle.fontSize;
+
 	const positionY = Math.max(
-        nucleusLayouted.type === "char" ? 0 : nucleusLayouted.dimensions.yMax + supLift,
-        getFixedSupY(mainStyle),
-        xHeight / 4 - supLayouted.dimensions.yMin 
+        nucleusLayouted.type === "char" ? 0 : nucleusLayouted.dimensions.yMax + supLift * mainFontSize,
+        getFixedSupY(mainStyle) * mainFontSize,
+        mainFontSize * (xHeight / 4) - supLayouted.dimensions.yMin 
     );
 
 	//add a small spacing
-	const mainFontSize = mainStyle.fontSize;
 	const horizontalSpacing = 0;//0.08 * mainFontSize;
 	const positionX = (nucleusLayouted.type === "char" ? 
 		getPositionXOfSupAtCharNucleus(nucleusLayouted as BoxCharNode, mainStyle) : 
@@ -90,12 +90,13 @@ const layoutSup = (mainStyle: Style, nucleusLayouted: BoxNode) => ((sup: Formula
 });
 
 const layoutSub = (mainStyle: Style, nucleusLayouted: BoxNode, hasSup: boolean) => ((sub: FormulaNode) : BoxNode => {
-	const subLayouted = layoutWithStyle(getSubOrSupStyle(mainStyle, sub))(sub);
-    const targetY = nucleusLayouted.type === "char" ? 0 : nucleusLayouted.dimensions.yMin + subLift;
+    const subLayouted = layoutWithStyle(getSubOrSupStyle(mainStyle, sub))(sub);
+    const mainFontSize = mainStyle.fontSize;
+    const targetY = nucleusLayouted.type === "char" ? 0 : nucleusLayouted.dimensions.yMin + subLift * mainFontSize;
     return setPosition([
         nucleusLayouted.dimensions.width,
-        hasSup ? Math.min(targetY, subYSupNotEmpty) : 
-            Math.min(targetY, subYSupEmpty, 0.8 * xHeight - subLayouted.dimensions.yMax)
+        hasSup ? Math.min(targetY, subYSupNotEmpty * mainFontSize) : 
+            Math.min(targetY, subYSupEmpty * mainFontSize, mainFontSize * 0.8 * xHeight - subLayouted.dimensions.yMax)
 	])(subLayouted);
 });
 
@@ -106,20 +107,20 @@ interface SupSubMap {
 };
 
 //if the sub- and superscript overlap, move the subscript down to make enough space
-const depenetrate = (supSubMap: SupSubMap) : SupSubMap => {
-    const maxSubTop = boxBottom(supSubMap.sup) - 4 * defaultRuleThickness;
+const depenetrate = (fontSize: number) => ((supSubMap: SupSubMap) : SupSubMap => {
+    const maxSubTop = boxBottom(supSubMap.sup) - (4 * defaultRuleThickness) * fontSize;
     const overlap = maxSubTop - boxTop(supSubMap.sub);
     const newSubY = Math.min(0, overlap) + supSubMap.sub.position[1];
     return assocPath(["sub", "position", 1], newSubY, supSubMap);
-};
+});
 
 //if the superscript is below 0.8 * xHeight, move both super- and subscript up
-const adjustAlignment = (supSubMap: SupSubMap) : SupSubMap => {
-    const minSupBottom = 0.8 * xHeight;
+const adjustAlignment =  (fontSize: number) => ((supSubMap: SupSubMap) : SupSubMap => {
+    const minSupBottom = 0.8 * xHeight * fontSize;
     const overlap = minSupBottom - boxBottom(supSubMap.sup);
     const shift = Math.max(0, overlap);
     return map(moveBox([0, shift]))(supSubMap);
-};
+});
 const supAndSubNotEmpty = (supSubMap: SupSubMap) : boolean => isDefined(supSubMap.sup) && isDefined(supSubMap.sub);
 
 export const layoutScriptInNoLimitPosition = (script: FormulaScriptNode) : BoxScriptNode => {
@@ -127,7 +128,8 @@ export const layoutScriptInNoLimitPosition = (script: FormulaScriptNode) : BoxSc
 		nucleus: "object"
 	})(script);
 
-	const { style } = script;
+    const { style } = script;
+    const { fontSize } = style;
 
 	const nucleusLayouted: BoxNode = pipe(layoutWithStyle(style), setPosition([0, 0]))(script.nucleus);
 
@@ -137,7 +139,7 @@ export const layoutScriptInNoLimitPosition = (script: FormulaScriptNode) : BoxSc
             sup: layoutSup(style, nucleusLayouted),
             sub: layoutSub(style, nucleusLayouted, script.sup !== undefined)
         }) as SupSubMap,
-        when(supAndSubNotEmpty, pipe(depenetrate, adjustAlignment))
+        when(supAndSubNotEmpty, pipe(depenetrate(fontSize), adjustAlignment(fontSize)))
     )(script) as SupSubMap;
 
 	const scriptLayouted = {

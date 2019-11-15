@@ -90,7 +90,7 @@ const renderNode = (ctx: CanvasRenderingContext2D, node: BoxNode) => {
 	ctx.save();
 	ctx.translate(...node.position);
 
-	//renderBoundingBox(ctx, node);
+	// renderBoundingBox(ctx, node);
 
 	const nodeType = node.type;
 	if (nodeType === "char") {

@@ -43,56 +43,26 @@ import { layout } from '../../src/layout/layout';
 async function main(){
 
 	const formulaData = {
-		type: "mathlist",
-		items: [
-			{
-				type: "script",
-				nucleus: { type: "ord", value: "c" },
-				sub: { type: "ord", value: "0" }
-			},
-			
-			{ type: "bin", value: "+" },
-
-			{
-				type: "script",
-				nucleus: { type: "ord", value: "c" },
-				sub: { type: "ord", value: "1" }
-			},
-			{ type: "bin", value: "*" },
-			{
-				type: "script",
-				nucleus: { type: "ord", value: "t" },
-				sup: { type: "ord", value: "1" }
-			},
-
-			{ type: "bin", value: "+" },
-
-			{
-				type: "script",
-				nucleus: { type: "ord", value: "c" },
-				sub: { type: "ord", value: "2" }
-			},
-			{ type: "bin", value: "*" },
-			{
-				type: "script",
-				nucleus: { type: "ord", value: "t" },
-				sup: { type: "ord", value: "2" }
-			},
-
-			{ type: "bin", value: "+" },
-
-			{
-				type: "script",
-				nucleus: { type: "ord", value: "c" },
-				sub: { type: "ord", value: "3" }
-			},
-			{ type: "bin", value: "*" },
-			{
-				type: "script",
-				nucleus: { type: "ord", value: "t" },
-				sup: { type: "ord", value: "3" }
-			},
-		]
+		type: "script",
+		style: {
+			type: "D",
+			fontSize: 60
+		},
+		nucleus: {
+			type: "ord", value: "f",
+		},
+		sup: {
+			type: "fraction",
+			numerator: { type: "ord", value: "1" },
+			denominator: {
+				type: "fraction",
+				numerator: { type: "ord", value: "1" },
+				denominator: {
+					type: "ord", value: "l"
+				}
+			}
+		},
+		sub: { type: "ord", value: "x" }
 	};
 	
 	const layoutData = layout(formulaData);
