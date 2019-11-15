@@ -1,18 +1,16 @@
 
-import { add, map, multiply, pick, pipe, when, assocPath } from 'ramda';
-import { lookUpGlyphByCharOrAlias } from "../../font-data/katex-font-util";
-import { isNodeChar, isNodeText } from "../../node-types";
-import { smallerStyle, smallestStyle, Style, isDisplayStyle } from "../../style";
-import { BoxNode, CharNode, Dimensions, FormulaNode, ScriptNode as FormulaScriptNode } from '../../types';
+import { assocPath, map, pick, pipe, when } from 'ramda';
+import { isDisplayStyle, smallerStyle, smallestStyle, Style } from "../../style";
+import { BoxNode, FormulaNode, ScriptNode as FormulaScriptNode } from '../../types';
 import { getMetricsOfCharNode, isDefined, pickList } from "../../util/util";
 import { BoxCharNode } from '../char-layout';
 import { validateProperties } from "../error";
-import { layoutWithStyle, layoutByMap } from "../layout";
-import { boxRight, calcBoundingDimensions, setPosition, boxBottom, boxTop, moveBox } from '../layout-util';
+import { layoutByMap, layoutWithStyle } from "../layout";
+import { boxBottom, boxTop, calcBoundingDimensions, moveBox, setPosition } from '../layout-util';
 import { BoxScriptNode } from './script-layout';
 
 
-
+//todo: scriptspace after sup or sub
 
 //parameters ###
 
