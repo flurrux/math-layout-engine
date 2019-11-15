@@ -37,6 +37,7 @@ class ResizableCanvas extends LitElement {
         };
         const resizeObserver = new ResizeObserver(updateCanvasSize);
         resizeObserver.observe(outerEl);
+        updateCanvasSize();
         this.dispatchEvent(new CustomEvent("first-updated", { detail: { canvas: canvas } }));
     }
 }

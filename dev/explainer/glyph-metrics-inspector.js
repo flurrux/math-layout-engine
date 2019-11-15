@@ -8,6 +8,10 @@ import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
 import '@polymer/paper-item/paper-item.js';
 import '@polymer/paper-listbox/paper-listbox.js';
 
+import {
+    fillFlippedText, strokePolyline
+} from '../ctx-util';
+
 const lookUpFontFamiliesWithUnicode = (unicode) => fontData.filter(entry => {
     const metricKey = entry.name + "-" + entry.emphasis[0];
     const metrics = fontMetricsData[metricKey];
@@ -39,25 +43,6 @@ const scaleAndCenterRect = (rect, availableSpaceRect, padding=0) => {
     }
 };
 
-const pathPolyline = (ctx, points) => {
-    ctx.moveTo(...points[0]);
-    points.slice(1).forEach(point => ctx.lineTo(...point));
-};
-const strokePolyline = (points) => (ctx => {
-    ctx.beginPath();
-    pathPolyline(ctx, points);
-    ctx.stroke();
-});
-const fillFlippedText = (text, x=0, y=0, scale=1) => (ctx => {
-    ctx.save();
-    ctx.translate(x, y);
-    scaleUniform(scale)(ctx);
-    ctx.scale(1, -1);
-    ctx.fillText(text, 0, 0);
-    ctx.restore();
-});
-const scaleUniform = (scale) => (ctx => ctx.scale(scale, scale));
-
 const fillCanvasCenteredText = (canvas, ctx, text) => {
     Object.assign(ctx, {
         textBaseline: "middle",
@@ -66,12 +51,6 @@ const fillCanvasCenteredText = (canvas, ctx, text) => {
     });
     ctx.fillText(text, canvas.width / 2, canvas.height / 2);
 };
-
-
-
-
-
-
 
 
 class GlyphMetricsInspector extends LitElement {

@@ -30,3 +30,53 @@ if the spacing between the nodes is smaller than the minimal-spacing, shift both
 same amount until the spacing is correct.
 
 
+
+script ###
+
+the positions of subscript and superscript are relative to the 
+origin of the nucleus.
+margins can be added by increasing the width of the enclosing script-node.
+heightShift => u
+depthShift => v
+sub1 => fixed y when no superscript (usual)
+sub2 => fixed y when superscript (lower than usual?)
+sup3 => fixed y when cramped (lower than usual?)
+sup1 => fixed y when display (higher than usual?)
+sup2 => otherwise (usual)
+
+
+if nucleus is char:
+    heightShift = 0
+    depthShift = 0
+else 
+    heightShift = height(nucleus) - sup_drop
+    depthShift = depth(nucleus) + sub_drop
+
+if (subscript exists):
+    style(subscript) = scriptDown(style(script))
+    positionX(subscript) = width(nucleus);
+    marginRight(subscript) = scriptspace
+    if (subscript only): 
+        //it must be positioned at least at the bottom of the nucleus with a drop of sub_drop
+        //it must drop at least sub1
+        //the top of the subscript must not extend above 4/5 of the x_height,
+        positionY(subscript) = max(depthShift, sub1, height(subscript) - 4/5 * x_height)
+    else: 
+        //similar as above but the x_height alignment is missing
+        positionY(subscript) = max(depthShift, sub2)
+
+if (superscript exists):
+    style(superscript) = scriptUp(style(script))
+    marginRight(superscript) = scriptspace
+
+    positionX(superscript) = italicCorrection(nucleus)
+    supPosition = if isCramped(style) : sup3, if isDisplay(style) : sup1, otherwise : sup2
+    positionY(superscript) = max(heightShift, supPosition, depth(superscript) + 1/4 * x_height)
+
+if (subscript and superscript exist both):
+    if (spaceBetween(positionY(superscript) and positionY(subscript)) < 4 * default_rule_thickness):
+        adjust depthShift so that the space between superscript and subscript is 4 * default_rule_thickness
+
+    if (bottom(superscript) < 4/5 * x_height):
+        shift both the superscript and subscript up so that bottom(superscript) = 4/5 * x_height
+
