@@ -34,7 +34,7 @@ import { FormulaNode, BoxNode } from '../types';
 import { isNodeChar, isNodeText } from "../node-types";
 import { pipe } from 'ramda';
 
-import { layoutScript } from "./script-layout";
+import { layoutScript } from "./script/script-layout";
 import { layoutFraction } from './fraction-layout';
 import { layoutDelimited } from './delimiter/delimited-layout';
 import { layoutRoot } from './root/root-layout';
@@ -93,8 +93,31 @@ const getLayoutFuncByNode = (node: FormulaNode): LayoutFunction => {
 		`"${node.type}" is not a valid node-type`);
 };
 
+
+//useful function for layouting optional nodes
+//supply a map with layout-functions for all possible nodes and get back 
+//the layouted nodes that actually exist
+interface BoxNodeMap {
+	[key: string]: BoxNode
+};
+interface FormulaNodeObject {
+	[key: string]: FormulaNode
+}
+export const layoutByMap = (layoutMap: { [key: string]: LayoutFunction }) => ((inputMap: FormulaNodeObject) : BoxNodeMap => {
+	const layouted : BoxNodeMap = {};
+	const keys: string[] = Reflect.ownKeys(inputMap) as string[];
+	for (const key of keys){
+		layouted[key] = layoutMap[key](inputMap[key]);
+	}
+	return layouted;
+});
+
+
+
+
 export const layoutNode : LayoutFunction = (node: FormulaNode) : BoxNode => getLayoutFuncByNode(node)(node);
 export const layoutWithStyle = (style: any) : LayoutFunction => pipe(withStyle(style), layoutNode) as LayoutFunction;
+
 
 //this is the main function to call for layouting the root-node (root as in tree) of a formula
 const defaultStyle : Style = {

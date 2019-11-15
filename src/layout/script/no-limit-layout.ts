@@ -1,11 +1,12 @@
 
-import { isNodeChar, isNodeText } from "../node-types";
- 
+
+
+
+
 interface TargetYPair {
 	supY: number, 
 	subY: number
 }
-
 const fontFamilyToTargetY : { [key: string]: TargetYPair } = {
 	Main: { supY: 0.42, subY: -0.2 },
     Math: { supY: 0.42, subY: -0.2 }, 
@@ -22,100 +23,28 @@ const getTargetYOfGlyphNucleus = (fontFamily: string, unicode: number) : TargetY
     return getOverridenTargetY(fontFamily, unicode) || fontFamilyToTargetY[fontFamily] || { supY: 0.42, subY: -0.2 };
 };
 
-export interface BoxScriptNode extends BoxNode {
-	nucleus: BoxNode,
-	sup?: BoxNode,
-	sub?: BoxNode
-};
-
-import { ScriptNode as FormulaScriptNode, BoxNode, FormulaNode, CharNode, TextNode, Dimensions, Vector2, ScriptNode } from '../types';
-import { smallerStyle, smallestStyle, withStyle, Style } from "../style";
-import { pickList, isDefined, min, getMetricsOfCharNode } from "../util/util";
-import { layoutNode, layoutWithStyle } from "./layout";
-import { 
-	center, setPosition, calcBoundingDimensions, getAxisHeight, alignToYAxis, boxRight
-} from './layout-util';
-
-import { lookUpUnicode, lookUpGlyphByCharOrAlias } from "../font-data/katex-font-util";
-import { pipe, filter, map, multiply, identity, pick, add } from 'ramda';
-import { BoxCharNode } from './char-layout';
-import { validateProperties } from "./error";
-
-
-//useful function for layouting optional nodes
-//supply a map with layout-functions for all possible nodes and get back 
-//the layouted nodes that actually exist
-interface BoxNodeObject {
-	[key: string]: BoxNode
-};
-interface FormulaNodeObject {
-	[key: string]: FormulaNode
-}
-type LayoutFunction = (node: FormulaNode) => BoxNode;
-const layoutByMap = (layoutMap: { [key: string]: LayoutFunction }) => ((inputMap: any) : BoxNodeObject => {
-	const layouted : BoxNodeObject = {};
-	const keys: string[] = Reflect.ownKeys(inputMap) as string[];
-	for (const key of keys){
-		layouted[key] = layoutMap[key](inputMap[key]);
-	}
-	return layouted;
-});
-const valuesInObject = (obj: object) : any[] => (Object as any).values(obj);
 
 
 
 
 
-//limit position ###
 
-const layoutSupLim = (parentStyle: Style, supStyle: Style, nucleusDimensions: Dimensions) => ((sup: FormulaNode) : BoxNode => {
-	const supLayouted : BoxNode = pipe(withStyle(supStyle), layoutNode)(sup);
-	const supDim = supLayouted.dimensions;
-	const spacing = parentStyle.fontSize * 0.2;
-	const position : Vector2 = [
-		center(supDim.width, nucleusDimensions.width),
-		nucleusDimensions.yMax - supDim.yMin + spacing
-	];
-	return setPosition(position)(supLayouted);
-});
-const layoutSubLim = (parentStyle: Style, subStyle: Style, nucleusDimensions: Dimensions) => ((sub: FormulaNode) : BoxNode => {
-	const subLayouted = pipe(withStyle(subStyle), layoutNode)(sub);
-	const subDim = subLayouted.dimensions;
-	const spacing = parentStyle.fontSize * 0.2;
-	const position : Vector2 = [
-		center(subDim.width, nucleusDimensions.width),
-		nucleusDimensions.yMin - subDim.yMax - spacing
-	];
-	return setPosition(position)(subLayouted);
-});
-
-const layoutScriptLimitPosition = (script: FormulaScriptNode) : BoxScriptNode => {
-	const { style } = script;
-	
-	const nucleusLayouted : BoxNode = pipe(withStyle(style), layoutNode)(script.nucleus);
-	const nucleusDim = nucleusLayouted.dimensions;
-
-	const scriptStyle = smallerStyle(style);
-	const scriptLayouted = {
-		nucleus: nucleusLayouted,
-		...layoutByMap({
-			sup: layoutSupLim(style, scriptStyle, nucleusDim),
-			sub: layoutSubLim(style, scriptStyle, nucleusDim)
-		})
-	};
-	
-	const dimensions = calcBoundingDimensions(valuesInObject(scriptLayouted));
-	return {
-		type: "script",
-		style, dimensions,
-		...scriptLayouted
-	};
-};
+import { add, map, multiply, pick, pipe } from 'ramda';
+import { lookUpGlyphByCharOrAlias } from "../../font-data/katex-font-util";
+import { isNodeChar, isNodeText } from "../../node-types";
+import { smallerStyle, smallestStyle, Style } from "../../style";
+import { BoxNode, CharNode, Dimensions, FormulaNode, ScriptNode as FormulaScriptNode } from '../../types';
+import { getMetricsOfCharNode, isDefined, pickList } from "../../util/util";
+import { BoxCharNode } from '../char-layout';
+import { validateProperties } from "../error";
+import { layoutWithStyle, layoutByMap } from "../layout";
+import { boxRight, calcBoundingDimensions, setPosition } from '../layout-util';
+import { BoxScriptNode } from './script-layout';
 
 
 
 
-//nolimit position ###
+
 
 const getSubOrSupStyle = (scriptStyle: Style, subOrSupNode: FormulaNode) : Style => {
 	return subOrSupNode.type === "fraction" ? smallestStyle(scriptStyle) : smallerStyle(scriptStyle);
@@ -195,7 +124,7 @@ const layoutSubNoLim = (mainStyle: Style, nucleusLayouted: BoxNode, targetY: num
 	])(subLayouted);
 });
 
-const layoutScriptNoLimitPosition = (script: FormulaScriptNode) : BoxScriptNode => {
+export const layoutScriptInNoLimitPosition = (script: FormulaScriptNode) : BoxScriptNode => {
 	validateProperties({
 		nucleus: "object"
 	})(script);
@@ -222,35 +151,4 @@ const layoutScriptNoLimitPosition = (script: FormulaScriptNode) : BoxScriptNode 
 		type: "script", style, dimensions,
 		...scriptLayouted
 	};
-};
-
-const isNodeDisplayOperator = (style: Style, node: FormulaNode) : boolean => {
-	return isNodeChar(node) && node.type === "op" && style.type === "D";
-};
-//the integral operator can only have sub- and superscripts in nolimit-position
-const isDisplayOperatorLimitException = (node: CharNode) => lookUpUnicode(node.value) !== 8747 /*integral: ∫*/;
-const isScriptLimitPosition = (style: Style, nucleus: FormulaNode) : boolean => {
-	return (nucleus.style !== undefined && nucleus.style.fontFamily !== undefined && nucleus.style.fontFamily === "Size2") ||
-		(isNodeDisplayOperator(style, nucleus) && !isDisplayOperatorLimitException(nucleus as CharNode)) || 
-		isNodeText(nucleus) && (nucleus as TextNode).text === "lim";
-};
-
-const withLimitStyle = (scriptNode: ScriptNode) : ScriptNode => {
-	return {
-		...scriptNode,
-		nucleus: {
-			...scriptNode.nucleus,
-			style: {
-				...(scriptNode.nucleus.style || {}),
-				fontFamily: "Size2"
-			}
-		}
-	};
-};
-export const layoutScript = (script: FormulaScriptNode) : BoxScriptNode => {
-	const { nucleus } = script;
-	const limitPosition = isScriptLimitPosition(script.style, nucleus);
-	if (limitPosition) script = withLimitStyle(script);
-	const layoutFunc = limitPosition ? layoutScriptLimitPosition : layoutScriptNoLimitPosition;
-	return layoutFunc(script);
 };
