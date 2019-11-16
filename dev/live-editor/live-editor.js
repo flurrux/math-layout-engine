@@ -258,6 +258,7 @@ class LiveMathLayoutEditor extends LitElement {
 				width: `${(nodeLayouted.dimensions.width + padding)}px`,
 				height: `${(nodeLayouted.dimensions.yMax - nodeLayouted.dimensions.yMin + padding)}px`,
 			});
+			this._renderLayoutedNode();
 		}
 		catch (e){
 			console.log(e);
