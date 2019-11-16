@@ -37,3 +37,5 @@ export const removeKeys = (keys: string[]) => ((obj: object) => {
 import { BoxCharNode } from '../layout/char-layout';
 import { getMetricsObject } from '../font-data/katex-font-util';
 export const getMetricsOfCharNode = (node: BoxCharNode) => getMetricsObject(node.style.fontFamily, node.style.emphasis, node.unicode);
+
+export const valuesInObject = (obj: object) : [any] => (Object as any).values(obj);

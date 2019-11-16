@@ -7,15 +7,15 @@ import { BoxScriptNode } from './script-layout';
 import { smallerStyle, withStyle, Style } from "../../style";
 import { layoutNode, layoutByMap } from "../layout";
 import { 
-	center, setPosition, calcBoundingDimensions
+	center, setPosition, calcBoundingDimensions, alignToYAxis
 } from '../layout-util';
 
-import { pipe } from 'ramda';
+import { pipe, map, pick } from 'ramda';
+import { valuesInObject } from '../../util/util';
 
 
 
 
-const valuesInObject = (obj: object) : any[] => (Object as any).values(obj);
 
 const withLimitStyle = (scriptNode: ScriptNode) : ScriptNode => {
 	return {
@@ -54,20 +54,23 @@ const layoutSubLim = (parentStyle: Style, subStyle: Style, nucleusDimensions: Di
 export const layoutScriptInLimitPosition = (script: FormulaScriptNode) : BoxScriptNode => {
     script = withLimitStyle(script);
 	const { style } = script;
-	
-	const nucleusLayouted : BoxNode = pipe(withStyle(style), layoutNode)(script.nucleus);
+	const nucleusLayouted : BoxNode = pipe(
+		withStyle(style), layoutNode, setPosition([0, 0])
+	)(script.nucleus);
 	const nucleusDim = nucleusLayouted.dimensions;
 
 	const scriptStyle = smallerStyle(style);
-	const scriptLayouted = {
+	const scriptLayouted = pipe(alignToYAxis)({
 		nucleus: nucleusLayouted,
-		...layoutByMap({
-			sup: layoutSupLim(style, scriptStyle, nucleusDim),
-			sub: layoutSubLim(style, scriptStyle, nucleusDim)
-		})
-	};
-	
-	const dimensions = calcBoundingDimensions(valuesInObject(scriptLayouted));
+		...pipe(
+			pick(["sup", "sub"]),
+			layoutByMap({
+				sup: layoutSupLim(style, scriptStyle, nucleusDim),
+				sub: layoutSubLim(style, scriptStyle, nucleusDim)
+			})
+		)(script)
+	});
+	const dimensions = calcBoundingDimensions(scriptLayouted);
 	return {
 		type: "script",
 		style, dimensions,

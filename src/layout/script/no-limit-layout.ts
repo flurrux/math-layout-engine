@@ -1,5 +1,5 @@
 
-import { assocPath, map, pick, pipe, when } from 'ramda';
+import { assocPath, map, pick, pipe, when, filter } from 'ramda';
 import { isDisplayStyle, smallerStyle, smallestStyle, Style } from "../../style";
 import { BoxNode, FormulaNode, ScriptNode as FormulaScriptNode } from '../../types';
 import { getMetricsOfCharNode, isDefined, pickList } from "../../util/util";
@@ -55,6 +55,9 @@ const getSubOrSupStyle = (scriptStyle: Style, subOrSupNode: FormulaNode) : Style
 	return subOrSupNode.type === "fraction" ? smallestStyle(scriptStyle) : smallerStyle(scriptStyle);
 };
 
+const isBigOperator = (node: BoxNode) => (node.style !== undefined &&
+	node.style.fontFamily !== undefined && ["Size1", "Size2"].includes(node.style.fontFamily));
+const isDynamicNucleusSize = (nucleus: BoxNode) => nucleus.type !== "char" || isBigOperator(nucleus);
 
 
 const getPositionXOfSupAtCharNucleus = (nucleus: BoxCharNode, mainStyle: Style) => {
@@ -66,13 +69,15 @@ const getFixedSupY = (mainStyle: Style) => {
     if (isDisplayStyle(mainStyle)) return supYDisplay;
     return supYDefault;
 };
+
+	
 const layoutSup = (mainStyle: Style, nucleusLayouted: BoxNode) => ((sup: FormulaNode) : BoxNode => {
 	const supStyle = getSubOrSupStyle(mainStyle, sup);
 	const supLayouted: BoxNode = layoutWithStyle(supStyle)(sup);
     const mainFontSize = mainStyle.fontSize;
 
 	const positionY = Math.max(
-        nucleusLayouted.type === "char" ? 0 : nucleusLayouted.dimensions.yMax + supLift * mainFontSize,
+		isDynamicNucleusSize(nucleusLayouted) ? nucleusLayouted.dimensions.yMax + supLift * mainFontSize : 0,
         getFixedSupY(mainStyle) * mainFontSize,
         mainFontSize * (xHeight / 4) - supLayouted.dimensions.yMin 
     );
@@ -90,7 +95,7 @@ const layoutSup = (mainStyle: Style, nucleusLayouted: BoxNode) => ((sup: Formula
 const layoutSub = (mainStyle: Style, nucleusLayouted: BoxNode, hasSup: boolean) => ((sub: FormulaNode) : BoxNode => {
     const subLayouted = layoutWithStyle(getSubOrSupStyle(mainStyle, sub))(sub);
     const mainFontSize = mainStyle.fontSize;
-    const targetY = nucleusLayouted.type === "char" ? 0 : nucleusLayouted.dimensions.yMin + subLift * mainFontSize;
+    const targetY = isDynamicNucleusSize(nucleusLayouted) ? nucleusLayouted.dimensions.yMin + subLift * mainFontSize : 0;
     return setPosition([
         nucleusLayouted.dimensions.width,
         hasSup ? Math.min(targetY, subYSupNotEmpty * mainFontSize) : 
@@ -137,7 +142,7 @@ export const layoutScriptInNoLimitPosition = (script: FormulaScriptNode) : BoxSc
             sup: layoutSup(style, nucleusLayouted),
             sub: layoutSub(style, nucleusLayouted, script.sup !== undefined)
         }) as SupSubMap,
-        when(supAndSubNotEmpty, pipe(depenetrate(fontSize), adjustAlignment(fontSize)))
+        //when(supAndSubNotEmpty, pipe(depenetrate(fontSize), adjustAlignment(fontSize)))
     )(script) as SupSubMap;
 
 	const scriptLayouted = {
@@ -145,7 +150,11 @@ export const layoutScriptInNoLimitPosition = (script: FormulaScriptNode) : BoxSc
 		...supAndSubLayouted
 	};
 
-	const dimensions = calcBoundingDimensions(pickList(["nucleus", "sup", "sub"], scriptLayouted).filter(isDefined));
+	const dimensions = pipe(
+		pick(["nucleus", "sup", "sub"]), 
+		filter(isDefined),
+		calcBoundingDimensions
+	)(scriptLayouted);
 
 	return {
 		type: "script", style, dimensions,

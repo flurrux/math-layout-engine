@@ -88,7 +88,7 @@ const getLayoutFuncByNode = (node: FormulaNode): LayoutFunction => {
 	if (isNodeText(node)) return layoutTextNode;
 	
 
-	throw new InvalidNodeError(node.type === "char" ? 
+	throw new InvalidNodeError((node as any).type === "char" ? 
 		"char is not a valid node-type. use ord, bin, ... instead." : 
 		`"${node.type}" is not a valid node-type`);
 };

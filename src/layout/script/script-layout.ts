@@ -21,9 +21,10 @@ const isNodeDisplayOperator = (style: Style, node: FormulaNode) : boolean => {
 	return isNodeChar(node) && node.type === "op" && style.type === "D";
 };
 //the integral operator can only have sub- and superscripts in nolimit-position
-const isDisplayOperatorLimitException = (node: CharNode) => lookUpUnicode(node.value) !== 8747 /*integral: ∫*/;
+const isDisplayOperatorLimitException = (node: CharNode) => lookUpUnicode(node.value) === 8747 /*integral: ∫*/;
+const isLimitStyle = (style: Style): boolean => style !== undefined && style.fontFamily !== undefined && style.fontFamily === "Size2";
 const isScriptLimitPosition = (style: Style, nucleus: FormulaNode) : boolean => {
-	return (nucleus.style !== undefined && nucleus.style.fontFamily !== undefined && nucleus.style.fontFamily === "Size2") ||
+	return isLimitStyle(nucleus.style) ||
 		(isNodeDisplayOperator(style, nucleus) && !isDisplayOperatorLimitException(nucleus as CharNode)) || 
 		isNodeText(nucleus) && (nucleus as TextNode).text === "lim";
 };
