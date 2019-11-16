@@ -20,9 +20,8 @@ export interface BoxCharNode extends BoxNode {
 };
 
 const getMetricsOfCharNode = (charNode: BoxCharNode) : Metrics => getMetricsObject(charNode.style.fontFamily, charNode.style.emphasis, charNode.unicode);
-const getDimensionsOfCharNode = (style: Style, node: FormulaCharNode) : Dimensions => {
-	const fontData = lookUpGlyphByCharOrAlias(node.value);
-	const metrics: Metrics = getMetricsObject(fontData.fontFamily, getDefaultEmphasis(fontData.fontFamily), fontData.unicode);
+const getDimensionsOfCharNode = (style: Style, node: FormulaCharNode, unicode: number) : Dimensions => {
+	const metrics: Metrics = getMetricsObject(style.fontFamily, style.emphasis, unicode);
 	return map(multiply(style.fontSize))({
 		width: metrics.width,
 		yMin: -metrics.depth,
@@ -40,7 +39,7 @@ export const layoutCharNode = (node: FormulaCharNode) : BoxCharNode => {
 	return {
 		type: "char", unicode, style,
 		char: String.fromCharCode(unicode), 
-		dimensions: getDimensionsOfCharNode(style, node),
+		dimensions: getDimensionsOfCharNode(style, node, unicode),
 		bbox: map(multiply(style.fontSize))(lookUpBoundingBox(fontFamily, unicode, style.emphasis))
 	};
 };
