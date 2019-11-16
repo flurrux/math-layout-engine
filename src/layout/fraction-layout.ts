@@ -38,7 +38,7 @@ const numeratorYInlineStyle = numeratorYDisplayStyle;
 const denominatorYDisplayStyle = axisHeight - maxTextualHeight;
 const denominatorYInlineStyle = denominatorYDisplayStyle;
 
-const horizontalPadding = 0.2;
+const horizontalPadding = 0.12;
 
 const calculateNumeratorPositionY = (numerator: BoxNode, fontSize: number, isDisplay: boolean, minBottom: number) : number => {
 	const y = (isDisplay ? numeratorYDisplayStyle : numeratorYInlineStyle) * fontSize;

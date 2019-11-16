@@ -2,10 +2,12 @@ import { identity } from "ramda";
 import { FormulaNode } from "./types";
 
 export interface Style {
-	type?: string,
+	type?: "D" | "T" | "S" | "SS",
 	fontSize?: number,
-	emphasis?: string,
-	fontFamily?: string,
+	emphasis?: "Regular" | "Bold" | "Italic" | "BoldItalic",
+	fontFamily?: "Math"| "Main" |
+		"Size1" | "Size2" | "Size3" | "Size4" |
+		"SansSerif" | "Caligraphic" | "AMS" | "Fraktur" | "Typewriter" | "Script"
 	cramped?: boolean
 };
 

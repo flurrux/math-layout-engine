@@ -28,10 +28,10 @@ export interface BoundingBox {
 //formula nodes ###
 
 export interface FormulaNode {
-    type: string,
+	type: "ord" | "op" | "bin" | "rel" | "open" | "close" | "punct" 
+		| "mathlist" | "fraction" | "root" | "script" | "delimited" | "accented",
     style?: Style
 };
-
 
 export interface TextualNode extends FormulaNode {
 	value?: string,

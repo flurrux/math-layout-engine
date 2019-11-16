@@ -15,6 +15,7 @@
   "devDependencies": {
     "@babel/core": "^7.7.2",
     "@babel/plugin-transform-classes": "^7.7.0",
+    "@flurrux/declarative-scene-2d": "^1.1.15",
     "@polymer/marked-element": "^3.0.1",
     "@polymer/paper-button": "^3.0.1",
     "@polymer/paper-dropdown-menu": "^3.0.1",
@@ -25,11 +26,13 @@
     "babel-preset-es2017": "^6.24.1",
     "codemirror": "^5.49.2",
     "cssnano": "^4.1.10",
+    "highlight.js": "^9.16.2",
+    "import": "0.0.6",
     "install": "^0.13.0",
     "lit-element": "^2.2.1",
     "lit-html": "^1.1.2",
+    "marked": "^0.7.0",
     "npm": "^6.13.0",
-    "showdown": "^1.9.0",
     "typescript": "^3.7.2"
   },
   "browserslist": [

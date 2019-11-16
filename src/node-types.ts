@@ -15,7 +15,8 @@ export const nodeType = {
 	fraction: "fraction",
 	root: "root",
 	script: "script",
-	delimited: "delimited"
+	delimited: "delimited",
+	accented: "accented"
 };
 
 export const glyphTypes = ["ord", "op", "bin", "rel", "open", "close", "punct"];
