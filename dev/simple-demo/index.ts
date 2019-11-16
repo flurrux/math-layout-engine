@@ -40,29 +40,43 @@
 import { loadKatexFontFaces, renderFormulaLayout, centerNodeOnCanvas } from '../../src/rendering/render';
 import { layout } from '../../src/layout/layout';
 
+
 async function main(){
 
 	const formulaData = {
-		type: "script",
-		style: {
-			type: "D",
-			fontSize: 60
-		},
-		nucleus: {
-			type: "ord", value: "f",
-		},
-		sup: {
-			type: "fraction",
-			numerator: { type: "ord", value: "1" },
-			denominator: {
-				type: "fraction",
-				numerator: { type: "ord", value: "1" },
-				denominator: {
-					type: "ord", value: "l"
+		"type": "mathlist",
+		"style": { "type": "T" },
+		"items": [
+			{
+				"type": "script",
+				"nucleus": { "type": "op", "value": "sum" },
+				"sub": {
+					"type": "mathlist",
+					"items": [
+						{ "type": "ord", "value": "n" },
+						{ "type": "rel", "value": "=" },
+						{ "type": "ord", "value": "1" }
+					]
+				},
+				"sup": {
+					"type": "mathlist",
+					"items": [
+						{ "type": "ord", "value": "n" },
+						{ "type": "rel", "value": "<" },
+						{ "type": "ord", "text": "10" }
+					]
 				}
+			},
+			{
+				"type": "fraction",
+				"numerator": {
+					"type": "script",
+					"nucleus": { "type": "ord", "value": "2" },
+					"sup": { "type": "ord", "value": "n" }
+				},
+				"denominator": { "type": "ord", "value": "pi" }
 			}
-		},
-		sub: { type: "ord", value: "x" }
+		]
 	};
 	
 	const layoutData = layout(formulaData);
