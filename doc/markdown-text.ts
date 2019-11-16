@@ -2,18 +2,16 @@ import formulaToRendering from './formula-to-rendering.png';
 import quickExampleRender from './quick-example-render.png';
 
 import displayDemoImg from './style-type-demo/display.png';
-import inlineDemoImg from './style-type-demo/text.png';
+import inlineDemoImg from './style-type-demo/inline.png';
 import scriptDemoImg from './style-type-demo/script.png';
 import scriptOfScriptDemo from './style-type-demo/script-of-script.png';
+import crampedDemo from './style-type-demo/cramped.png';
+import uncrampedDemo from './style-type-demo/uncramped.png';
+
+import mathListDemo from './composite-node-demos/mathlist-demo.png';
+import fractionDemo from './composite-node-demos/fraction-demo.png';
 
 export const markdownStr = `
-
-
-
-## installation  
-
-todo
-
 
 
 ## description  
@@ -27,6 +25,11 @@ you can play around in the live-editor here:
 <https://tender-brattain-a839fc.netlify.com/>
 
 this documentation uses [typescript](https://www.typescriptlang.org/docs/handbook/basic-types.html) to describe the structure of data.  
+
+## installation  
+
+todo
+
 
 ## disclaimer & credits  
 
@@ -153,7 +156,7 @@ interface Style {
 		"SansSerif" | "Caligraphic" | "AMS" | "Fraktur" | "Typewriter" | "Script",
 
 	cramped?: boolean
-};
+}
 \`\`\`
 
 ### type
@@ -169,12 +172,12 @@ interface Style {
 ![demo img](${inlineDemoImg})  
 this style takes up less vertical space than display-style.  
 
-S (script)  
+#### S (script)  
 ![demo img](${scriptDemoImg})  
 - fontSize is reduced to 0.7 multiplied by the "base"-fontSize
 - no spacing between items in mathlist
-
-SS (script of script)  
+ 
+#### SS (script of script)  
 ![demo img](${scriptOfScriptDemo})  
 - fontSize is reduced to 0.5 multiplied by the "base"-fontSize  
 
@@ -182,8 +185,6 @@ the "base"-fontSize depends on the type and fontSize of a node.
 if there are two nested script-nodes like x^(2^2), then the superscript at the end  
 is scaled by 0.5 relative to the x-node, **not** by 0.7 × 0.5!  
 
-
-todo: examples of each style-type
 
 ### emphasis  
 emphasis describes one of 4 possible combinations of regular/bold and italic/normal.  
@@ -194,7 +195,8 @@ the cramped boolean means that a node should take up less vertical space,
 so superscripts are raised less (and that's it?).  
 nodes that are placed under lines like denominators have a cramped-style.  
 
-
+cramped = false ![uncramped img](${uncrampedDemo})
+cramped = true  ![cramped img](${crampedDemo})
 
 
 
@@ -219,8 +221,65 @@ todo: aliases
 ## MathList  
 ------------
 
+\`\`\`typescript
+export interface MathListNode extends FormulaNode {
+	items: FormulaNode[]
+}
+\`\`\`
+
+after layout: 
+\`\`\`typescript
+export interface BoxMathListNode extends BoxNode {
+	items: BoxNode[]
+}
+\`\`\`
+
+
+### example  
+\`\`\`javascript
+{
+  "type": "mathlist",
+  "items": [
+    { "type": "ord", "value": "-" },
+    { "type": "ord", "value": "x" },
+    { "type": "bin", "value": "*" },
+    { "type": "open", "value": "(" },
+    { "type": "ord", "value": "1" },
+    { "type": "bin", "value": "+" },
+    { "type": "ord", "value": "x" },
+    { "type": "ord", "value": ")" }
+  ]
+}
+\`\`\`
+
+![mathlist rendered](${mathListDemo})
+
 ## Fraction  
 ------------
+
+### example  
+\`\`\`javascript
+{
+  "type": "fraction",
+  "numerator": {
+    "type": "ord", "value": "μ" 
+  },
+  "denominator": {
+    "type": "mathlist",
+    "items": [
+      { "type": "ord", "value": "1" },
+      { "type": "bin", "value": "+" },
+      {
+        "type": "fraction",
+        "numerator": { "type": "ord", "value": "μ" },
+        "denominator": { "type": "ord", "value": "beta" }
+      }
+    ]
+  }
+}
+\`\`\`
+
+![fraction demo](${fractionDemo})
 
 ## Script  
 ----------

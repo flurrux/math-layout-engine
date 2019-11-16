@@ -44,8 +44,9 @@ const renderBoundingBox = (ctx: CanvasRenderingContext2D, node: BoxNode) => {
 
 	ctx.save();
 	ctx.beginPath();
-	ctx.moveTo(0, 0);
-	ctx.lineTo(dim.width, 0);
+	const y = 0;//0.25 * (node.style.fontSize);
+	ctx.moveTo(0, y);
+	ctx.lineTo(dim.width, y);
 	ctx.setTransform(1, 0, 0, 1, 0, 0);
 	ctx.lineWidth = 1;
 	ctx.strokeStyle = "red";
@@ -90,7 +91,9 @@ const renderNode = (ctx: CanvasRenderingContext2D, node: BoxNode) => {
 	ctx.save();
 	ctx.translate(...node.position);
 
-	// renderBoundingBox(ctx, node);
+	// if (node.type === "char"){
+	// 	renderBoundingBox(ctx, node);
+	// }
 
 	const nodeType = node.type;
 	if (nodeType === "char") {

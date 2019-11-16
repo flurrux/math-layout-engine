@@ -3,28 +3,85 @@
 
 <head>
 	<meta charset="UTF-8" />
+	<meta name=viewport content="width=device-width, initial-scale=1">
 
 	<link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
 	<style>
 		body {
 			font-family: 'Roboto', sans-serif;
+			background-color: #2d2c2c;
+			color: #e0dddd;
+			margin: 0px;
 		}
 		#page {
-			padding-left: 100px;
+			margin-left: 240px;
 			font-size: 22px;
+			margin-top: 80px;
 		}
 		#page > pre {
 			width: fit-content;
 			padding: 16px;
 			border-radius: 4px;
-			background-color: #e6e6e694;
+			background-color: #e6e6e608;
+		}
+		header {
+			position: fixed;
+			display: flex;
+			padding: 20px 30px 20px 30px;
+			background-color: #3a5873;
+			width: 100%;
+			box-sizing: border-box;
+			height: 65px;
+			z-index: 1;
+			font-size: 20px;
+		}
+		header > a {
+			margin: 0px 10px 0px 10px;
+			text-decoration: solid;
+			font-weight: bold;
+			color: #d4d2dc;
+		}
+		.navigation-bar {
+			position: fixed;
+			padding: 20px;
+			margin-top: 65px;
+			height: 100%;
+			background-color: transparent;
+			display: flex;
+			flex-direction: column;
+			width: 160px;
+		}
+		.navigation-bar > a {
+			font-size: 24px;
+			padding: 20px 8px 20px 8px;
+			text-decoration: solid;
+			color: #d4d2dc;
+			display: inline-block;
+		}
+		a {
+			color: #91caca
 		}
 	</style>
 
 </head>
 
 <body>
-	<div id="page"></div>
+	
+	<header>
+		<span>math-layout-engine</span>
+		<span style="flex: 1;"></span>
+		<a href="https://tender-brattain-a839fc.netlify.com/">live editor</a>
+		<a href="https://github.com/flurrux/math-layout-engine">github</a>
+	</header>
+	<div style="display: flex;">
+		<div class="navigation-bar">
+			<a href="#description">description</a>
+			<a href="#installation">installation</a>
+			<a href="#disclaimer--credits">disclaimer & credits</a>
+		</div>
+		<div id="page"></div>
+	</div>
+
 	<script src="index.ts"></script>
 </body>
 

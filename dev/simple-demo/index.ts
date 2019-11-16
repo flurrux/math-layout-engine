@@ -45,37 +45,22 @@ async function main(){
 
 	const formulaData = {
 		"type": "mathlist",
-		"style": { "type": "T" },
+		"style": { "type": "T", fontSize: 200 },
 		"items": [
 			{
 				"type": "script",
-				"nucleus": { "type": "op", "value": "sum" },
-				"sub": {
-					"type": "mathlist",
-					"items": [
-						{ "type": "ord", "value": "n" },
-						{ "type": "rel", "value": "=" },
-						{ "type": "ord", "value": "1" }
-					]
+				"nucleus": { 
+					"type": "op", "value": "sum",
 				},
-				"sup": {
-					"type": "mathlist",
-					"items": [
-						{ "type": "ord", "value": "n" },
-						{ "type": "rel", "value": "<" },
-						{ "type": "ord", "text": "10" }
-					]
-				}
+				"sub": { "type": "ord", "value": "1" },
+				"sup": { "type": "ord", "value": "1" }
 			},
 			{
-				"type": "fraction",
-				"numerator": {
-					"type": "script",
-					"nucleus": { "type": "ord", "value": "2" },
-					"sup": { "type": "ord", "value": "n" }
-				},
-				"denominator": { "type": "ord", "value": "pi" }
-			}
+				"type": "script",
+				"nucleus": { "type": "op", "value": "x" },
+				"sub": { "type": "ord", "value": "1" },
+				"sup": { "type": "ord", "value": "1" }
+			},
 		]
 	};
 	
