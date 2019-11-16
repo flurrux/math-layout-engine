@@ -2,7 +2,7 @@ import {
 	lookUpGlyphByCharOrAlias, getMetricsObject, 
 	getDefaultEmphasis, lookUpBoundingBox 
 } from "../font-data/katex-font-util";
-import { map, multiply } from 'ramda';
+import { map, multiply, assoc, pipe } from 'ramda';
 import { createNodeStyle } from "../style";
 
 import { Metrics } from '../font-data/katex-font-util';
@@ -19,7 +19,6 @@ export interface BoxCharNode extends BoxNode {
 	bbox: BoundingBox
 };
 
-const getMetricsOfCharNode = (charNode: BoxCharNode) : Metrics => getMetricsObject(charNode.style.fontFamily, charNode.style.emphasis, charNode.unicode);
 const getDimensionsOfCharNode = (style: Style, node: FormulaCharNode, unicode: number) : Dimensions => {
 	const metrics: Metrics = getMetricsObject(style.fontFamily, style.emphasis, unicode);
 	return map(multiply(style.fontSize))({
@@ -28,6 +27,15 @@ const getDimensionsOfCharNode = (style: Style, node: FormulaCharNode, unicode: n
 		yMax: metrics.height
 	});
 };
+
+const handleOperatorStyle = (node: FormulaCharNode) => ((style: Style) : Style => {
+	if (node.type !== "op" || !["Size1", "Size2"].includes(style.fontFamily)){
+		return style;
+	}
+	const fontFamily = style.type === "D" ? "Size2" : "Size1";
+	return assoc("fontFamily", fontFamily, style);
+});
+
 export const layoutCharNode = (node: FormulaCharNode) : BoxCharNode => {
 	validateProperties({
 		value: "string"
@@ -35,7 +43,8 @@ export const layoutCharNode = (node: FormulaCharNode) : BoxCharNode => {
 	
 	const { fontFamily, unicode } = lookUpGlyphByCharOrAlias(node.value);
 	const emphasis : string = getDefaultEmphasis(fontFamily);
-	const style = createNodeStyle(node, { fontFamily, emphasis });
+	const implicitStyle = pipe(handleOperatorStyle(node))({ fontFamily, emphasis }) as Style;
+	const style = createNodeStyle(node, implicitStyle);
 	return {
 		type: "char", unicode, style,
 		char: String.fromCharCode(unicode), 

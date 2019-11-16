@@ -57,7 +57,7 @@ const getSubOrSupStyle = (scriptStyle: Style, subOrSupNode: FormulaNode) : Style
 
 const isBigOperator = (node: BoxNode) => (node.style !== undefined &&
 	node.style.fontFamily !== undefined && ["Size1", "Size2"].includes(node.style.fontFamily));
-const isDynamicNucleusSize = (nucleus: BoxNode) => nucleus.type !== "char" || isBigOperator(nucleus);
+const isDynamicNucleusSize = (nucleus: BoxNode) => nucleus.type !== "char";// || isBigOperator(nucleus);
 
 
 const getPositionXOfSupAtCharNucleus = (nucleus: BoxCharNode, mainStyle: Style) => {
@@ -142,7 +142,7 @@ export const layoutScriptInNoLimitPosition = (script: FormulaScriptNode) : BoxSc
             sup: layoutSup(style, nucleusLayouted),
             sub: layoutSub(style, nucleusLayouted, script.sup !== undefined)
         }) as SupSubMap,
-        //when(supAndSubNotEmpty, pipe(depenetrate(fontSize), adjustAlignment(fontSize)))
+        when(supAndSubNotEmpty, pipe(depenetrate(fontSize), adjustAlignment(fontSize)))
     )(script) as SupSubMap;
 
 	const scriptLayouted = {
