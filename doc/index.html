@@ -27,13 +27,22 @@
 		header {
 			position: fixed;
 			display: flex;
-			padding: 20px 30px 20px 30px;
+			padding: 20px 35px 20px 35px;
 			background-color: #3a5873;
 			width: 100%;
 			box-sizing: border-box;
 			height: 65px;
 			z-index: 1;
 			font-size: 20px;
+			box-shadow: 0 0 2px #8282828c;
+		}
+		#header-img {
+			display: block;
+			width: auto;
+			height: auto;
+			position: absolute;
+			left: 320px;
+			top: 11px;
 		}
 		header > a {
 			margin: 0px 10px 0px 10px;
@@ -61,6 +70,15 @@
 		a {
 			color: #91caca
 		}
+
+		h2::before { 
+			display: block; 
+			content: " "; 
+			margin-top: -65px; 
+			height: 65px; 
+			visibility: hidden; 
+			pointer-events: none;
+		}
 	</style>
 
 </head>
@@ -69,8 +87,10 @@
 	
 	<header>
 		<span>math-layout-engine</span>
+		<span style="margin-left: 10px;">1.0.0</span>
+		<img src="header-formula-1.png" id="header-img" />
 		<span style="flex: 1;"></span>
-		<a href="https://tender-brattain-a839fc.netlify.com/">live editor</a>
+		<a href="https://tender-brattain-a839fc.netlify.com/">live-editor</a>
 		<a href="https://github.com/flurrux/math-layout-engine">github</a>
 	</header>
 	<div style="display: flex;">
@@ -78,6 +98,7 @@
 			<a href="#description">description</a>
 			<a href="#installation">installation</a>
 			<a href="#disclaimer--credits">disclaimer & credits</a>
+			<a href="#style">style</a>
 		</div>
 		<div id="page"></div>
 	</div>
