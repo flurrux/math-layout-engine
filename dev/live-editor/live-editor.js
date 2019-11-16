@@ -44,13 +44,17 @@ class LiveMathLayoutEditor extends LitElement {
 				flex-direction: column;
 				margin-left: 4px;
 			}
-			resizable-canvas {
+			.canvas-container {
 				flex: 1;
+				display: flex;
+				align-items: center;
+				justify-content: center;
 			}
 			.current-error {
 				padding: 10px;
 				min-height: 40px;
 				font-weight: bold;
+				font-size: 22px;
 			}
 			.examples-picker {
 				display: flex;
@@ -247,7 +251,13 @@ class LiveMathLayoutEditor extends LitElement {
 			this._layoutedNode = nodeLayouted;
 			this.outputText = JSON.stringify(nodeLayouted, null, 4);
 			this._outputEditor.setValue(this.outputText);
-			this._renderLayoutedNode();
+			
+			const resizableCanvas = this.shadowRoot.querySelector("resizable-canvas");
+			const padding = 32;
+			Object.assign(resizableCanvas.style, {
+				width: `${(nodeLayouted.dimensions.width + padding)}px`,
+				height: `${(nodeLayouted.dimensions.yMax - nodeLayouted.dimensions.yMin + padding)}px`,
+			});
 		}
 		catch (e){
 			console.log(e);
@@ -347,15 +357,18 @@ class LiveMathLayoutEditor extends LitElement {
 							foldGutter: true
 						}}
 					></code-mirror-element>	
-					<resizable-canvas 
-						style="display: ${this.outputMode === "rendered" ? "block" : "none"};"
-						@canvas-resized=${e => {
-							if (this._layoutedNode){
-								this._renderLayoutedNode();
-							}
-						}}
-						@first-updated=${e => this._initCanvas(e.detail.canvas)}	
-					></resizable-canvas>
+					<div class="canvas-container" 
+						style="display: ${this.outputMode === "rendered" ? "flex" : "none"};"
+					>
+						<resizable-canvas 
+							@canvas-resized=${e => {
+								if (this._layoutedNode){
+									this._renderLayoutedNode();
+								}
+							}}
+							@first-updated=${e => this._initCanvas(e.detail.canvas)}	
+						></resizable-canvas>
+					</div>
 					<div class="bottom-bar"></div>
 				</div>
 			</div>
