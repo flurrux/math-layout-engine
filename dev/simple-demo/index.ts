@@ -44,24 +44,11 @@ import { layout } from '../../src/layout/layout';
 async function main(){
 
 	const formulaData = {
-		"type": "mathlist",
-		"style": { "type": "T", fontSize: 200 },
-		"items": [
-			{
-				"type": "script",
-				"nucleus": { 
-					"type": "op", "value": "sum",
-				},
-				"sub": { "type": "ord", "value": "1" },
-				"sup": { "type": "ord", "value": "1" }
-			},
-			{
-				"type": "script",
-				"nucleus": { "type": "op", "value": "x" },
-				"sub": { "type": "ord", "value": "1" },
-				"sup": { "type": "ord", "value": "1" }
-			},
-		]
+		type: "fraction",
+		numerator: {
+			type: "ord", value: "alpha"
+		},
+		denominator: { type: "ord", value: "beta" }
 	};
 	
 	const layoutData = layout(formulaData);

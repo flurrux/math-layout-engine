@@ -62,6 +62,15 @@ the cramped boolean means that a node should take up less vertical space,
 so superscripts are raised less (and that's it?).  
 nodes that are placed under lines like denominators have a cramped-style.  
 
-cramped = false ![uncramped img](${uncrampedDemo})
-cramped = true  ![cramped img](${crampedDemo})
+<div style="
+		display: grid; grid-template-columns: min-content min-content; 
+		grid-column-gap: 14px; justify-items: center; align-items: end;
+	"
+>
+	<div>cramped</div>
+	<div>uncramped</div>
+	<img src="${crampedDemo}" />
+	<img src="${uncrampedDemo}" />
+</div>
+
 `;

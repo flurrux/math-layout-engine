@@ -7,7 +7,7 @@ export default `
 \`\`\`typescript
 interface FormulaNode {
 	type: "ord" | "op" | "bin" | "rel" | "open" | "close" | "punct" 
-		| "mathlist" | "fraction" | "root" | "script" | "delimited" | "accented",  
+		| "mathlist" | "fraction" | "root" | "script" | "delimited" | "accented" | "matrix",  
 
     style?: Style
 }

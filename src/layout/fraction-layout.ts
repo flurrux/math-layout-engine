@@ -10,6 +10,7 @@ import { max } from "../util/util";
 import { validateProperties } from "./error";
 
 export interface BoxFractionNode extends BoxNode {
+	type: "fraction",
 	numerator: BoxNode,
 	denominator: BoxNode,
 	rule: RuleNode

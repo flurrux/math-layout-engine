@@ -1,5 +1,6 @@
 
-import formulaToRendering from './formula-to-rendering.png';
+
+import formulaToRenderingStr from './formula-to-rendering';
 
 export default `
 
@@ -8,7 +9,9 @@ export default `
 this engine turns an abstract formula-description into a layout-description,
 that can be rendered to canvas.
 
-![formula to rendering, example image](${formulaToRendering})  
+
+
+${formulaToRenderingStr}
 
 you can play around in the live-editor here:  
 <https://tender-brattain-a839fc.netlify.com/>

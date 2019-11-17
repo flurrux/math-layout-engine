@@ -10,7 +10,6 @@ hljs.registerLanguage('typescript', typescript);
 import { loadKatexFontFaces } from '../src/rendering/render';
 import { markdownStr } from './markdown-text';
 
-
 (async () => {
 	await loadKatexFontFaces();
 	const html = marked.parse(markdownStr, {
@@ -20,3 +19,6 @@ import { markdownStr } from './markdown-text';
 	});
     document.body.querySelector("#page").innerHTML = html;
 })();
+
+// import renderedPageStr from './rendered-page';
+// document.body.querySelector("#page").innerHTML = renderedPageStr;

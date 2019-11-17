@@ -72,11 +72,10 @@ const renderContours = (ctx: CanvasRenderingContext2D, node: ContoursNode) => {
 	ctx.restore();
 };
 const renderRule = (ctx: CanvasRenderingContext2D, node: RuleNode) => {
-	const y = node.position[1];
 	const thickness = node.dimensions.yMax - node.dimensions.yMin;
 	ctx.beginPath();
-	ctx.moveTo(0, y);
-	ctx.lineTo(node.dimensions.width, y);
+	ctx.moveTo(0, 0);
+	ctx.lineTo(node.dimensions.width, 0);
 	ctx.lineWidth = thickness;
 	ctx.stroke();
 };

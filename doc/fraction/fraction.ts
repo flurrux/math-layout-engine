@@ -7,6 +7,7 @@ export default `
 
 \`\`\`typescript
 interface FractionNode extends FormulaNode {
+	type: "fraction",
 	numerator: FormulaNode,
 	denominator: FormulaNode
 }
@@ -15,20 +16,20 @@ interface FractionNode extends FormulaNode {
 after layout:
 \`\`\`typescript
 interface BoxFractionNode extends BoxNode {
+	type: "fraction",
 	numerator: BoxNode,
 	denominator: BoxNode,
-
-	ruleThickness: number,
-	ruleY: number
+	rule: RuleNode
+}
+interface RuleNode extends BoxNode { 
+	type: "rule" 
 }
 \`\`\`
 
 the horizontal division-line in a fraction is called a rule and  
 its width spans the entire BoxFractionNode.  
-it's thickness and y-coordinate relative to the BoxFractionNode  
-are given by "ruleThickness" and "ruleY".  
-it's is drawn in such a way that half of its height is above the y-coordinate  
-and the other half below.
+the line itself is centered vertically.  
+
 
 ### example
 \`\`\`javascript
