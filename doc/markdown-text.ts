@@ -4,8 +4,10 @@ import disclaimerStr from './disclaimer';
 import exampleStr from './example/example';
 import formulaNodeStr from './formula-node';
 import styleStr from './style/style';
+import textNodeStr from './text-node/text-node';
 import mathlistStr from './mathlist/mathlist';
 import fractionStr from './fraction/fraction';
+import '../dev/explainer/fonts-overview';
 
 export const markdownStr = `
 
@@ -16,14 +18,14 @@ ${disclaimerStr}
 todo
 
 ${exampleStr}
-${formulaNodeStr}
-${styleStr}
-
-
-
 
 ## Fonts  
 ---------
+<font-overview-table></font-overview-table>
+
+${styleStr}
+
+${formulaNodeStr}
 
 ## BoxNode  
 -----------
@@ -36,8 +38,7 @@ these types are basically only used for horizontal spacing.
 todo: available symbols
 todo: aliases
 
-## TextNode
-------------
+${textNodeStr}
 
 ${mathlistStr}
 ${fractionStr}

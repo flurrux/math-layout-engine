@@ -1,8 +1,15 @@
 import { LitElement, html, css } from 'lit-element';
+import { loadKatexFontFaces } from './load-katex-font-faces';
 
 class FontOverviewTable extends LitElement {
     static get styles(){
-        return css`
+		return css`
+			:host {
+				display: block;
+			}
+			a {
+				color: white;
+			}
             #font-table thead {
                 font-weight: bold;
             }
@@ -85,7 +92,8 @@ class FontOverviewTable extends LitElement {
                 emphasis: ["Regular"],
                 examples: "([{⟨"
             }
-        ];
+		];
+		loadKatexFontFaces().then(() => this.update());
     }
     _fontEntryTemplate(fontEntry){
         const { fontFamily } = fontEntry;

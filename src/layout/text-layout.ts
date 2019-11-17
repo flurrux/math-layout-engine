@@ -6,8 +6,10 @@ import { Style } from '../style';
 import { validateProperties } from './error';
 
 export interface BoxTextNode extends BoxNode {
-	text: string
-}
+	type: "text",
+	text: string,
+	style: Style
+};
 
 const maxTextualHeight = 0.685;
 const maxTextualDepth = -0.205;

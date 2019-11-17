@@ -11,7 +11,7 @@ import { Style } from '../style';
 import { validateProperties } from "./error";
 
 export interface BoxCharNode extends BoxNode {
-	type: string,
+	type: "char",
 	char: string,
 	unicode: number,
 	style: Style,

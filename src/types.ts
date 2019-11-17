@@ -43,11 +43,11 @@ export interface TextualNode extends FormulaNode {
 };
 export interface CharNode extends FormulaNode {
 	type: TextualType,
-	value?: string
+	value: string
 };
 export interface TextNode extends FormulaNode {
 	type: "ord" | "op",
-	text?: string
+	text: string
 };
 export interface RootNode extends FormulaNode {
 	type: "root",

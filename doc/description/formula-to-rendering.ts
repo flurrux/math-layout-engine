@@ -34,7 +34,7 @@ const template = `
 `;
 */
 
-import '../labeled-arrow';
+import '../elements/labeled-arrow';
 import rendering from './rendering.png';
 
 export default `

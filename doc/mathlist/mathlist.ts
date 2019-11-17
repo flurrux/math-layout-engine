@@ -8,14 +8,14 @@ export default `
 ------------
 
 \`\`\`typescript
-export interface MathListNode extends FormulaNode {
+interface MathListNode extends FormulaNode {
 	items: FormulaNode[]
 }
 \`\`\`
 
 after layout:
 \`\`\`typescript
-export interface BoxMathListNode extends BoxNode {
+interface BoxMathListNode extends BoxNode {
 	items: BoxNode[]
 }
 \`\`\`
