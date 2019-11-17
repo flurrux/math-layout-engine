@@ -16,13 +16,16 @@ export const nodeType = {
 	root: "root",
 	script: "script",
 	delimited: "delimited",
-	accented: "accented"
+	accented: "accented",
+	matrix: "matrix"
 };
 
 export const glyphTypes = ["ord", "op", "bin", "rel", "open", "close", "punct"];
-export const compositeTypes = ["mathlist", "fraction", "root", "script", "delimited", "accented"];
+export const compositeTypes = [
+	"mathlist", "fraction", "root", "script", "delimited", "accented", "matrix"
+];
 
-import { FormulaNode, TextNode } from './types';
+import { FormulaNode, TextNode, BoxNode } from './types';
 
 export const isNodeTextual = (node: FormulaNode) : boolean => isNodeChar(node) || isNodeText(node);
 export const isNodeChar = (node: FormulaNode) : boolean => glyphTypes.includes(node.type) && (node as TextNode).text === undefined;

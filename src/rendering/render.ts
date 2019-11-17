@@ -1,7 +1,7 @@
 import { pickList, isDefined, addFontFaces } from '../util/util';
 import { fontIdentifiers } from '../font-data/katex-font-util';
 import { pathContours } from '../opentype';
-import { BoxNode, ContoursNode } from '../types';
+import { BoxNode, ContoursNode, RuleNode } from '../types';
 import { Style } from '../style';
 import { BoxCharNode } from '../layout/char-layout';
 import { BoxTextNode } from '../layout/text-layout';
@@ -71,16 +71,14 @@ const renderContours = (ctx: CanvasRenderingContext2D, node: ContoursNode) => {
 	ctx.fill();
 	ctx.restore();
 };
-const renderFractionRule = (ctx: CanvasRenderingContext2D, y: number, width: number, thickness: number) => {
+const renderRule = (ctx: CanvasRenderingContext2D, node: RuleNode) => {
+	const y = node.position[1];
+	const thickness = node.dimensions.yMax - node.dimensions.yMin;
 	ctx.beginPath();
 	ctx.moveTo(0, y);
-	ctx.lineTo(width, y);
+	ctx.lineTo(node.dimensions.width, y);
 	ctx.lineWidth = thickness;
 	ctx.stroke();
-};
-const renderFraction = (ctx: CanvasRenderingContext2D, node: BoxFractionNode) => {
-	renderSubNodes(ctx, node, ["numerator", "denominator"]);
-	renderFractionRule(ctx, node.ruleY, node.dimensions.width, node.ruleThickness);
 };
 const renderSubNodes = (ctx: CanvasRenderingContext2D, node: BoxNode, props: string[]) => pickList(props, node)
 	.filter(isDefined).forEach((subNode => renderNode(ctx, subNode)));
@@ -109,7 +107,10 @@ const renderNode = (ctx: CanvasRenderingContext2D, node: BoxNode) => {
 		renderNodes(ctx, (node as any).items as BoxNode[]);
 	}
 	else if (nodeType === "fraction") {
-		renderFraction(ctx, node as BoxFractionNode);
+		renderSubNodes(ctx, node, ["numerator", "rule", "denominator"]);
+	}
+	else if (nodeType === "rule") {
+		renderRule(ctx, node as RuleNode);
 	}
 	else if (nodeType === "script") {
 		renderSubNodes(ctx, node, ["nucleus", "sup", "sub"]);

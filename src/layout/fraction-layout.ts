@@ -4,7 +4,7 @@ import { setPosition, getAxisHeight, boxBottom, boxTop } from './layout-util';
 import { center as calcCentering } from './layout-util';
 import { pipe } from 'ramda';
 
-import { FractionNode as FormulaFractionNode, BoxNode } from '../types';
+import { FractionNode as FormulaFractionNode, BoxNode, RuleNode } from '../types';
 import { Style } from '../style';
 import { max } from "../util/util";
 import { validateProperties } from "./error";
@@ -12,8 +12,7 @@ import { validateProperties } from "./error";
 export interface BoxFractionNode extends BoxNode {
 	numerator: BoxNode,
 	denominator: BoxNode,
-	ruleThickness: number,
-	ruleY: number
+	rule: RuleNode
 };
 
 /*
@@ -92,7 +91,15 @@ export const layoutFraction = (fraction: FormulaFractionNode) : BoxFractionNode 
 		type: "fraction", style,
 		numerator: num,
 		denominator: denom,
-		ruleThickness, ruleY: axisHeight,
+		rule: {
+			type: "rule",
+			position: [0, axisHeight],
+			dimensions: {
+				width: dimensions.width,
+				yMax: halfRuleThickness,
+				yMin: -halfRuleThickness
+			}
+		},
 		dimensions
 	};
 };
