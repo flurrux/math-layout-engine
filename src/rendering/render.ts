@@ -1,12 +1,13 @@
-import { pickList, isDefined, addFontFaces } from '../util/util';
 import { fontIdentifiers } from '../font-data/katex-font-util';
-import { pathContours } from '../opentype';
-import { BoxNode, ContoursNode, RuleNode } from '../types';
-import { Style } from '../style';
 import { BoxCharNode } from '../layout/char-layout';
-import { BoxTextNode } from '../layout/text-layout';
-import { BoxFractionNode } from '../layout/fraction-layout';
 import { setPosition } from '../layout/layout-util';
+import { BoxMathListNode } from '../layout/mathlist-layout';
+import { BoxMatrixNode } from '../layout/matrix-layout';
+import { BoxTextNode } from '../layout/text-layout';
+import { pathContours } from '../opentype';
+import { Style } from '../style';
+import { BoxNode, ContoursNode, RuleNode } from '../types';
+import { addFontFaces, isDefined, pickList } from '../util/util';
 
 export const loadKatexFontFaces = async () => {
 	const baseUrl = "https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/fonts/";
@@ -103,7 +104,7 @@ const renderNode = (ctx: CanvasRenderingContext2D, node: BoxNode) => {
 		renderContours(ctx, node as ContoursNode);
 	}
 	else if (nodeType === "mathlist") {
-		renderNodes(ctx, (node as any).items as BoxNode[]);
+		renderNodes(ctx, (node as BoxMathListNode).items as BoxNode[]);
 	}
 	else if (nodeType === "fraction") {
 		renderSubNodes(ctx, node, ["numerator", "rule", "denominator"]);
@@ -118,7 +119,7 @@ const renderNode = (ctx: CanvasRenderingContext2D, node: BoxNode) => {
 		renderSubNodes(ctx, node, ["radical", "radicand", "index"]);
 	}
 	else if (nodeType === "matrix"){
-		renderNodes(ctx, (node as any).items as BoxNode[]);
+		renderNodes(ctx, (node as BoxMatrixNode).items as BoxNode[]);
 	}
 	else if (nodeType === "accented"){
 		renderSubNodes(ctx, node, ["nucleus", "accent"]);

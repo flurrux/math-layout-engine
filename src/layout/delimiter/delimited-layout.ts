@@ -62,8 +62,8 @@ export const layoutDelimited = (delimNode: FormulaDelimitedNode) : BoxMathListNo
 		})) as [BoxNode, BoxNode];
 
 	const itemXs = accumSum([
-		leftDelimBox.dimensions.width + lookUpHorizontalSpacing(leftDelimBox, delimited),
-		delimitedLayouted.dimensions.width + lookUpHorizontalSpacing(delimited, rightDelimBox)
+		leftDelimBox.dimensions.width + lookUpHorizontalSpacing(leftDelim, delimited),
+		delimitedLayouted.dimensions.width + lookUpHorizontalSpacing(delimited, rightDelim)
 	]);
 	const items = [
 		setPosition([itemXs[0], 0])(leftDelimBox),

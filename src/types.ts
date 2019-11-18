@@ -65,15 +65,16 @@ export interface FractionNode extends FormulaNode {
 	denominator: FormulaNode
 };
 
+export interface MatrixStyle extends Style {
+	rowSpacing: number,
+	colSpacing: number
+};
 export interface MatrixNode extends FormulaNode {
 	type: "matrix",
+	style: MatrixStyle,
 	rowCount: number,
 	colCount: number,
-	items: FormulaNode[],
-
-	//move to style?
-	rowSpacing?: number,
-	colSpacing?: number
+	items: FormulaNode[]
 };
 
 export interface DelimitedNode extends FormulaNode {

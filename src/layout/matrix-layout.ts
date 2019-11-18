@@ -1,18 +1,14 @@
-import { layoutWithStyle } from "./layout";
-import { setPosition, getAxisHeight, isNodeAlignedToBaseline } from './layout-util';
-import { map, filter, range, pipe, pick, add, multiply, identity } from 'ramda';
-import { sum, accumSum, max } from "../util/util";
-import { BoxNode, MatrixNode as FormulaMatrixNode, FormulaNode, Vector2 } from "../types";
-import { Style } from "../style";
+import { add, identity, map, multiply, pick, pipe, range } from 'ramda';
+import { BoxNode, MatrixNode as FormulaMatrixNode } from "../types";
+import { accumSum, max, sum } from "../util/util";
 import { validateProperties } from "./error";
+import { layoutWithStyle } from "./layout";
+import { setPosition } from './layout-util';
+import matrix from '../../doc/matrix/matrix';
 
 
-interface MatrixStyle extends Style {
-	rowSpacing: number,
-	colSpacing: number
-};
-
-interface BoxMatrixNode extends BoxNode {
+export interface BoxMatrixNode extends BoxNode {
+	type: "matrix",
 	items: BoxNode[],
 	rowCount: number,
 	colCount: number,
@@ -50,7 +46,9 @@ export const layoutMatrix = (matrixNode: FormulaMatrixNode) : BoxMatrixNode => {
 		colCount: "number",
 		items: "array"
 	});
-
+	if (matrixNode.rowCount * matrixNode.colCount !== matrixNode.items.length){
+		throw `the number of matrix-items (${matrixNode.items.length}) does not match rowCount * colCount (${matrixNode.rowCount * matrixNode.colCount})`
+	}
 
 	const style = matrixNode.style;
 	const spacings = {
@@ -73,7 +71,7 @@ export const layoutMatrix = (matrixNode: FormulaMatrixNode) : BoxMatrixNode => {
 	const halfHeight = totalHeight / 2;
 	const colPositions: number[] = pipe(map(add(colSpacing)), accumSum)(colWidths);
 	const rowPositions: number[] = rowDims.reduce((posArr, rowDim, rowInd) => {
-		if (rowInd === colCount - 1) return posArr;
+		if (rowInd === rowCount - 1) return posArr;
 		const lastVal = posArr[posArr.length - 1];
 		const [curDim, nextDim] = [rowDim, rowDims[rowInd + 1]];
 		const descend = curDim.yMin - rowSpacing - nextDim.yMax;

@@ -1,25 +1,42 @@
 import { layoutNode } from "../layout";
-import { setPosition, dimensionHeight, calcBoundingDimensions } from '../layout-util';
+import { setPosition, dimensionHeight, calcBoundingDimensions, alignToYAxis } from '../layout-util';
 import { isDefined } from "../../util/util";
 import { map, pipe, multiply } from 'ramda';
 import { createRadical } from "./create-radical";
-import { switchStyleType, withStyle } from "../../style";
+import { switchStyleType, withStyle, Style } from "../../style";
 
-import { BoxNode, RootNode as FormulaRootNode, ContoursNode, Vector2 } from '../../types';
+import { BoxNode, RootNode as FormulaRootNode, ContoursNode, Vector2, FormulaNode } from '../../types';
 import { validateProperties } from "../error";
 
-export interface BoxRootNode {
-	radicand: BoxNode
+export interface BoxRootNode extends BoxNode {
+	type: "root",
+	radical: ContoursNode,
+	radicand: BoxNode,
+	index?: BoxNode
 };
 
-export const layoutRoot = (root: FormulaRootNode) => {
+const layoutIndex = (mainStyle: Style, contoursOffset: Vector2, bottomRightCorner: Vector2, index: FormulaNode) : BoxNode => {
+	const indexLayouted: BoxNode = pipe(withStyle(switchStyleType(mainStyle, "SS")), layoutNode)(index);
+	const scaledCorner: Vector2 = map(multiply(mainStyle.fontSize))(bottomRightCorner) as Vector2;
+	const rightBottomPosition = [
+		contoursOffset[0] + scaledCorner[0],
+		contoursOffset[1] + scaledCorner[1]
+	];
+	const indexPosition: Vector2 = [
+		rightBottomPosition[0] - indexLayouted.dimensions.width,
+		rightBottomPosition[1] - indexLayouted.dimensions.yMin
+	];
+	return setPosition(indexPosition)(indexLayouted);
+};
+
+export const layoutRoot = (root: FormulaRootNode) : BoxRootNode => {
 	validateProperties({
 		radicand: "object"
 	})(root);
 
 	const { style } = root;
 	const { fontSize } = style;
-	let radicandLayouted = pipe(withStyle(style), layoutNode)(root.radicand);
+	let radicandLayouted : BoxNode = pipe(withStyle(style), layoutNode)(root.radicand);
 
 	const radicandDim = radicandLayouted.dimensions;
 	const radicandDimEm = map(multiply(1 / fontSize), radicandLayouted.dimensions);
@@ -35,7 +52,7 @@ export const layoutRoot = (root: FormulaRootNode) => {
 
 	const spareYHalf = (radical.innerHeight * fontSize - radicandDim.yMax + radicandDim.yMin) * 0.7;
 	const contourY = spareYHalf - (rootMetrics.yMax - radicandDim.yMax);
-	const contoursOffset = [0, contourY];
+	const contoursOffset : Vector2 = [0, contourY];
 
 	const radicandPosition = [
 		fontSize * (radical.innerStartX + margin[0]), 0
@@ -48,22 +65,13 @@ export const layoutRoot = (root: FormulaRootNode) => {
 		position: [contoursOffset[0], contoursOffset[1] + radicandPosition[1]],
 		dimensions: rootMetrics
 	};
+	let indexLayouted : BoxNode = root.index ? layoutIndex(style, contoursOffset, radical.indexCorner, root.index) : undefined;
 
-
-	//index
-	let indexLayouted : BoxNode = root.index ? (function () {
-		const indexLayouted : BoxNode = pipe(withStyle(switchStyleType(style, "SS")), layoutNode)(root.index);
-		const scaledCorner : Vector2 = map(multiply(style.fontSize))(radical.indexCorner) as Vector2;
-		const rightBottomPosition = [
-			contoursOffset[0] + scaledCorner[0],
-			contoursOffset[1] + scaledCorner[1]
-		];
-		const indexPosition : Vector2 = [
-			rightBottomPosition[0] - indexLayouted.dimensions.width,
-			rightBottomPosition[1] - indexLayouted.dimensions.yMin
-		];
-		return setPosition(indexPosition)(indexLayouted);
-	})() as BoxNode : undefined;
+	// const alignedNodes = alignToYAxis({
+	// 	radicand: radicandLayouted,
+	// 	radical: radicalLayouted,
+	// 	...(indexLayouted ? { index: indexLayouted } : {})
+	// });
 
 	const shift = (indexLayouted && indexLayouted.position[0] < 0) ? -indexLayouted.position[0] : 0;
 	if (shift > 0){
