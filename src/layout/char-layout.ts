@@ -1,6 +1,6 @@
 import { 
 	lookUpGlyphByCharOrAlias, getMetricsObject, 
-	getDefaultEmphasis, lookUpBoundingBox 
+	getDefaultEmphasis, lookUpBoundingBox, hasFontFamilyUnicode 
 } from "../font-data/katex-font-util";
 import { map, multiply, assoc, pipe } from 'ramda';
 import { createNodeStyle } from "../style";
@@ -42,9 +42,16 @@ export const layoutCharNode = (node: FormulaCharNode) : BoxCharNode => {
 	})(node);
 	
 	const { fontFamily, unicode } = lookUpGlyphByCharOrAlias(node.value);
+	const char = String.fromCharCode(unicode);
 	const emphasis : string = getDefaultEmphasis(fontFamily);
-	const implicitStyle = pipe(handleOperatorStyle(node))({ fontFamily, emphasis }) as Style;
+	const implicitStyle = pipe(handleOperatorStyle(node))({ 
+		type: node.style.type,
+		fontFamily, emphasis 
+	}) as Style;
 	const style = createNodeStyle(node, implicitStyle);
+	if (!hasFontFamilyUnicode(style.fontFamily, style.emphasis, unicode)){
+		throw `font ${style.fontFamily}-${style.emphasis} does not contain char '${char}'`;
+	}
 	return {
 		type: "char", unicode, style,
 		char: String.fromCharCode(unicode), 

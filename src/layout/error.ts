@@ -32,3 +32,12 @@ export const validateProperties = (propsObject: object) => ((obj: object) => {
         }
     }
 });
+
+
+import { Style } from "../style";
+import { hasFontFamilyUnicode } from "../font-data/katex-font-util";
+export const validateCharInFont = (style: Style, char: string) => {
+	if (!hasFontFamilyUnicode(style.fontFamily, style.emphasis, char.charCodeAt(0))){
+		throw `font ${style.fontFamily}-${style.emphasis} does not contain '${char}'`
+	}
+};

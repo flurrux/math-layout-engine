@@ -1,17 +1,11 @@
 
-import { 
-	ScriptNode as FormulaScriptNode, BoxNode, FormulaNode, Dimensions, Vector2, ScriptNode 
-} from '../../types';
+import { pick, pipe } from 'ramda';
+import { smallerStyle, Style, withStyle } from "../../style";
+import { BoxNode, Dimensions, FormulaNode, ScriptNode as FormulaScriptNode, ScriptNode, Vector2 } from '../../types';
+import { layoutByMap, layoutNode } from "../layout";
+import { alignToYAxis, calcBoundingDimensions, center, setPosition } from '../layout-util';
 import { BoxScriptNode } from './script-layout';
 
-import { smallerStyle, withStyle, Style } from "../../style";
-import { layoutNode, layoutByMap } from "../layout";
-import { 
-	center, setPosition, calcBoundingDimensions, alignToYAxis
-} from '../layout-util';
-
-import { pipe, map, pick } from 'ramda';
-import { valuesInObject } from '../../util/util';
 
 
 
@@ -52,7 +46,6 @@ const layoutSubLim = (parentStyle: Style, subStyle: Style, nucleusDimensions: Di
 });
 
 export const layoutScriptInLimitPosition = (script: FormulaScriptNode) : BoxScriptNode => {
-    script = withLimitStyle(script);
 	const { style } = script;
 	const nucleusLayouted : BoxNode = pipe(
 		withStyle(style), layoutNode, setPosition([0, 0])

@@ -8,6 +8,7 @@ import { validateProperties } from "../error";
 import { layoutByMap, layoutWithStyle } from "../layout";
 import { boxBottom, boxTop, calcBoundingDimensions, moveBox, setPosition } from '../layout-util';
 import { BoxScriptNode } from './script-layout';
+import { isNodeChar } from '../../node-types';
 
 
 //todo: scriptspace after sup or sub
@@ -25,7 +26,7 @@ const supLift = -0.16;
 
 //how much is the subscript shifted up relative
 //to the bottom of the (non-char)nucleus box
-const subLift = 0.12;
+const subLift = -0.02;//0.12;
 
 
 //fixed y-coordinate for superscript in cramped style (priority 1)
@@ -57,7 +58,9 @@ const getSubOrSupStyle = (scriptStyle: Style, subOrSupNode: FormulaNode) : Style
 
 const isBigOperator = (node: BoxNode) => (node.style !== undefined &&
 	node.style.fontFamily !== undefined && ["Size1", "Size2"].includes(node.style.fontFamily));
-const isDynamicNucleusSize = (nucleus: BoxNode) => nucleus.type !== "char";// || isBigOperator(nucleus);
+const isDynamicNucleusSize = (nucleus: FormulaNode) => {
+	return !isNodeChar(nucleus) || nucleus.type === "op";
+};
 
 
 const getPositionXOfSupAtCharNucleus = (nucleus: BoxCharNode, mainStyle: Style) => {
@@ -71,13 +74,12 @@ const getFixedSupY = (mainStyle: Style) => {
 };
 
 	
-const layoutSup = (mainStyle: Style, nucleusLayouted: BoxNode) => ((sup: FormulaNode) : BoxNode => {
+const layoutSup = (mainStyle: Style, nucleus: FormulaNode, nucleusLayouted: BoxNode) => ((sup: FormulaNode) : BoxNode => {
 	const supStyle = getSubOrSupStyle(mainStyle, sup);
 	const supLayouted: BoxNode = layoutWithStyle(supStyle)(sup);
     const mainFontSize = mainStyle.fontSize;
-
 	const positionY = Math.max(
-		isDynamicNucleusSize(nucleusLayouted) ? nucleusLayouted.dimensions.yMax + supLift * mainFontSize : 0,
+		isDynamicNucleusSize(nucleus) ? nucleusLayouted.dimensions.yMax + supLift * mainFontSize : 0,
         getFixedSupY(mainStyle) * mainFontSize,
         mainFontSize * (xHeight / 4) - supLayouted.dimensions.yMin 
     );
@@ -92,10 +94,10 @@ const layoutSup = (mainStyle: Style, nucleusLayouted: BoxNode) => ((sup: Formula
 	return setPosition([positionX, positionY])(supLayouted);
 });
 
-const layoutSub = (mainStyle: Style, nucleusLayouted: BoxNode, hasSup: boolean) => ((sub: FormulaNode) : BoxNode => {
+const layoutSub = (mainStyle: Style, nucleus: FormulaNode, nucleusLayouted: BoxNode, hasSup: boolean) => ((sub: FormulaNode) : BoxNode => {
     const subLayouted = layoutWithStyle(getSubOrSupStyle(mainStyle, sub))(sub);
     const mainFontSize = mainStyle.fontSize;
-    const targetY = isDynamicNucleusSize(nucleusLayouted) ? nucleusLayouted.dimensions.yMin + subLift * mainFontSize : 0;
+	const targetY = isDynamicNucleusSize(nucleus) ? nucleusLayouted.dimensions.yMin + subLift * mainFontSize : 0;
     return setPosition([
         nucleusLayouted.dimensions.width,
         hasSup ? Math.min(targetY, subYSupNotEmpty * mainFontSize) : 
@@ -134,13 +136,14 @@ export const layoutScriptInNoLimitPosition = (script: FormulaScriptNode) : BoxSc
     const { style } = script;
     const { fontSize } = style;
 
-	const nucleusLayouted: BoxNode = pipe(layoutWithStyle(style), setPosition([0, 0]))(script.nucleus);
+	const { nucleus } = script;
+	const nucleusLayouted: BoxNode = pipe(layoutWithStyle(style), setPosition([0, 0]))(nucleus);
 
     const supAndSubLayouted = pipe(
         pick(["sup", "sub"]), 
         layoutByMap({
-            sup: layoutSup(style, nucleusLayouted),
-            sub: layoutSub(style, nucleusLayouted, script.sup !== undefined)
+            sup: layoutSup(style, nucleus, nucleusLayouted),
+            sub: layoutSub(style, nucleus, nucleusLayouted, script.sup !== undefined)
         }) as SupSubMap,
         when(supAndSubNotEmpty, pipe(depenetrate(fontSize), adjustAlignment(fontSize)))
     )(script) as SupSubMap;

@@ -3,7 +3,7 @@ import { getMetricsObject } from '../font-data/katex-font-util';
 import { createNodeStyle } from '../style';
 import { BoxNode, TextNode as FormulaTextNode } from '../types';
 import { Style } from '../style';
-import { validateProperties } from './error';
+import { validateProperties, validateCharInFont } from './error';
 
 export interface BoxTextNode extends BoxNode {
 	type: "text",
@@ -29,6 +29,7 @@ export const layoutTextNode = (textNode: FormulaTextNode) : BoxTextNode => {
 		fontFamily: "Main", 
 		emphasis: "Regular",
 	});
+	Array.from(text).forEach(char => validateCharInFont(style, char));
 	const { fontSize } = style;
 	const dimensions = map(multiply(fontSize))({
 		width: calculateTextWidth(style, text),
