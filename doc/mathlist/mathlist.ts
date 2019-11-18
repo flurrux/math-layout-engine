@@ -4,7 +4,7 @@ import mathListDemo from './mathlist-demo.png';
 
 export default `
 
-## MathList
+## mathlist
 ------------
 
 \`\`\`typescript

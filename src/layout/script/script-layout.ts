@@ -13,6 +13,7 @@ import { BoxNode, CharNode, FormulaNode, ScriptNode as FormulaScriptNode, TextNo
 import { layoutScriptInLimitPosition } from './limit-layout';
 import { layoutScriptInNoLimitPosition } from './no-limit-layout';
 import { isNodeChar, isNodeText } from "../../node-types";
+import { validateProperties } from "../error";
 
 
 
@@ -26,12 +27,16 @@ const isLimitStyle = (style: Style): boolean => style !== undefined && style.fon
 const isScriptLimitPosition = (style: Style, nucleus: FormulaNode) : boolean => {
 	return isLimitStyle(nucleus.style) ||
 		(isNodeDisplayOperator(style, nucleus) && !isDisplayOperatorLimitException(nucleus as CharNode)) || 
-		isNodeText(nucleus) && (nucleus as TextNode).text === "lim";
+		(isNodeText(nucleus) && (nucleus as TextNode).text === "lim");
 };
 
 
 
 export const layoutScript = (script: FormulaScriptNode) : BoxScriptNode => {
+	validateProperties({
+		nucleus: "object"
+	})(script);
+
 	const { nucleus } = script;
 	const limitPosition = isScriptLimitPosition(script.style, nucleus);
 	const layoutFunc = limitPosition ? layoutScriptInLimitPosition : layoutScriptInNoLimitPosition;

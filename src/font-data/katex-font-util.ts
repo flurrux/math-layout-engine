@@ -128,7 +128,7 @@ const fontFamilyLookUpOrder = [
     "SansSerif", "Caligraphic", "AMS", "Fraktur", "Typewriter", "Script"
 ];
 
-const hasFontFamilyUnicode = (fontFamily: string, emphasis: string, unicode: number) : boolean => getMetrics(fontFamily, emphasis, unicode) !== undefined;
+export const hasFontFamilyUnicode = (fontFamily: string, emphasis: string, unicode: number) : boolean => getMetrics(fontFamily, emphasis, unicode) !== undefined;
 
 const lookUpFamilyNameByUnicode = (unicode: number): { fontFamily: string, emphasis: string } => {
     for (const fontFam of fontFamilyLookUpOrder){

@@ -2,7 +2,7 @@
 import textNodeDemoImg from './textnode-demo.png';
 
 export default `
-## TextNode
+## text
 ------------
 
 \`\`\`typescript

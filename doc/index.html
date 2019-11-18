@@ -29,6 +29,7 @@
 		@media only screen and (min-width: 600px) {
 			#page { 
 				margin-left: 240px; 
+				font-size: 22px;
 			}
 		}
 		
@@ -108,21 +109,34 @@
 			padding: 14px;
 			width: 160px;
 			margin-top: 65px;
-			height: 100%;
+			bottom: 0px;
+			top: 0px;
+			overflow-y: auto;
+			overflow-x: hidden;
 			background-color: transparent;
 			flex-direction: column;
-		}
-		.navigation-bar > a {
 			font-size: 24px;
-			padding: 8px 8px 8px 8px;
+		}
+		.navigation-bar a {
+			padding: 6px 8px 6px 8px;
 			text-decoration: solid;
 			color: #d4d2dc;
-			display: inline-block;
+			display: block;
+			cursor: pointer;
 		}
 		@media only screen and (min-width: 600px) {
 			.navigation-bar { 
 				display: flex;  
 			}
+		}
+		.sub-navigation {
+			font-size: 85%;
+			margin-left: 20px;
+		}
+
+		/* width */
+		.navigation-bar::-webkit-scrollbar {
+			width: 0px;
 		}
 	</style>
 	<!-- sub markdown -->
@@ -158,11 +172,26 @@
 			<a href="#disclaimer--credits">disclaimer & credits</a>
 			<a href="#fonts">fonts</a>
 			<a href="#style">Style</a>
-			<a href="#formulanode">FormulaNode</a>
-			<a href="#charnode">CharNode</a>
-			<a href="#textnode">TextNode</a>
-			<a href="#mathlist">MathlistNode</a>
-			<a href="#fraction">FractionNode</a>
+
+			<a href="#formulanode">basic nodetypes</a>
+			<div class="sub-navigation">
+				<a href="#formulanode">FormulaNode</a>
+				<a href="#boxnode">BoxNode</a>
+				<a href="#contoursnode">ContoursNode</a>
+			</div>
+			
+			<a href="#formulanode">nodes</a>
+			<div class="sub-navigation">
+				<a href="#character">character</a>
+				<a href="#text">text</a>
+				<a href="#mathlist">mathlist</a>
+				<a href="#fraction">fraction</a>
+				<a href="#script">script</a>
+				<a href="#accent">accent</a>
+				<a href="#matrix">matrix</a>
+				<a href="#root">root</a>
+				<a href="#delimiter">delimiter</a>
+			</div>
 
 		</div>
 		<div id="page"></div>

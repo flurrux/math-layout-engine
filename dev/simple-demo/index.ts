@@ -44,11 +44,23 @@ import { layout } from '../../src/layout/layout';
 async function main(){
 
 	const formulaData = {
-		type: "fraction",
-		numerator: {
-			type: "ord", value: "alpha"
-		},
-		denominator: { type: "ord", value: "beta" }
+		"type": "mathlist",
+		"items": [
+			{
+				"type": "script",
+				"nucleus": { "type": "op", "value": "integral" },
+				"sup": { "type": "ord", "value": "1" },
+				"sub": { "type": "ord", "value": "0" }
+			},
+			{
+				"type": "script",
+				"nucleus": { "type": "ord", "value": "i" },
+				"sup": { "type": "ord", "value": "x" },
+			},
+			{ "type": "bin", "value": "*" },
+			{ "type": "ord", "value": "d" },
+			{ "type": "ord", "value": "x" },
+		]
 	};
 	
 	const layoutData = layout(formulaData);
@@ -56,11 +68,13 @@ async function main(){
 
 	document.body.insertAdjacentHTML("beforeend", `<canvas width=800 height=400></canvas>`);
 	const canvas = document.querySelector("canvas");
+	const padding = 32;
 	Object.assign(canvas, { 
-		width: layoutData.dimensions.width + 40, 
-		height: (layoutData.dimensions.yMax - layoutData.dimensions.yMin) + 40
+		width: layoutData.dimensions.width + padding, 
+		height: (layoutData.dimensions.yMax - layoutData.dimensions.yMin) + padding
 	});
 	const ctx = canvas.getContext("2d");
+	Object.assign(ctx, { strokeStyle: "white", fillStyle: "white" });
 	await loadKatexFontFaces();
 	renderFormulaLayout(canvas, ctx, centerNodeOnCanvas(canvas, layoutData));
 }

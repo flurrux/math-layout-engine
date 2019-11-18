@@ -1,8 +1,9 @@
 
 import fractionDemo from './fraction-demo.png';
+import labeledParts from './fraction-labeled.png';
 
 export default `
-## Fraction
+## fraction
 ------------
 
 \`\`\`typescript
@@ -13,7 +14,6 @@ interface FractionNode extends FormulaNode {
 }
 \`\`\`
 
-after layout:
 \`\`\`typescript
 interface BoxFractionNode extends BoxNode {
 	type: "fraction",
@@ -26,8 +26,9 @@ interface RuleNode extends BoxNode {
 }
 \`\`\`
 
-the horizontal division-line in a fraction is called a rule and  
-its width spans the entire BoxFractionNode.  
+![labeled parts](${labeledParts})
+
+the horizontal division-line in a fraction is called a rule and its width spans the entire BoxFractionNode.  
 the line itself is centered vertically.  
 
 

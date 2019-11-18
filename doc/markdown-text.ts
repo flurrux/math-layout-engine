@@ -2,12 +2,20 @@
 import descriptionStr from './description/description';
 import disclaimerStr from './disclaimer';
 import exampleStr from './example/example';
-import formulaNodeStr from './formula-node';
 import styleStr from './style/style';
+import '../dev/explainer/fonts-overview';
+import formulaNodeStr from './formula-node';
+import boxNodeStr from './box-node/box-node';
+import contoursStr from './contours/contours';
+
+import charNodeStr from './char-node/char-node';
 import textNodeStr from './text-node/text-node';
 import mathlistStr from './mathlist/mathlist';
 import fractionStr from './fraction/fraction';
-import '../dev/explainer/fonts-overview';
+import scriptStr from './script/script';
+import matrixStr from './matrix/matrix';
+import rootStr from './root/root';
+
 
 export const markdownStr = `
 
@@ -22,44 +30,29 @@ ${exampleStr}
 ## Fonts  
 ---------
 <font-overview-table></font-overview-table>
+todo: table with all possible glyphs
 
 ${styleStr}
 
 ${formulaNodeStr}
+${boxNodeStr}
+${contoursStr}
 
-## BoxNode  
------------
-
-## CharNode
-------------
-
-types: ord, bin, rel, open, close, ...  
-these types are basically only used for horizontal spacing.  
-todo: available symbols
-todo: aliases
-
+${charNodeStr}
 ${textNodeStr}
-
 ${mathlistStr}
 ${fractionStr}
+${scriptStr}
 
-
-
-## Script  
+## accent  
 ----------
 
-## Root  
---------
+${matrixStr}
+${rootStr}
 
-## Delimiter  
+
+## delimiter  
 -------------
-
-## Accent  
-----------
-
-## Matrix  
-----------
-
 
 
 `;
