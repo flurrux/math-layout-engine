@@ -82,7 +82,8 @@ export const layoutMatrix = (matrixNode: FormulaMatrixNode) : BoxMatrixNode => {
 	itemsLayouted = itemsLayouted.map((layoutedItem, index) => {
 		const [rowIndex, colIndex] = getPositionInMatrix(colCount, index);
 		return setPosition([
-			colPositions[colIndex], 
+			//align at text-end
+			colPositions[colIndex] + colWidths[colIndex] - layoutedItem.dimensions.width, 
 			rowPositions[rowIndex] 
 		])(layoutedItem);
 	});
