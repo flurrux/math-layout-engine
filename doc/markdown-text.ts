@@ -15,6 +15,7 @@ import fractionStr from './fraction/fraction';
 import scriptStr from './script/script';
 import matrixStr from './matrix/matrix';
 import rootStr from './root/root';
+import delimitedStr from './delimited/delimited';
 
 
 export const markdownStr = `
@@ -49,10 +50,7 @@ ${scriptStr}
 
 ${matrixStr}
 ${rootStr}
-
-
-## delimiter  
--------------
+${delimitedStr}
 
 
 `;
