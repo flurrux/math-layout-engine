@@ -15,7 +15,6 @@
   "devDependencies": {
     "@babel/core": "^7.7.2",
     "@babel/plugin-transform-classes": "^7.7.0",
-    "@flurrux/declarative-scene-2d": "^1.1.15",
     "@polymer/marked-element": "^3.0.1",
     "@polymer/paper-button": "^3.0.1",
     "@polymer/paper-dropdown-menu": "^3.0.1",

@@ -3,7 +3,7 @@ import descriptionStr from './description/description';
 import disclaimerStr from './disclaimer';
 import exampleStr from './example/example';
 import styleStr from './style/style';
-import '../dev/explainer/fonts-overview';
+//import '../dev/explainer/fonts-overview';
 import formulaNodeStr from './formula-node';
 import boxNodeStr from './box-node/box-node';
 import contoursStr from './contours/contours';

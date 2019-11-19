@@ -44,23 +44,20 @@ import { layout } from '../../src/layout/layout';
 async function main(){
 
 	const formulaData = {
-		"type": "mathlist",
-		"items": [
-			{
-				"type": "script",
-				"nucleus": { "type": "op", "value": "integral" },
-				"sup": { "type": "ord", "value": "1" },
-				"sub": { "type": "ord", "value": "0" }
-			},
-			{
-				"type": "script",
-				"nucleus": { "type": "ord", "value": "i" },
-				"sup": { "type": "ord", "value": "x" },
-			},
-			{ "type": "bin", "value": "*" },
-			{ "type": "ord", "value": "d" },
-			{ "type": "ord", "value": "x" },
-		]
+		"type": "delimited",
+		"leftDelim": { "type": "open", "value": "(" },
+		"rightDelim": { "type": "close", "value": ")" },
+		"delimited": {
+			"type": "matrix",
+			"rowCount": 3,
+			"colCount": 1,
+			"style": { "rowSpacing": 0.4 },
+			"items": [
+				{ "type": "ord", "value": "3" },
+				{ "type": "ord", "value": "1" },
+				{ "type": "ord", "value": "7" }
+			]
+		}
 	};
 	
 	const layoutData = layout(formulaData);

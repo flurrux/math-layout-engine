@@ -24,7 +24,7 @@ interface BoxScriptNode extends BoxNode {
 
 ![labeled parts](${labeledPartsImg})
 
-**sup** is short for superscript
+**sup** is short for superscript  
 **sub** is short for subscript
 
 sometimes, sub- and superscript appear above/below the nucleus,  
