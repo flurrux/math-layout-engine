@@ -6,14 +6,21 @@ import { map, pipe, multiply, identity } from 'ramda';
 import { withStyle } from "../../style";
 import { lookUpHorizontalSpacing } from "../horizontal-layout";
 
-import { DelimitedNode as FormulaDelimitedNode, FormulaNode, Dimensions, BoxNode, CharNode } from '../../types';
+import { DelimitedNode as FormulaDelimitedNode, FormulaNode, Dimensions, BoxNode, CharNode, ContoursNode } from '../../types';
 import { Style } from '../../style';
 import { BoxMathListNode } from '../mathlist-layout';
 import { lookUpGlyphByCharOrAlias } from "../../font-data/katex-font-util";
 import { validateProperties } from "../error";
 
+export interface BoxDelimitedNode extends BoxNode {
+	type: "delimited",
+	delimited: BoxNode,
+	leftDelim: ContoursNode,
+	rightDelim: ContoursNode
+}
+
 const calculateDelimiterHeight = (delimited: FormulaNode, delimitedMetrics: Dimensions, style: Style): number => {
-	const axisOffset = isNodeAlignedToBaseline(delimited) ? -getAxisHeight(style) : 0;
+	const axisOffset = -getAxisHeight(style);// isNodeAlignedToBaseline(delimited) ? -getAxisHeight(style) : 0;
 	const [height, depth] = [delimitedMetrics.yMax, delimitedMetrics.yMin]
 		.map(val => val + axisOffset)
 		.map(val => val / style.fontSize);
@@ -39,7 +46,7 @@ const validateDelimiterNode = (delimNode: any, label: string, isOpen: boolean) =
 	const curValidChars = isOpen ? validOpenChars : validCloseChars;
 	if (!curValidChars.includes(char)) throw `${char} is not a valid ${requiredType}-character`;
 };
-export const layoutDelimited = (delimNode: FormulaDelimitedNode) : BoxMathListNode => {
+export const layoutDelimited = (delimNode: FormulaDelimitedNode) : BoxDelimitedNode => {
 	validateProperties({
 		delimited: "object",
 		leftDelim: "object",
@@ -59,22 +66,20 @@ export const layoutDelimited = (delimNode: FormulaDelimitedNode) : BoxMathListNo
 		.map(delimNode => createDelimiter((delimNode as CharNode).value.charCodeAt(0), delimiterHeight))
 		.map(delim => identity({ 
 			...delim, dimensions: map(multiply(style.fontSize), delim.dimensions), style 
-		})) as [BoxNode, BoxNode];
+		})) as [ContoursNode, ContoursNode];
 
 	const itemXs = accumSum([
 		leftDelimBox.dimensions.width + lookUpHorizontalSpacing(leftDelim, delimited),
 		delimitedLayouted.dimensions.width + lookUpHorizontalSpacing(delimited, rightDelim)
 	]);
-	const items = [
-		setPosition([itemXs[0], 0])(leftDelimBox),
-		setPosition([
-			itemXs[1], isNodeAlignedToBaseline(delimited) ? 0 : getAxisHeight(style)
-		])(delimitedLayouted),
-		setPosition([itemXs[2], 0])(rightDelimBox)
-	];
+	const layoutedItems = {
+		delimited: setPosition([itemXs[1], 0])(delimitedLayouted),
+		leftDelim: setPosition<ContoursNode>([itemXs[0], 0])(leftDelimBox),
+		rightDelim: setPosition<ContoursNode>([itemXs[2], 0])(rightDelimBox)
+	};
 	return {
-		type: "mathlist",
-		dimensions: calcBoundingDimensions(items),
-		items
+		type: "delimited",
+		dimensions: calcBoundingDimensions(layoutedItems),
+		...layoutedItems
 	};
 };

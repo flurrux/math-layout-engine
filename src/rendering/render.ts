@@ -124,6 +124,9 @@ const renderNode = (ctx: CanvasRenderingContext2D, node: BoxNode) => {
 	else if (nodeType === "accented"){
 		renderSubNodes(ctx, node, ["nucleus", "accent"]);
 	}
+	else if (nodeType === "delimited"){
+		renderSubNodes(ctx, node, ["delimited", "leftDelim", "rightDelim"]);
+	}
 
 	ctx.restore();
 };

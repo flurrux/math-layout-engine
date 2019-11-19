@@ -3,7 +3,7 @@ import { BoxNode, MatrixNode as FormulaMatrixNode } from "../types";
 import { accumSum, max, sum } from "../util/util";
 import { validateProperties } from "./error";
 import { layoutWithStyle } from "./layout";
-import { setPosition } from './layout-util';
+import { setPosition, getAxisHeight } from './layout-util';
 import matrix from '../../doc/matrix/matrix';
 
 
@@ -69,6 +69,7 @@ export const layoutMatrix = (matrixNode: FormulaMatrixNode) : BoxMatrixNode => {
 	const totalWidth = sum(colWidths) + (colCount - 1) * colSpacing;
 	const totalHeight = sum(map(dim => dim.yMax - dim.yMin)(rowDims)) + (rowCount - 1) * rowSpacing;
 	const halfHeight = totalHeight / 2;
+	const topY = halfHeight + getAxisHeight(style);
 	const colPositions: number[] = pipe(map(add(colSpacing)), accumSum)(colWidths);
 	const rowPositions: number[] = rowDims.reduce((posArr, rowDim, rowInd) => {
 		if (rowInd === rowCount - 1) return posArr;
@@ -77,7 +78,7 @@ export const layoutMatrix = (matrixNode: FormulaMatrixNode) : BoxMatrixNode => {
 		const descend = curDim.yMin - rowSpacing - nextDim.yMax;
 		posArr.push(lastVal + descend);
 		return posArr;
-	}, [halfHeight - rowDims[0].yMax]);
+	}, [topY - rowDims[0].yMax]);
 
 	itemsLayouted = itemsLayouted.map((layoutedItem, index) => {
 		const [rowIndex, colIndex] = getPositionInMatrix(colCount, index);
@@ -90,8 +91,8 @@ export const layoutMatrix = (matrixNode: FormulaMatrixNode) : BoxMatrixNode => {
 
 	const dimensions = {
 		width: totalWidth,
-		yMin: -halfHeight,
-		yMax: halfHeight
+		yMin: topY - totalHeight,
+		yMax: topY
 	};
 
 	return {
