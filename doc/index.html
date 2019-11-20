@@ -16,20 +16,21 @@
 			background-color: #2d2c2c;
 			color: #e0dddd;
 			margin: 0px;
+			font-size: 1em;
 		}
 	</style>
 	<!-- page and markdown -->
 	<style>	
 		#page {
 			padding: 0px 20px 0px 20px;
-			font-size: 18px;
+			font-size: 1em;
 			margin-top: 80px;
 			max-width: 100%;
 		}
 		@media only screen and (min-width: 600px) {
 			#page { 
 				margin-left: 240px; 
-				font-size: 22px;
+				font-size: 1em;
 			}
 		}
 		
@@ -41,7 +42,7 @@
 		#page > pre {
 			max-width: 100%;
 			overflow-x: auto;
-			font-size: 18px;
+			font-size: 1.3em;
 			width: fit-content;
 			padding: 16px;
 			border-radius: 4px;
@@ -49,7 +50,7 @@
 		}
 		@media only screen and (min-width: 600px) {
 			#page > pre { 
-				font-size: 22px;
+				font-size: 1.3em;
 			}
 		}
 
@@ -59,8 +60,8 @@
 		h2::before { 
 			display: block; 
 			content: " "; 
-			margin-top: -65px; 
-			height: 65px; 
+			margin-top: -60px; 
+			height: 60px; 
 			visibility: hidden; 
 			pointer-events: none;
 		}
@@ -71,13 +72,13 @@
 		header {
 			display: flex;
 			width: 100%;
-			height: 65px;
-			position: fixed;
+			height: 60px;
+			position: absolute;
 			padding: 20px 35px 20px 35px;
 			background-color: #3a5873;
 			box-sizing: border-box;
 			z-index: 1;
-			font-size: 20px;
+			font-size: 1em;
 			box-shadow: 0 0 2px #8282828c;
 		}
 		#header-img {
@@ -96,6 +97,9 @@
 			color: #d4d2dc;
 		}
 		@media only screen and (min-width: 600px) {
+			header {
+				position: fixed;
+			}
 			header > a { 
 				display: inline;  
 			}
@@ -108,7 +112,7 @@
 			position: fixed;
 			padding: 14px;
 			width: 160px;
-			margin-top: 65px;
+			margin-top: 60px;
 			bottom: 0px;
 			top: 0px;
 			overflow-y: auto;
