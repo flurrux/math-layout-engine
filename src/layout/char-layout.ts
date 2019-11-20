@@ -56,6 +56,6 @@ export const layoutCharNode = (node: FormulaCharNode) : BoxCharNode => {
 		type: "char", unicode, style,
 		char: String.fromCharCode(unicode), 
 		dimensions: getDimensionsOfCharNode(style, node, unicode),
-		bbox: map(multiply(style.fontSize))(lookUpBoundingBox(fontFamily, unicode, style.emphasis))
+		bbox: map(multiply(style.fontSize))(lookUpBoundingBox(style.fontFamily, unicode, style.emphasis))
 	};
 };
