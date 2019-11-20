@@ -1,6 +1,7 @@
 import { transformContour, transformBbox, BoundingBox, Contour, GlyphPoint } from "../../opentype";
 import { pick } from 'ramda';
 import { Vector2, ContoursNode, Dimensions } from '../../types';
+import { lastInArray } from "../../util/util";
 
 /*
 delimiters:
@@ -17,7 +18,7 @@ floor: 8970 8971
 
 */
 
-const lastInArray = <T>(array: T[]) : T => array[array.length - 1];
+
 
 interface GlyphData {
     fontId: string,

@@ -39,3 +39,5 @@ import { getMetricsObject } from '../font-data/katex-font-util';
 export const getMetricsOfCharNode = (node: BoxCharNode) => getMetricsObject(node.style.fontFamily, node.style.emphasis, node.unicode);
 
 export const valuesInObject = (obj: object) : [any] => (Object as any).values(obj);
+
+export const lastInArray = <T>(array: T[]) : T => array[array.length - 1];
