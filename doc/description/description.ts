@@ -1,20 +1,26 @@
 
-
+import { html } from 'lit-html';
+import { markdown } from '../util/lit-marked';
+import { pageAnchor } from '../util/page-anchor';
 import formulaToRenderingStr from './formula-to-rendering';
 
-export default `
 
-## description
+export default pageAnchor("description", html`
 
-this engine turns an abstract formula-description into a layout-description,
-that can be rendered to canvas.
+${markdown(`
+    ## description
 
-
+    this engine turns an abstract formula-description into a layout-description,
+    that can be rendered to canvas.
+`)}
 
 ${formulaToRenderingStr}
 
-you can play around in the live-editor here:  
-<https://tender-brattain-a839fc.netlify.com/>
+${markdown(`
+    you can play around in the live-editor here:  
+    <https://tender-brattain-a839fc.netlify.com/>
 
-this documentation uses [typescript](https://www.typescriptlang.org/docs/handbook/basic-types.html) to describe the structure of data.  
-`;
+    this documentation uses [typescript](https://www.typescriptlang.org/docs/handbook/basic-types.html) to describe the structure of data.  
+`)}
+
+`);

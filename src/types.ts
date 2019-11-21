@@ -91,6 +91,12 @@ export interface ScriptNode extends FormulaNode {
 	sub?: FormulaNode
 };
 
+export interface AccentNode extends FormulaNode {
+	type: "accented",
+    nucleus: FormulaNode,
+    accent: CharNode
+};
+
 
 
 //box types #####

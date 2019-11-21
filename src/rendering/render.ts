@@ -130,10 +130,13 @@ const renderNode = (ctx: CanvasRenderingContext2D, node: BoxNode) => {
 
 	ctx.restore();
 };
-export const centerNodeOnCanvas = (canvas: HTMLCanvasElement, node: BoxNode) : BoxNode => setPosition([
-	(canvas.width - node.dimensions.width) / 2,
-	(canvas.height - node.dimensions.yMax - node.dimensions.yMin) / 2
-])(node);
+export const calculateCenterPosition = (canvas: HTMLCanvasElement, node: BoxNode) : [number, number] => {
+	return [
+		(canvas.width - node.dimensions.width) / 2,
+		(canvas.height - node.dimensions.yMax - node.dimensions.yMin) / 2
+	];
+};
+export const centerNodeOnCanvas = (canvas: HTMLCanvasElement, node: BoxNode) : BoxNode => setPosition(calculateCenterPosition(canvas, node))(node);
 
 export const renderFormulaLayout = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, formulaLayout: BoxNode) => {
 	ctx.save();

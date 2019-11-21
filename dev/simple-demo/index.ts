@@ -43,21 +43,26 @@ import { layout } from '../../src/layout/layout';
 
 async function main(){
 
-	const formulaData = {
-		"type": "delimited",
-		"leftDelim": { "type": "open", "value": "(" },
-		"rightDelim": { "type": "close", "value": ")" },
-		"delimited": {
-			"type": "matrix",
-			"rowCount": 3,
-			"colCount": 1,
-			"style": { "rowSpacing": 0.4 },
-			"items": [
-				{ "type": "ord", "value": "3" },
-				{ "type": "ord", "value": "1" },
-				{ "type": "ord", "value": "7" }
-			]
-		}
+	const formulaData = { 
+		"type": "mathlist",
+		"style": { "fontFamily": "Main", "emphasis": "Regular" },
+		"items": [
+			{
+				"type": "accented",
+				"nucleus": { "type": "ord", "value": "v" },
+				"accent": { "type": "ord", "value": "dotaccent" }
+			},
+			{ "type": "rel", "value": "=" },
+			{
+				"type": "fraction",
+				"numerator": {
+					"type": "accented",
+					"nucleus": { "type": "ord", "value": "f" },
+					"accent": { "type": "ord", "value": "vector" }
+				},
+				"denominator": { "type": "ord", "value": "m" }
+			}
+		]
 	};
 	
 	const layoutData = layout(formulaData);

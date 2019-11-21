@@ -2,7 +2,7 @@ import { identity } from "ramda";
 import { FormulaNode } from "./types";
 
 export interface Style {
-	type?: "D" | "T" | "S" | "SS",
+	type: "D" | "T" | "S" | "SS",
 	fontSize?: number,
 	emphasis?: "Regular" | "Bold" | "Italic" | "BoldItalic",
 	fontFamily?: "Math"| "Main" |

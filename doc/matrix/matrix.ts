@@ -29,8 +29,8 @@ interface BoxMatrixNode extends BoxNode {
 \`\`\`
 
 **rowCount** is the number of rows of this matrix.  
-**colCount** is the number of columns of this matrix.
-items.length must be rowCount * colCount.  
+**colCount** is the number of columns of this matrix.  
+the number of items must be rowCount * colCount.  
 
 the default horizontal alignment is at the end of a cell.  
 there are no options to override or control alignment yet.
