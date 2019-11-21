@@ -9,7 +9,7 @@ const typeEl = (types: string, label: string) => html`
 `;
 
 export const typeView = (formulaTypes: string, boxTypes: string) : TemplateResult => html`
-    <div style="display: flex;">
+    <div style="display: flex; flex-wrap: wrap;">
         ${typeEl(formulaTypes, "formula")}
         ${typeEl(boxTypes, "box")}
     </div>

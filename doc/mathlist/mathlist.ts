@@ -6,7 +6,7 @@ import { markdown, markdownCode } from '../util/lit-marked';
 import { pageAnchor } from '../util/page-anchor';
 import { codeAndRender } from '../util/formula-and-render';
 import { typeView } from '../util/type-view';
-
+import labeledComponentsImg from './labeled-components.png';
 
 export default pageAnchor("mathlist", html`
 
@@ -26,7 +26,11 @@ ${typeView(`
 `)}
 
 ${markdown(`
-  ### example
+    
+    a mathlist is simply a horizontal list of nodes,  
+    ![labeled components](${labeledComponentsImg})
+        
+    ### example
 `)}
 ${codeAndRender(`
     {

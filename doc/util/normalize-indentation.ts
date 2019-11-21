@@ -1,42 +1,55 @@
+
+const tabSize = 4;
+
 export default (str: string) : string => {
     const newLineChar = String.fromCharCode(10);
     const lines = unpadSplitArray(str.split(newLineChar));
-    const indentationLevel = getIndentationLevel(lines[0]);
-    return lines.map(removeIndentation(indentationLevel)).join(newLineChar);
+    const indentationLevel = getIndentationInSpaces(lines[0]);
+    const result = lines.map(removeIndentation(indentationLevel)).join(newLineChar);
+    return result;
 };
 
-const removeIndentation = (level: number) => ((line: string) => {
-    const tabSize = 4;
-    return line.substr(tabSize * level);
-});
+const isCharCode = (char: string, charCode: number) => char.charCodeAt(0) === charCode;
+const isTab = (char: string) => isCharCode(char, 9);
+const isSpace = (char: string) => isCharCode(char, 32);
 
 const unpadSplitArray = (lines: string[]) : string[] => [
     ...(lines[0] === "" ? [] : [lines[0]]),
     ...lines.slice(1, lines.length - 1),
     ...(lines[0] === "" ? [] : [lines[0]]),
 ];
-const getIndentationLevel = (str: string) : number => {
-    const tabSize = 4;
-    let level = 0;
-    let currentSpaceCount = 0;
+const getIndentationInSpaces = (str: string) : number => {
+    let indentation = 0;
     for (let i = 0; i < str.length; i++){
         const char = str[i];
-        const unicode = char.charCodeAt(0);
-        if (unicode === 9){
-            level++;
-            continue;
+        if (isTab(char)){
+            indentation += tabSize;
         }
-        else if (unicode === 32){
-            currentSpaceCount++;
+        else if (isSpace(char)){
+            indentation++;
         }
-        if (currentSpaceCount === tabSize){
-            level++;
-            currentSpaceCount = 0;
-        }
-
-        if (unicode !== 9 && unicode !== 32){
+        else {
             break;
         }
     }
-    return level;
+    return indentation;
 };
+const removeIndentation = (spaces: number) => ((line: string) => {
+    let currentIndentation = 0;
+    let startIndex = 0;
+    for (let i = 0; i < line.length; i++){
+        const char = line[i];
+        if (isTab(char)){
+            currentIndentation += tabSize;
+        }
+        else if (isSpace(char)){
+            currentIndentation++;
+        }
+
+        if (currentIndentation === spaces){
+            startIndex = i + 1;
+            break;
+        }
+    }
+    return line.substr(startIndex);
+});

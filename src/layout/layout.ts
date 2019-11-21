@@ -44,6 +44,7 @@ import { layoutMathList } from './mathlist-layout';
 import { layoutMatrix } from './matrix-layout';
 import { layoutAccent } from './accent-layout';
 import { Style, withStyle } from "../style";
+import { dimensionHeight } from './layout-util';
 
 interface LayoutFunction {
 	(node: FormulaNode): BoxNode
@@ -124,4 +125,14 @@ const defaultStyle : Style = {
 	type: "D", 
 	fontSize: 40
 };
-export const layout = (formulaNode: FormulaNode) : BoxNode => layoutWithStyle(defaultStyle)(formulaNode);
+interface LayoutResult extends BoxNode {
+	width: number, 
+	height: number
+};
+const attachTotalSize = (node: BoxNode) : LayoutResult => Object.assign(node, {
+	width: node.dimensions.width,
+	height: dimensionHeight(node.dimensions)
+});
+export const layout = (formulaNode: FormulaNode) : LayoutResult => pipe(
+	layoutWithStyle(defaultStyle), attachTotalSize
+)(formulaNode);

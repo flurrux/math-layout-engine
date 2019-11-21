@@ -2,7 +2,7 @@
 import { html } from 'lit-html';
 import { markdown } from '../util/lit-marked';
 import { pageAnchor } from '../util/page-anchor';
-import formulaToRenderingStr from './formula-to-rendering';
+import './formula-to-rendering';
 
 
 export default pageAnchor("description", html`
@@ -14,7 +14,7 @@ ${markdown(`
     that can be rendered to canvas.
 `)}
 
-${formulaToRenderingStr}
+<formula-to-rendering-example></formula-to-rendering-example>
 
 ${markdown(`
     you can play around in the live-editor here:  

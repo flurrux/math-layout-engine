@@ -31,30 +31,57 @@ ${markdownCode(`
 	}
 `, "typescript")}
 
-${markdown(`
-	### type
-	(as in tex)
-
-	#### D (display)
-	![demo img](${displayDemoImg})  
-	- numerators and denominators are further apart (than in text-style)  
-	- superscripts are raised higher  
-	- big operators are bigger and sub- and superscripts are placed below and above  
-
-	#### T (text or inline)  
-	![demo img](${inlineDemoImg})  
-	this style takes up less vertical space than display-style.  
-
-	#### S (script)  
-	![demo img](${scriptDemoImg})  
-	- fontSize is reduced to 0.7 multiplied by the "base"-fontSize
-	- no spacing between items in mathlist
+<h3>type</h3>
+<div>
+	<style>
+		.style-type-table {
+			align-items: center;
+			grid-template-columns: 1fr;
+			display: grid; 
+			column-gap: 10px;
+			justify-items: center;
+		}
+		@media only screen and (min-width: 740px) {
+			.style-type-table { 
+				grid-template-columns: max-content min-content 1fr;
+				row-gap: 10px; 
+				justify-items: flex-start;
+			}
+		}
+	</style>
+	<div class="style-type-table">
+		<h4>D (display)</h4>
+		<img src="${displayDemoImg}" />
+		${markdown(`
+			- numerators and denominators are further apart (than in text-style)  
+			- superscripts are raised higher  
+			- big operators are bigger and sub- and superscripts are placed below and above  
+		`)}
 	
-	#### SS (script of script)  
-	![demo img](${scriptOfScriptDemo})  
-	- fontSize is reduced to 0.5 multiplied by the "base"-fontSize  
+		<h4>T (text/inline)</h4>
+		<img src="${inlineDemoImg}" />
+		${markdown(`
+			- takes up less vertical space than display-style
+		`)}
+	
+		<h4>S (script)</h4>
+		<img src="${scriptDemoImg}" />
+		${markdown(`
+			- fontSize is reduced to 0.7 multiplied by the "base-fontSize"
+			- no spacing between horizontal items
+		`)}
+	
+		<h4>SS (script of script)</h4>
+		<img src="${scriptOfScriptDemo}" />
+		${markdown(`
+			- same as script-style except: 
+			- fontSize is reduced to 0.5 multiplied by the "base-fontSize"
+		`)}
+	</div>
+</div>
 
-	the "base"-fontSize depends on the type and fontSize of a node.  
+${markdown(`
+	the "base-fontSize" depends on the type and fontSize of a node.  
 	if there are two nested script-nodes like x^(2^2), then the superscript at the end  
 	is scaled by 0.5 relative to the x-node, **not** by 0.7 × 0.5!  
 
@@ -69,15 +96,35 @@ ${markdown(`
 	nodes that are placed under lines like denominators have a cramped-style.  
 `)}
 
-<div style="
-		display: grid; grid-template-columns: min-content min-content; 
-		grid-column-gap: 14px; justify-items: center; align-items: end;
-	"
->
-	<div>cramped</div>
-	<div>uncramped</div>
-	<img src="${crampedDemo}" />
-	<img src="${uncrampedDemo}" />
+<style>
+	.cramped-uncramped-container {
+		display: flex; 
+		justify-content: center;
+	}
+	@media only screen and (min-width: 600px) {
+		.cramped-uncramped-container { 
+			justify-content: flex-start;
+		}
+	}
+
+	.cramped-uncramped-table {
+		display: grid; 
+		grid-template-columns: min-content min-content; 
+		grid-column-gap: 14px; 
+		justify-items: center; 
+		align-items: end;
+	}
+	.cramped-uncramped-table div {
+		font-weight: bold;
+	}
+</style>
+<div class="cramped-uncramped-container">
+	<div class="cramped-uncramped-table">
+		<div>cramped</div>
+		<div>uncramped</div>
+		<img src="${crampedDemo}" />
+		<img src="${uncrampedDemo}" />
+	</div>
 </div>
 
 `);

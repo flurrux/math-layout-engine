@@ -4,7 +4,7 @@ import { markdown, markdownCode } from '../util/lit-marked';
 import { pageAnchor } from '../util/page-anchor';
 
 import quickExampleRender from './quick-example-render.png';
-
+import { renderedFomula } from '../util/formula-render';
 
 
 export default pageAnchor("example", html`
@@ -56,7 +56,25 @@ ${markdownCode(`
 
 ${markdown(`
 	the render should look like
-
-	![render result](${quickExampleRender})
 `)}
+
+${renderedFomula({
+	"type": "mathlist",
+	"items": [
+		{ "type": "ord", "value": "1" },
+		{ "type": "bin", "value": "+" },
+		{ "type": "ord", "value": "2" },
+		{ "type": "bin", "value": "+" },
+		{ "type": "ord", "value": "3" },
+		{ "type": "bin", "value": "+" },
+		{ "type": "ord", "value": "⋯" },
+		{ "type": "rel", "value": "=" },
+		{ "type": "ord", "value": "-" },
+		{
+			"type": "fraction",
+			"numerator": { "type": "ord", "value": "1" },
+			"denominator": { "type": "ord", "text": "12" }
+		}
+	]
+})}
 `);
