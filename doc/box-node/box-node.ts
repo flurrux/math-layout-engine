@@ -13,19 +13,19 @@ ${markdown(`
 	`)}
 	
 ${markdownCode(`
-interface BoxNode {
-	type: "char" | "text" | 
-		"mathlist" | "fraction" | "root" | "script" | "delimited" | "accented" | "matrix" | 
-		"contours" | "rule",
+	interface BoxNode {
+		type: "char" | "text" | 
+			"mathlist" | "fraction" | "root" | "script" | "delimited" | "accented" | "matrix" | 
+			"contours" | "rule",
 
-	position?: [number, number],
-	dimensions: {
-		width: number, 
-		yMin: number,
-		yMax: number
-	},
-	style?: Style
-}
+		position?: [number, number],
+		dimensions: {
+			width: number, 
+			yMin: number,
+			yMax: number
+		},
+		style?: Style
+	}
 `, "typescript")}
 
 ${markdown(`
@@ -45,7 +45,7 @@ ${markdown(`
 
 <h3>dimensions</h3>
 <div style="display: flex; flex-wrap: wrap; align-items: center;">
-	<img src="${labeledDimensionsImg}" />
+	<img src="${labeledDimensionsImg}" style="max-width: 100%;" />
 	${markdown(`
 		- the red line sits on the text-baseline 
 		- yMin is below the baseline if it's a negative number.  

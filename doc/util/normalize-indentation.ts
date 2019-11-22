@@ -13,11 +13,10 @@ const isCharCode = (char: string, charCode: number) => char.charCodeAt(0) === ch
 const isTab = (char: string) => isCharCode(char, 9);
 const isSpace = (char: string) => isCharCode(char, 32);
 
-const unpadSplitArray = (lines: string[]) : string[] => [
-    ...(lines[0] === "" ? [] : [lines[0]]),
-    ...lines.slice(1, lines.length - 1),
-    ...(lines[0] === "" ? [] : [lines[0]]),
-];
+const unpadSplitArray = (lines: string[]) : string[] => lines.slice(
+    lines[0] === "" ? 1 : 0, 
+    lines[lines.length - 1] === "" ? lines.length - 1 : lines.length
+);
 const getIndentationInSpaces = (str: string) : number => {
     let indentation = 0;
     for (let i = 0; i < str.length; i++){
@@ -38,17 +37,16 @@ const removeIndentation = (spaces: number) => ((line: string) => {
     let currentIndentation = 0;
     let startIndex = 0;
     for (let i = 0; i < line.length; i++){
+        if (currentIndentation === spaces){
+            startIndex = i;
+            break;
+        }
         const char = line[i];
         if (isTab(char)){
             currentIndentation += tabSize;
         }
         else if (isSpace(char)){
             currentIndentation++;
-        }
-
-        if (currentIndentation === spaces){
-            startIndex = i + 1;
-            break;
         }
     }
     return line.substr(startIndex);

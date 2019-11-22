@@ -7,6 +7,8 @@ export default `
 ## script  
 ----------
 
+this algorithm was implemented as described in the texbook (page 445, number 18)
+
 \`\`\`typescript
 interface ScriptNode extends FormulaNode {
 	type: "script",

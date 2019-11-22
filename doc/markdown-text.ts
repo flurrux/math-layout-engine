@@ -4,11 +4,11 @@ import disclaimerStr from './disclaimer';
 import exampleStr from './example/example';
 import styleStr from './style/style';
 import fontStr from './fonts/fonts';
-// import formulaNodeStr from './formula-node';
+import formulaNodeStr from './formula-node';
 import boxNodeStr from './box-node/box-node';
 // import contoursStr from './contours/contours';
 
-// import charNodeStr from './char-node/char-node';
+import charNodeStr from './char-node/char-node';
 // import textNodeStr from './text-node/text-node';
 import mathlistStr from './mathlist/mathlist';
 // import fractionStr from './fraction/fraction';
@@ -24,7 +24,10 @@ export const markdownStr = [
     exampleStr,
     styleStr,
     fontStr,
+    formulaNodeStr,
     boxNodeStr,
+
+    charNodeStr,
     mathlistStr
 ];
 

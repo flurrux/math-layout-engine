@@ -6,6 +6,8 @@ export default `
 ## fraction
 ------------
 
+this algorithm was implemented as described in the texbook (page 445, number 15)
+
 \`\`\`typescript
 interface FractionNode extends FormulaNode {
 	type: "fraction",

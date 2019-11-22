@@ -115,7 +115,6 @@ class CharOverviewTable extends LitElement {
         const entry = this.data[this.fontFamilyIndex];
         const emphasisStr = emphasisComboToString({ italic: this.italic, bold: this.bold });
         const isEmphasisValid = entry.emphasis.includes(emphasisStr);
-        console.log(emphasisStr, isEmphasisValid);
         const key = `${entry.fontFamily}-${emphasisStr}`;
         return html`
             <div>
