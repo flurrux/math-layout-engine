@@ -21,13 +21,13 @@ ${typeView(`
     }
 `, `
     interface BoxMathListNode extends BoxNode {
-    items: BoxNode[]
+        items: BoxNode[]
     }
 `)}
 
 ${markdown(`
     
-    a mathlist is simply a horizontal list of nodes,  
+    a mathlist is simply a horizontal list of nodes
     ![labeled components](${labeledComponentsImg})
         
     ### example
