@@ -144,24 +144,58 @@ const lookUpFamilyNameByUnicode = (unicode: number): { fontFamily: string, empha
 
 
 const aliasMap : { alias: string[], fontFamily: string, unicode: number }[] = [
-    { alias: ["plus", "+"], fontFamily: "Main", unicode: 43 },
-    { alias: ["minus", "-"], fontFamily: "Main", unicode: 8722 },
-    { alias: ["plusminus", "+-"], fontFamily: "Main", unicode: 177 },
-    { alias: ["*", "muldot"], fontFamily: "Main", unicode: 8901 },
+	//big operators
+	{ alias: ["integral"], fontFamily: "Size2", unicode: 8747 },
+	{ alias: ["sum"], fontFamily: "Size2", unicode: 8721 },
+	{ alias: ["product"], fontFamily: "Size2", unicode: 8719 },
+	
+	//binary operators
+	{ alias: ["+"], fontFamily: "Main", unicode: 43 },
+    { alias: ["-"], fontFamily: "Main", unicode: 8722 },
+    { alias: ["+-"], fontFamily: "Main", unicode: 177 },
+    { alias: ["*"], fontFamily: "Main", unicode: 8901 },
+	{ alias: ["division"], fontFamily: "Main", unicode: 247 },
+	{ alias: ["cross"], fontFamily: "Main", unicode: 215 },
+	{ alias: ["ring"], fontFamily: "Main", unicode: 8728 },
+
+	//relation
 	{ alias: ["equal", "="], fontFamily: "Main", unicode: 61 },
-	{ alias: ["to", "->"], fontFamily: "Main", unicode: 8594 },
-    { alias: ["dot", "."], fontFamily: "Main", unicode: 46 },
-    { alias: ["times", "cross"], fontFamily: "Main", unicode: 215 },
-    { alias: ["dotdotdot", "..."], fontFamily: "Main", unicode: 8943 },
+	{ alias: ["<="], fontFamily: "Main", unicode: 8804 },
+	{ alias: [">="], fontFamily: "Main", unicode: 8805 },
+	{ alias: ["<<"], fontFamily: "Main", unicode: 8810 },
+	{ alias: [">>"], fontFamily: "Main", unicode: 8811 },
+	{ alias: ["approx"], fontFamily: "Main", unicode: 8776 },
+	{ alias: ["equiv"], fontFamily: "Main", unicode: 8801 },
+	{ alias: ["not equal"], fontFamily: "Main", unicode: 57376 },
+
+	{ alias: ["in"], fontFamily: "Main", unicode: 8712 },
+	{ alias: ["owns"], fontFamily: "Main", unicode: 8715 },
+	{ alias: ["subset"], fontFamily: "Main", unicode: 8835 },
+	{ alias: ["subset equal"], fontFamily: "Main", unicode: 8839 },
+
+	{ alias: ["not in"], fontFamily: "Main", unicode: 47 },
+
+	//accents
     { alias: ["dotaccent"], fontFamily: "Main", unicode: 729 },
+	{ alias: ["vector"], fontFamily: "Main", unicode: 8407 },
 
-    { alias: ["integral"], fontFamily: "Size2", unicode: 8747 },
-    { alias: ["sum"], fontFamily: "Size2", unicode: 8721 },
-    { alias: ["product"], fontFamily: "Size2", unicode: 8719 },
+	//open & close
+	{ unicode: 10216, fontFamily: "Main", alias: ["left angle"] },
+	{ unicode: 10217, fontFamily: "Main", alias: ["right angle"] },
+	{ unicode: 8968, fontFamily: "Main", alias: ["left ceil"] },
+	{ unicode: 8969, fontFamily: "Main", alias: ["right ceil"] },
+	{ unicode: 8970, fontFamily: "Main", alias: ["left floor"] },
+	{ unicode: 8971, fontFamily: "Main", alias: ["right floor"] },
 
+	//misc
+	{ alias: ["implies"], fontFamily: "Main", unicode: 10233},
+	{ alias: ["maps to"], fontFamily: "Main", unicode: 8614 },
+	{ alias: ["to", "->"], fontFamily: "Main", unicode: 8594 },
+	{ alias: ["'"], fontFamily: "Main", unicode: 8242 },
     { alias: ["infinity"], fontFamily: "Main", unicode: 8734 },
-    { alias: ["'"], fontFamily: "Main", unicode: 8242 },
-    { alias: ["vector"], fontFamily: "Main", unicode: 8407 },
+    { alias: ["dotdotdot", "..."], fontFamily: "Main", unicode: 8943 },
+	{ alias: ["ellipsis", "..."], fontFamily: "Math", unicode: 8943 },
+
 
     { alias: ["a"], fontFamily: "Math", unicode: 97 },
     { alias: ["b"], fontFamily: "Math", unicode: 98 }, 
@@ -190,15 +224,14 @@ const aliasMap : { alias: string[], fontFamily: string, unicode: number }[] = [
     { alias: ["y"], fontFamily: "Math", unicode: 121 }, 
     { alias: ["z"], fontFamily: "Math", unicode: 122 }, 
 
-
-    { alias: ["ellipsis", "..."], fontFamily: "Math", unicode: 8943 },
-
+	//greek letters
     { alias: ["alpha"], fontFamily: "Math", unicode: 945 },
     { alias: ["beta"], fontFamily: "Math", unicode: 946 },
     { alias: ["gamma"], fontFamily: "Math", unicode: 947 },
     { alias: ["delta"], fontFamily: "Math", unicode: 948 },
     { alias: ["pi"], fontFamily: "Math", unicode: 960 },
 
+	
     { alias: ["natural-numbers"], fontFamily: "AMS", unicode: 78 },
     { alias: ["integers"], fontFamily: "AMS", unicode: 90 },
     { alias: ["rational-numbers"], fontFamily: "AMS", unicode: 81 },

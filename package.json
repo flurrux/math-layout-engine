@@ -9,7 +9,6 @@
   "author": "Christian Hoffmann <christianhoffmann@outlook.com>",
   "license": "ISC",
   "dependencies": {
-    "@polymer/paper-checkbox": "^3.1.0",
     "opentype.js": "^1.1.0",
     "ramda": "^0.26.1"
   },
@@ -18,6 +17,7 @@
     "@babel/plugin-transform-classes": "^7.7.0",
     "@polymer/marked-element": "^3.0.1",
     "@polymer/paper-button": "^3.0.1",
+    "@polymer/paper-checkbox": "^3.1.0",
     "@polymer/paper-dropdown-menu": "^3.0.1",
     "@polymer/paper-item": "^3.0.1",
     "@polymer/paper-listbox": "^3.0.1",
