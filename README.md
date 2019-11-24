@@ -19,6 +19,9 @@ for now this library can only be included in a node-project
 ...
 ```
 
+### documentation 
+
+<https://lucid-panini-eb3886.netlify.com/>
 
 ## usage  
 
@@ -63,11 +66,6 @@ loadKatexFontFaces().then(
 );
 
 ```
-
-### documentation 
-
-<https://lucid-panini-eb3886.netlify.com/>
-
 
 ## examples  
 

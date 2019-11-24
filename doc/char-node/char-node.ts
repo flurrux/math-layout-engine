@@ -2,8 +2,61 @@ import { html } from 'lit-html';
 import { markdown, markdownCode } from '../util/lit-marked';
 import { pageAnchor } from '../util/page-anchor';
 import { typeView } from '../util/type-view';
+import { charTableTemplate } from '../util/char-table';
 
 
+const operatorsTable = charTableTemplate("op (operators)", [
+	{ char: "∑", aliases: ["sum"] },
+	{ char: "∫", aliases: ["integral"] },
+	{ char: "∏", aliases: ["product"] },
+	"⋁", "⋀", "⋂", "⋃"
+]);
+const binaryOperatorsTable = charTableTemplate("bin (binary operators)", [
+	"+", "-",
+	{ char: "±", aliases: ["+-"] },
+	{ char: "⋅", aliases: ["*"] },
+	"/", 
+	{ char: "÷", aliases: ["division"] }, 
+	{ char: "×", aliases: ["cross"] }, 
+	{ char: "∘", aliases: ["ring"] }, "∖"
+]);
+const relationalTable = charTableTemplate("rel (relational)", [
+	"=", "<", ">", 
+	{ char: "≤", aliases: ["<="] },
+	{ char: "≥", aliases: [">="] },
+	{ char: "≪", aliases: ["<<"] },
+	{ char: "≫", aliases: [">>"] },
+	{ char: "≈", aliases: ["approx"] },
+	{ char: "≡", aliases: ["equiv"] },
+	 
+	{ char: 57376, aliases: ["!="]},
+
+	{ char: "∈", aliases: ["in"] },
+	{ char: "∋", aliases: ["owns"] },
+	{ char: "⊂", aliases: ["subset"] },
+	{ char: "⊆", aliases: ["subset equal"]},
+
+	{ char: 47, aliases: ["not in"] },
+]);
+const openCloseTable = charTableTemplate("open & close", [
+	")", "(", "[", "]", "{", "}",
+	{ char: "⟨", aliases: ["left angle"] },
+	{ char: "⟩", aliases: ["right angle"] },
+	{ char: "⌈", aliases: ["left ceil"] },
+	{ char: "⌉", aliases: ["right ceil"] },
+	{ char: "⌊", aliases: ["left floor"] },
+	{ char: "⌋", aliases: ["right floor"] },
+	"|",
+]);
+
+const miscTable = charTableTemplate("misc", [
+	{ char: "⟹", aliases: ["implies"] },
+	{ char: "↦", aliases: ["mapsto"] },
+	{ char: "→", aliases: ["->"] },
+	{ char: "′ ", aliases: ["'"] },
+	{ char: "∞", aliases: ["infinity"] },
+	{ char: "⋯", aliases: ["..."]}
+]);
 
 const typeExampleTemplate = html`
 	<div>
@@ -70,51 +123,6 @@ const typeExampleTemplate = html`
 	</div>
 `;
 
-interface CharAliasMap {
-	char: string,
-	aliases: string[]
-}
-
-const normalizeCharAliasEntry = (entry: { char: string, aliases?: string[] | string } | string) : CharAliasMap => {
-	const isString = typeof(entry) === "string";
-	return {
-		char: isString ? entry : (entry as any).char,
-		aliases: (isString ? [] : (entry as any).aliases)
-	};
-};
-const aliasCharTemplate = (entry: CharAliasMap) => html`
-	<div style="min-width: 42px; min-height: 42px; display: flex; flex-direction: column; border: 1.3px solid white;">
-		<span style="display: flex; align-items: center; justify-content: center; flex: 1;">
-			${entry.char}
-		</span>
-		
-		<div style="display: flex; flex-direction: column;">
-			${entry.aliases.slice(0, 1).map(alias => html`
-				<span style="text-align: center; border-top: 1px solid white;">
-					${alias}
-				</span>
-			`)}	
-		</div>
-	</div>
-`;
-
-const operatorsTable = html`
-	<div style="display: flex;">
-		${	
-			[
-				"+", "-", 
-				{ char: "±", aliases: ["+-", "plusminus"] }, 
-				{ char: "⋅", aliases: ["*", "muldot"] }, 
-				"/", "÷", "×", "∘", 
-				"&", "∧", "∨",
-				"∖", "∪"
-			]
-			.map(normalizeCharAliasEntry)
-			.map(aliasCharTemplate)
-		}	
-	</div>
-`;
-
 export default pageAnchor("character", html`
 
 ${markdown(`
@@ -129,6 +137,12 @@ ${typeView(`
 		value: string
 	}
 `, `
+	interface BoundingBox {
+		xMin: number, 
+		yMin: number,
+		xMax: number,
+		yMax: number
+	}
 	interface BoxCharNode extends BoxNode {
 		type: "char",
 		char: string,
@@ -156,11 +170,19 @@ ${markdownCode(`
 `, "javascript")}
 
 ${markdown(`
-	the tables below list all the available characters by type, along with their aliases.
+	the tables below list some of the common characters by type, along with their aliases.  
+	if you can't find a certain character, look at [fonts](#fonts) or in the [katex documentation](https://katex.org/docs/supported.html) since the fonts are from katex.
 `)}
 
-
-<h3>operators</h3>
 ${operatorsTable}
+${markdown(`
+	functions like sin, ln, lim, etc. are of type "op".  
+`)}
+
+${binaryOperatorsTable}
+${relationalTable}
+${openCloseTable}
+${miscTable}
+
 
 `);

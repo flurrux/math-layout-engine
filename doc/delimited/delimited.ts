@@ -2,59 +2,65 @@
 import vectorExampleImg from './demo.png';
 import emptyDepthExample from './empty-depth-example.png';
 
-export default `
-## delimiter
+import { html } from 'lit-html';
+import { codeAndRender } from '../util/formula-and-render';
+import { markdown, markdownCode } from '../util/lit-marked';
+import { pageAnchor } from '../util/page-anchor';
+import { typeView } from '../util/type-view';
 
-\`\`\`typescript
-interface DelimitedNode extends FormulaNode {
-	type: "delimited",
-	leftDelim: FormulaNode,
-	rightDelim: FormulaNode,
-	delimited: FormulaNode
-}
+export default pageAnchor("delimiter", html`
 
-interface BoxDelimitedNode extends BoxNode {
-	type: "delimited",
-	delimited: BoxNode,
-	leftDelim: ContoursNode,
-	rightDelim: ContoursNode
-}
-\`\`\`
+${markdown(`
+	## delimiter
+	-------------
+`)}
 
-nodes like 
-\`\`\`typescript
-{ "type": "open", "value": "(" }
-\`\`\`
-have a static size.  
-for delimiters with dynamic size, use DelimitedNode.
+${typeView(`
+	interface DelimitedNode extends FormulaNode {
+		type: "delimited",
+		leftDelim: FormulaNode,
+		rightDelim: FormulaNode,
+		delimited: FormulaNode
+	}
+`, `
+	interface BoxDelimitedNode extends BoxNode {
+		type: "delimited",
+		delimited: BoxNode,
+		leftDelim: ContoursNode,
+		rightDelim: ContoursNode
+	}
+`)}
 
-these are all the possible delimiter-characters that can be used:  
-( ),  [ ],  ⟨ ⟩,  ⌈ ⌉,  ⌊ ⌋,  | |
+${markdown(`
+	nodes like \`{ "type": "open", "value": "(" )}\` have a static size.  
+	for delimiters with dynamic size, use DelimitedNode.
 
-note that delimiters are centered on the axis (0.25) and sized in such a way to completely cover the enclosed nodes.  
-if a node has much more height than depth, the lower part of the delimiter will be empty.  
-![example](${emptyDepthExample})
+	these are all the possible delimiter-characters that can be used:  
+	( ),  [ ],  ⟨ ⟩,  ⌈ ⌉,  ⌊ ⌋,  | |
+
+	note that delimiters are centered on the axis (0.25) and sized in such a way to completely cover the enclosed nodes.  
+	if a node has much more height than depth, the lower part of the delimiter will be empty.  
+	![example](${emptyDepthExample})
+`)}
 
 
-### example
-\`\`\`javascript
-{
-  "type": "delimited",
-  "leftDelim": { "type": "open", "value": "(" },
-  "rightDelim": { "type": "close", "value": ")" },
-  "delimited": {
-	"type": "matrix",
-	"rowCount": 3,
-	"colCount": 1,
-	"style": { "rowSpacing": 0.4 },
-	"items": [
-	  { "type": "ord", "value": "3" },
-	  { "type": "ord", "value": "1" },
-	  { "type": "ord", "value": "7" }
-	]
-  }
-}
-\`\`\`
-![rendering](${vectorExampleImg})
+${codeAndRender(`
+	{
+		"type": "delimited",
+		"leftDelim": { "type": "open", "value": "(" },
+		"rightDelim": { "type": "close", "value": ")" },
+		"delimited": {
+			"type": "matrix",
+			"rowCount": 3,
+			"colCount": 1,
+			"style": { "rowSpacing": 0.4 },
+			"items": [
+				{ "type": "ord", "value": "3" },
+				{ "type": "ord", "value": "1" },
+				{ "type": "ord", "value": "7" }
+			]
+		}
+	}
+`)}
 
-`;
+`);

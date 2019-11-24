@@ -5,12 +5,12 @@ import { pageAnchor } from '../util/page-anchor';
 
 import labeledDimensionsImg from './dimensions-labeled.png';
 
-export default pageAnchor("style", html`
+export default pageAnchor("boxnode", html`
 
 ${markdown(`
 	## BoxNode
 	-----------
-	`)}
+`)}
 	
 ${markdownCode(`
 	interface BoxNode {
