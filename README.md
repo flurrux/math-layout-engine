@@ -8,7 +8,11 @@ unlike [katex](https://katex.org/) it produces a fixed layout in pojo format whi
 
 ## installation  
 
-for now this library can only be included in a node-project  
+```bash
+npm install @flurrux/math-layout-engine
+```
+
+or add it to the dependencies
 
 ```json
 // package.json

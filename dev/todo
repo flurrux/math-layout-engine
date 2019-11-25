@@ -1,0 +1,13 @@
+- font-color in styles
+- negated relations
+- optional delimiters in delimited
+- alignment options for matrix cells
+- implement vector-accent correctly
+- complete handling of errors
+- topology matching of differently sized radicals and delimiters (for interpolation)
+- parser 
+- visual testing, with many rendered cases
+- clean up code
+
+- improve doc performance
+- navigation bar in docs on mobile devices
