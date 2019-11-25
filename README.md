@@ -18,7 +18,7 @@ or add it to the dependencies
 // package.json
 ...
 "dependencies": {
-    "math-layout": "flurrux/math-layout-engine#master",
+    "math-layout": "@flurrux/math-layout-engine"
 }
 ...
 ```
@@ -35,7 +35,7 @@ layout a formula and render it
 import { 
     layoutFormula, 
     centerNodeOnCanvas, renderFormulaLayout, loadKatexFontFaces
-} from 'math-layout';
+} from '@flurrux/math-layout-engine';
 
 const formula = {
     "type": "mathlist",

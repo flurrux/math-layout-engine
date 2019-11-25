@@ -1,13 +1,21 @@
 {
-  "name": "@flurrux/math-layout",
+  "name": "@flurrux/math-layout-engine",
   "version": "1.0.0",
-  "description": "math-layout-engine like katex but simpler and primarily for canvas.",
+  "description": "math-layout like katex but simpler and primarily for canvas.",
+  "private": false,
+  "keywords": [
+    "math", "layout", "math-layout", "math-layout-engine", "formula", "canvas"
+  ],
   "main": "src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Christian Hoffmann <christianhoffmann@outlook.com>",
-  "license": "ISC",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/flurrux/math-layout-engine.git"
+  },
   "dependencies": {
     "opentype.js": "^1.1.0",
     "ramda": "^0.26.1"
