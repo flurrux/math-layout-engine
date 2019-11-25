@@ -130,7 +130,7 @@ const fontFamilyLookUpOrder = [
 
 export const hasFontFamilyUnicode = (fontFamily: string, emphasis: string, unicode: number) : boolean => getMetrics(fontFamily, emphasis, unicode) !== undefined;
 
-const lookUpFamilyNameByUnicode = (unicode: number): { fontFamily: string, emphasis: string } => {
+export const lookUpFamilyNameByUnicode = (unicode: number): { fontFamily: string, emphasis: string } => {
     for (const fontFam of fontFamilyLookUpOrder){
         const fontEntry = getFontDataByName(fontFam);
         for (const emph of fontEntry.emphasis){
@@ -143,12 +143,13 @@ const lookUpFamilyNameByUnicode = (unicode: number): { fontFamily: string, empha
 
 
 
-const aliasMap : { alias: string[], fontFamily: string, unicode: number }[] = [
+export const aliasMap : { alias: string[], fontFamily: string, unicode: number }[] = [
 	//big operators
 	{ alias: ["integral"], fontFamily: "Size2", unicode: 8747 },
 	{ alias: ["sum"], fontFamily: "Size2", unicode: 8721 },
 	{ alias: ["product"], fontFamily: "Size2", unicode: 8719 },
-	
+    { alias: ["big-union"], fontFamily: "Size2", unicode: 8899 },
+    
 	//binary operators
 	{ alias: ["+"], fontFamily: "Main", unicode: 43 },
     { alias: ["-"], fontFamily: "Main", unicode: 8722 },
@@ -157,6 +158,7 @@ const aliasMap : { alias: string[], fontFamily: string, unicode: number }[] = [
 	{ alias: ["division"], fontFamily: "Main", unicode: 247 },
 	{ alias: ["cross"], fontFamily: "Main", unicode: 215 },
 	{ alias: ["ring"], fontFamily: "Main", unicode: 8728 },
+    { alias: ["asterisk"], fontFamily: "Main", unicode: 42 },
 
 	//relation
 	{ alias: ["equal", "="], fontFamily: "Main", unicode: 61 },
@@ -166,39 +168,35 @@ const aliasMap : { alias: string[], fontFamily: string, unicode: number }[] = [
 	{ alias: [">>"], fontFamily: "Main", unicode: 8811 },
 	{ alias: ["approx"], fontFamily: "Main", unicode: 8776 },
 	{ alias: ["equiv"], fontFamily: "Main", unicode: 8801 },
-	{ alias: ["not equal"], fontFamily: "Main", unicode: 57376 },
 
 	{ alias: ["in"], fontFamily: "Main", unicode: 8712 },
 	{ alias: ["owns"], fontFamily: "Main", unicode: 8715 },
-	{ alias: ["subset"], fontFamily: "Main", unicode: 8835 },
-	{ alias: ["subset equal"], fontFamily: "Main", unicode: 8839 },
-
-	{ alias: ["not in"], fontFamily: "Main", unicode: 47 },
+	{ alias: ["subset"], fontFamily: "Main", unicode: 8834 },
+	{ alias: ["subset-equal"], fontFamily: "Main", unicode: 8838 },
 
 	//accents
-    { alias: ["dot accent"], fontFamily: "Main", unicode: 729 },
+    { alias: ["dot-accent"], fontFamily: "Main", unicode: 729 },
 	{ alias: ["vector"], fontFamily: "Main", unicode: 8407 },
     { alias: ["bar"], fontFamily: "Main", unicode: 713 },
-	{ alias: ["double dot accent"], fontFamily: "Main", unicode: 168 },
-    { alias: ["ring accent"], fontFamily: "Main", unicode: 730 },
-    { alias: ["hat accent"], fontFamily: "Main", unicode: 94 },
+	{ alias: ["double-dot-accent"], fontFamily: "Main", unicode: 168 },
+    { alias: ["ring-accent"], fontFamily: "Main", unicode: 730 },
+    { alias: ["hat-accent"], fontFamily: "Main", unicode: 94 },
 
 	//open & close
-	{ unicode: 10216, fontFamily: "Main", alias: ["left angle"] },
-	{ unicode: 10217, fontFamily: "Main", alias: ["right angle"] },
-	{ unicode: 8968, fontFamily: "Main", alias: ["left ceil"] },
-	{ unicode: 8969, fontFamily: "Main", alias: ["right ceil"] },
-	{ unicode: 8970, fontFamily: "Main", alias: ["left floor"] },
-	{ unicode: 8971, fontFamily: "Main", alias: ["right floor"] },
+	{ alias: ["left-angle"], fontFamily: "Main", unicode: 10216 },
+	{ alias: ["right-angle"], fontFamily: "Main", unicode: 10217 },
+	{ alias: ["left-ceil"], fontFamily: "Main", unicode: 8968 },
+	{ alias: ["right-ceil"], fontFamily: "Main", unicode: 8969 },
+	{ alias: ["left-floor"], fontFamily: "Main", unicode: 8970 },
+	{ alias: ["right-floor"], fontFamily: "Main", unicode: 8971 },
 
 	//misc
 	{ alias: ["implies"], fontFamily: "Main", unicode: 10233},
-	{ alias: ["maps to"], fontFamily: "Main", unicode: 8614 },
+	{ alias: ["maps-to"], fontFamily: "Main", unicode: 8614 },
 	{ alias: ["to", "->"], fontFamily: "Main", unicode: 8594 },
 	{ alias: ["'"], fontFamily: "Main", unicode: 8242 },
     { alias: ["infinity"], fontFamily: "Main", unicode: 8734 },
-    { alias: ["dotdotdot", "..."], fontFamily: "Main", unicode: 8943 },
-	{ alias: ["ellipsis", "..."], fontFamily: "Math", unicode: 8943 },
+    { alias: ["..."], fontFamily: "Main", unicode: 8943 },
 
     //alphabet
     { alias: ["a"], fontFamily: "Math", unicode: 97 },
@@ -264,39 +262,39 @@ const aliasMap : { alias: string[], fontFamily: string, unicode: number }[] = [
     { alias: ["varPhi"], fontFamily: "Main", unicode: 934 },
     { alias: ["varPsi"], fontFamily: "Main", unicode: 936 },
     { alias: ["varOmega"], fontFamily: "Main", unicode: 937 },
-    { alias: ["alpha"], fontFamily: "Main", unicode: 945 },
-    { alias: ["beta"], fontFamily: "Main", unicode: 946 },
-    { alias: ["gamma"], fontFamily: "Main", unicode: 947 },
-    { alias: ["delta"], fontFamily: "Main", unicode: 948 },
-    { alias: ["epsilon"], fontFamily: "Main", unicode: 1013 },
-    { alias: ["zeta"], fontFamily: "Main", unicode: 950 },
-    { alias: ["eta"], fontFamily: "Main", unicode: 951 },
-    { alias: ["theta"], fontFamily: "Main", unicode: 952 },
-    { alias: ["iota"], fontFamily: "Main", unicode: 953 },
-    { alias: ["kappa"], fontFamily: "Main", unicode: 954 },
-    { alias: ["lambda"], fontFamily: "Main", unicode: 955 },
-    { alias: ["mu"], fontFamily: "Main", unicode: 956 },
-    { alias: ["nu"], fontFamily: "Main", unicode: 957 },
-    { alias: ["xi"], fontFamily: "Main", unicode: 958 },
-    { alias: ["omicron"], fontFamily: "Main", unicode: 959 },
-    { alias: ["pi"], fontFamily: "Main", unicode: 960 },
-    { alias: ["rho"], fontFamily: "Main", unicode: 961 },
-    { alias: ["sigma"], fontFamily: "Main", unicode: 963 },
-    { alias: ["tau"], fontFamily: "Main", unicode: 964 },
-    { alias: ["upsilon"], fontFamily: "Main", unicode: 965 },
-    { alias: ["phi"], fontFamily: "Main", unicode: 981 },
-    { alias: ["chi"], fontFamily: "Main", unicode: 967 },
-    { alias: ["psi"], fontFamily: "Main", unicode: 968 },
-    { alias: ["omega"], fontFamily: "Main", unicode: 969 },
-    { alias: ["varepsilon"], fontFamily: "Main", unicode: 949 },
-    { alias: ["varkappa"], fontFamily: "Main", unicode: 1008 },
-    { alias: ["vartheta"], fontFamily: "Main", unicode: 977 },
-    { alias: ["thetasym"], fontFamily: "Main", unicode: 977 },
-    { alias: ["varpi"], fontFamily: "Main", unicode: 982 },
-    { alias: ["varrho"], fontFamily: "Main", unicode: 1009 },
-    { alias: ["varsigma"], fontFamily: "Main", unicode: 962 },
-    { alias: ["varphi"], fontFamily: "Main", unicode: 966 },
-    { alias: ["digamma"], fontFamily: "Main", unicode: 989 },
+    { alias: ["alpha"], fontFamily: "Math", unicode: 945 },
+    { alias: ["beta"], fontFamily: "Math", unicode: 946 },
+    { alias: ["gamma"], fontFamily: "Math", unicode: 947 },
+    { alias: ["delta"], fontFamily: "Math", unicode: 948 },
+    { alias: ["epsilon"], fontFamily: "Math", unicode: 1013 },
+    { alias: ["zeta"], fontFamily: "Math", unicode: 950 },
+    { alias: ["eta"], fontFamily: "Math", unicode: 951 },
+    { alias: ["theta"], fontFamily: "Math", unicode: 952 },
+    { alias: ["iota"], fontFamily: "Math", unicode: 953 },
+    { alias: ["kappa"], fontFamily: "Math", unicode: 954 },
+    { alias: ["lambda"], fontFamily: "Math", unicode: 955 },
+    { alias: ["mu"], fontFamily: "Math", unicode: 956 },
+    { alias: ["nu"], fontFamily: "Math", unicode: 957 },
+    { alias: ["xi"], fontFamily: "Math", unicode: 958 },
+    { alias: ["omicron"], fontFamily: "Math", unicode: 959 },
+    { alias: ["pi"], fontFamily: "Math", unicode: 960 },
+    { alias: ["rho"], fontFamily: "Math", unicode: 961 },
+    { alias: ["sigma"], fontFamily: "Math", unicode: 963 },
+    { alias: ["tau"], fontFamily: "Math", unicode: 964 },
+    { alias: ["upsilon"], fontFamily: "Math", unicode: 965 },
+    { alias: ["phi"], fontFamily: "Math", unicode: 981 },
+    { alias: ["chi"], fontFamily: "Math", unicode: 967 },
+    { alias: ["psi"], fontFamily: "Math", unicode: 968 },
+    { alias: ["omega"], fontFamily: "Math", unicode: 969 },
+    { alias: ["varepsilon"], fontFamily: "Math", unicode: 949 },
+    { alias: ["varkappa"], fontFamily: "AMS", unicode: 1008 },
+    { alias: ["vartheta"], fontFamily: "Math", unicode: 977 },
+    { alias: ["thetasym"], fontFamily: "Math", unicode: 977 },
+    { alias: ["varpi"], fontFamily: "Math", unicode: 982 },
+    { alias: ["varrho"], fontFamily: "Math", unicode: 1009 },
+    { alias: ["varsigma"], fontFamily: "Math", unicode: 962 },
+    { alias: ["varphi"], fontFamily: "Math", unicode: 966 },
+    { alias: ["digamma"], fontFamily: "AMS", unicode: 989 },
 
 	//sets
     { alias: ["natural-numbers"], fontFamily: "AMS", unicode: 78 },
@@ -304,6 +302,16 @@ const aliasMap : { alias: string[], fontFamily: string, unicode: number }[] = [
     { alias: ["rational-numbers"], fontFamily: "AMS", unicode: 81 },
     { alias: ["real-numbers"], fontFamily: "AMS", unicode: 82 },
     { alias: ["complex-numbers"], fontFamily: "AMS", unicode: 67 },
+
+    //misc
+    { alias: ["imath"], fontFamily: "Main", unicode: 305 },
+    { alias: ["jmath"], fontFamily: "Main", unicode: 567 },
+    { alias: ["nabla"], fontFamily: "Main", unicode: 8711 },
+    { alias: ["partial"], fontFamily: "Main", unicode: 8706 },
+    { alias: ["big-empty"], fontFamily: "Main", unicode: 216 },
+    { alias: ["empty"], fontFamily: "Main", unicode: 248 },
+    { alias: ["aleph"], fontFamily: "Main", unicode: 8501 },
+    { alias: ["hbar"], fontFamily: "Main", unicode: 8463 },
 ];
 const lookUpAliasEntry = (alias: string) => aliasMap.find(entry => entry.alias.includes(alias));
 
