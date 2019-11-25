@@ -19,10 +19,10 @@
     "url": "https://github.com/flurrux/math-layout-engine.git"
   },
   "dependencies": {
-    "opentype.js": "^1.1.0",
     "ramda": "^0.26.1"
   },
   "devDependencies": {
+    "opentype.js": "^1.1.0",
     "@babel/core": "^7.7.2",
     "@babel/plugin-transform-classes": "^7.7.0",
     "@polymer/marked-element": "^3.0.1",

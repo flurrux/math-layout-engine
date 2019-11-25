@@ -1,4 +1,3 @@
-import { load as loadOpentype } from 'opentype.js';
 import { identity, map } from 'ramda';
 import { Vector2 } from './types';
 
@@ -36,6 +35,8 @@ export interface BoundingBox {
 	yMax: number
 };
 
+/*
+import { load as loadOpentype } from 'opentype.js';
 
 export const loadOpentypeAsync = (url: string): Promise<OpentypeFont> => new Promise((resolve, reject) => {
 	loadOpentype(url, (err, result) => {
@@ -66,6 +67,14 @@ export const getCharByName = (font: OpentypeFont, name: string) : string => {
 };
 export const getGlyphIndexByName = (font: OpentypeFont, name: string) : number => getGlyphByName(font, name).index;
 export const getGlyphByIndex = (font: OpentypeFont, index: number) : Glyph => font.nameToGlyph(font.glyphIndexToName(index));
+export const getGlyphMetrics = (font: OpentypeFont, glyphName: string) : { width: number, yMin: number, yMax: number } => {
+    const glyph = getGlyphByName(font, glyphName);
+    return {
+        width: glyph.advanceWidth,
+        yMin: glyph.yMin, yMax: glyph.yMax
+    };
+};
+*/
 
 interface ExplicitGlyphPoint {
 	point: Vector2,
@@ -174,14 +183,6 @@ export const translateContours = (translation: Vector2, contours: Contour[]) : C
 }));
 const scaleGlyphPoint = (scale: number) => ((glyphPoint: GlyphPoint) : GlyphPoint => identity({ ...glyphPoint, x: glyphPoint.x * scale, y: glyphPoint.y * scale }));
 export const scaleContours = (scale: number, contours: Contour[]) => map((contour: Contour) => map(scaleGlyphPoint(scale), contour))(contours);
-
-export const getGlyphMetrics = (font: OpentypeFont, glyphName: string) : { width: number, yMin: number, yMax: number } => {
-    const glyph = getGlyphByName(font, glyphName);
-    return {
-        width: glyph.advanceWidth,
-        yMin: glyph.yMin, yMax: glyph.yMax
-    };
-};
 
 export const getGlyphContours = (glyph: Glyph) : Contour[] => {
     //this has to be called to make contours available strangely
