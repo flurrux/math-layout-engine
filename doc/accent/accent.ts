@@ -5,6 +5,7 @@ import { codeAndRender } from '../util/formula-and-render';
 import { markdown } from '../util/lit-marked';
 import { pageAnchor } from '../util/page-anchor';
 import { typeView } from '../util/type-view';
+import { charTableTemplate } from '../util/char-table';
 
 export default pageAnchor("accent", html`
 
@@ -38,6 +39,16 @@ ${codeAndRender(`
 		"sup": { "type": "ord", "text": "′′" }
 	}
 `)}
+
+${charTableTemplate("accent characters", [
+	{ char: "ˉ", aliases: ["bar"] },
+	{ char: "˙", aliases: ["dot accent"] },
+	{ char: "¨", aliases: ["double dot accent"] },
+	"~", 
+	{ char: 8407, aliases: ["vector"] },
+	{ char: 730, aliases: ["ring accent"] },
+	{ char: "^", aliases: ["hat accent"] },
+])}
 
 <h3>example</h3>
 ${codeAndRender(`
