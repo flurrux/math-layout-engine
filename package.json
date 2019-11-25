@@ -2,7 +2,6 @@
   "name": "@flurrux/math-layout-engine",
   "version": "1.0.0",
   "description": "math-layout like katex but simpler and primarily for canvas.",
-  "private": false,
   "keywords": [
     "math", "layout", "math-layout", "math-layout-engine", "formula", "canvas"
   ],
