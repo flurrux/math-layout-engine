@@ -1,40 +1,41 @@
-import { html } from 'lit-html';
+import { html as litHtml } from 'lit-html';
+import { aliasMap, lookUpFamilyNameByUnicode, getDefaultEmphasis } from '../../src/font-data/katex-font-util';
+import { pipe, map } from 'ramda';
+import './char-table-element';
+
+
+
 
 interface CharAliasMap {
 	char: string,
-	aliases: string[]
+	fontFamily: string,
+	alias: string[]
 }
-type CharAliasSpec = { char: string | number, aliases?: string[] | string } | string;
-const normalizeChar = (input: string | number): string => typeof (input) === "number" ? String.fromCharCode(input) : input;
-const normalizeCharAliasEntry = (entry: CharAliasSpec): CharAliasMap => {
-	const isString = typeof (entry) === "string";
+const getAliasEntryByUnicode = (unicode: number) => aliasMap.find(entry => entry.unicode === unicode);
+const aliasMapFromUnicode = (unicode: number) : CharAliasMap => {
+	const char = String.fromCharCode(unicode);
+	const entry = getAliasEntryByUnicode(unicode);
+	if (!entry){
+		const fontData = lookUpFamilyNameByUnicode(unicode);
+		return { 
+			char, 
+			fontFamily: `${fontData.fontFamily}-${fontData.emphasis}`,
+			alias: []
+		}
+	}
 	return {
-		char: isString ? (entry as string) : normalizeChar((entry as any).char),
-		aliases: (isString ? [] : (entry as any).aliases)
-	};
+		char, 
+		fontFamily: `${entry.fontFamily}-${getDefaultEmphasis(entry.fontFamily)}`, 
+		alias: entry.alias
+	}
 };
-const aliasCharTemplate = (entry: CharAliasMap) => html`
-	<div style="min-width: 42px; min-height: 42px; display: flex; flex-direction: column; border: 1.3px solid white;">
-		<span style="display: flex; align-items: center; justify-content: center; flex: 1;">
-			${entry.char}
-		</span>
-		
-		<div style="display: flex; flex-direction: column;">
-			${entry.aliases.slice(0, 1).map(alias => html`
-				<span style="text-align: center; border-top: 1px solid white; padding: 2px 3px 2px 3px;">
-					${alias}
-				</span>
-			`)}	
-		</div>
-	</div>
-`;
-export const charTableTemplate = (title: string, aliasMap: CharAliasSpec[]) => html`
-	<h3>${title}</h3>
-	<div style="display: flex;">
-		${
-	aliasMap
-		.map(normalizeCharAliasEntry)
-		.map(aliasCharTemplate)
-	}	
-	</div>
+const aliasMapFromUnicodes = (unicodes: number[]) : CharAliasMap[] => unicodes.map(aliasMapFromUnicode);
+const normalizeUnicode = (input: string | number) : number => typeof(input) === "string" ? (input as string).charCodeAt(0) : (input as number);
+
+
+export const charTableTemplate = (title: string, unicodes: (string|number)[]) => litHtml`
+	<char-table-element 
+		.title=${title} 
+		.charAliasMap=${pipe(map(normalizeUnicode), aliasMapFromUnicodes)(unicodes)}
+	></char-table-element>
 `;

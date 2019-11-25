@@ -41,13 +41,7 @@ ${codeAndRender(`
 `)}
 
 ${charTableTemplate("accent characters", [
-	{ char: "ˉ", aliases: ["bar"] },
-	{ char: "˙", aliases: ["dot accent"] },
-	{ char: "¨", aliases: ["double dot accent"] },
-	"~", 
-	{ char: 8407, aliases: ["vector"] },
-	{ char: 730, aliases: ["ring accent"] },
-	{ char: "^", aliases: ["hat accent"] },
+	"ˉ", "˙", "¨", "~", 8407, 730, "^"
 ])}
 
 <h3>example</h3>
@@ -59,7 +53,7 @@ ${codeAndRender(`
 			{
 				"type": "accented",
 				"nucleus": { "type": "ord", "value": "v" },
-				"accent": { "type": "ord", "value": "dotaccent" }
+				"accent": { "type": "ord", "value": "dot-accent" }
 			},
 			{ "type": "rel", "value": "=" },
 			{

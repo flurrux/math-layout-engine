@@ -1,6 +1,6 @@
 
 
-import { markdownStr } from './markdown-text';
+import { markdownStr } from './doc-text';
 import { render } from 'lit-html';
 import { loadKatexFontFaces } from '../src/index';
 

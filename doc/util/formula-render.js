@@ -23,7 +23,11 @@ class FormulaRender extends LitElement {
         document.fonts.addEventListener("loadingdone", () => this._renderFormula());
     }
     _renderFormula(){
-        const layoutedFormula = layout(this.formula)
+        const style = {
+            type: "D",
+            fontSize: 30
+        };
+        const layoutedFormula = layout(withStyle(style)(this.formula));
         const padding = 5;
         const { width, height } = {
             width: layoutedFormula.width + padding * 2,
@@ -54,6 +58,7 @@ class FormulaRender extends LitElement {
 customElements.define("formula-render", FormulaRender);
 
 import { html as litHtml } from 'lit-html';
+import { withStyle } from '../../src/style';
 export const renderedFomula = (formula) => litHtml`
     <formula-render .formula=${formula}></formula-render>
 `;

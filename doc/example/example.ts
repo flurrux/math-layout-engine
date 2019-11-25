@@ -2,10 +2,7 @@
 import { html } from 'lit-html';
 import { markdown, markdownCode } from '../util/lit-marked';
 import { pageAnchor } from '../util/page-anchor';
-
-import quickExampleRender from './quick-example-render.png';
 import { renderedFomula } from '../util/formula-render';
-
 
 export default pageAnchor("example", html`
 
@@ -18,7 +15,7 @@ ${markdownCode(`
 	import {
 		layoutFormula,
 		centerNodeOnCanvas, renderFormulaLayout, loadKatexFontFaces
-	} from 'math-layout';
+	} from '@flurrux/math-layout-engine';
 
 	//1 + 2 + 3 + ⋯ = -1/12
 	const formula = {

@@ -31,7 +31,7 @@ ${typeView(`
 
 <img src="${labeledPartsImg}" />
 
-<h3>example<h3>
+<h3>example</h3>
 ${codeAndRender(`
 	{
 		"type": "root",

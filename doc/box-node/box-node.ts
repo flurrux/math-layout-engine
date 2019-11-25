@@ -40,14 +40,13 @@ ${markdown(`
 
 	position and style are optional because internally, subnodes are generally first layouted and then positioned. 
 	so subnodes always have a position and so does every node in the final output-node.  
-	todo: maybe write a new interface "PositionedBoxNode" or "UnpositionedBoxNode" to distinguish between those cases.  
 `)}
 
 <h3>dimensions</h3>
 <div style="display: flex; flex-wrap: wrap; align-items: center;">
 	<img src="${labeledDimensionsImg}" style="max-width: 100%;" />
 	${markdown(`
-		- the red line sits on the text-baseline 
+		- the purple line sits on the text-baseline 
 		- yMin is below the baseline if it's a negative number.  
 		this is different than in tex, where it's below the baseline for positive values 
 	`)}

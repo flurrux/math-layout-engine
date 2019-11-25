@@ -3,59 +3,32 @@ import { markdown, markdownCode } from '../util/lit-marked';
 import { pageAnchor } from '../util/page-anchor';
 import { typeView } from '../util/type-view';
 import { charTableTemplate } from '../util/char-table';
+import { range } from 'ramda';
 
 
 const operatorsTable = charTableTemplate("op (operators)", [
-	{ char: "∑", aliases: ["sum"] },
-	{ char: "∫", aliases: ["integral"] },
-	{ char: "∏", aliases: ["product"] },
+	"∑", "∫", "∏",
 	"⋁", "⋀", "⋂", "⋃"
 ]);
 const binaryOperatorsTable = charTableTemplate("bin (binary operators)", [
-	"+", "-",
-	{ char: "±", aliases: ["+-"] },
-	{ char: "⋅", aliases: ["*"] },
-	"/", 
-	{ char: "÷", aliases: ["division"] }, 
-	{ char: "×", aliases: ["cross"] }, 
-	{ char: "∘", aliases: ["ring"] }, "∖"
+	"+", "-", "±", "⋅", "÷", "×", "∘", "∖"
 ]);
 const relationalTable = charTableTemplate("rel (relational)", [
-	"=", "<", ">", 
-	{ char: "≤", aliases: ["<="] },
-	{ char: "≥", aliases: [">="] },
-	{ char: "≪", aliases: ["<<"] },
-	{ char: "≫", aliases: [">>"] },
-	{ char: "≈", aliases: ["approx"] },
-	{ char: "≡", aliases: ["equiv"] },
-	 
-	{ char: 57376, aliases: ["!="]},
-
-	{ char: "∈", aliases: ["in"] },
-	{ char: "∋", aliases: ["owns"] },
-	{ char: "⊂", aliases: ["subset"] },
-	{ char: "⊆", aliases: ["subset equal"]},
-
-	{ char: 47, aliases: ["not in"] },
+	"=", "<", ">", "≤", "≥", "≪", "≫", "≈", "≡",
+	57376, "∈", "∋", "⊂", "⊆"
 ]);
 const openCloseTable = charTableTemplate("open & close", [
 	")", "(", "[", "]", "{", "}",
-	{ char: "⟨", aliases: ["left angle"] },
-	{ char: "⟩", aliases: ["right angle"] },
-	{ char: "⌈", aliases: ["left ceil"] },
-	{ char: "⌉", aliases: ["right ceil"] },
-	{ char: "⌊", aliases: ["left floor"] },
-	{ char: "⌋", aliases: ["right floor"] },
-	"|",
+	"⟨", "⟩", "⌈", "⌉", "⌊", "⌋", "|",
 ]);
 
 const miscTable = charTableTemplate("misc", [
-	{ char: "⟹", aliases: ["implies"] },
-	{ char: "↦", aliases: ["mapsto"] },
-	{ char: "→", aliases: ["->"] },
-	{ char: "′ ", aliases: ["'"] },
-	{ char: "∞", aliases: ["infinity"] },
-	{ char: "⋯", aliases: ["..."]}
+	"⟹","↦", "→", 8242, "∞", "⋯",
+	78, 90, 81, 82, 67,
+	305, 567, 8711, 8706, 248, 8501, 8463,
+	945, 946, 947, 948, 1013, 950, 951, 952, 953, 
+	954, 955, 956, 957, 958, 959, 960, 961, 962, 
+	963, 964, 965, 966, 967, 968, 969
 ]);
 
 const typeExampleTemplate = html`
@@ -182,7 +155,7 @@ ${markdown(`
 ${binaryOperatorsTable}
 ${relationalTable}
 ${openCloseTable}
-${miscTable}
 
+${miscTable}
 
 `);

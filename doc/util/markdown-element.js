@@ -3,9 +3,11 @@ import * as marked from 'marked';
 import hljs from 'highlight.js/lib/highlight';
 import javascript from 'highlight.js/lib/languages/javascript';
 import typescript from 'highlight.js/lib/languages/typescript';
+import bash from 'highlight.js/lib/languages/bash';
 import 'highlight.js/styles/hybrid.css';
 hljs.registerLanguage('javascript', javascript);
 hljs.registerLanguage('typescript', typescript);
+hljs.registerLanguage('bash', bash);
 
 const parsingOpt = {
     highlight: (code, lang) => {
@@ -32,6 +34,7 @@ class MarkdownElement extends LitElement {
                 padding: 16px;
                 border-radius: 4px;
                 background-color: #e6e6e608;
+                box-sizing: border-box;
             }
 
             /*
