@@ -84,10 +84,18 @@ const renderSubNodes = (ctx: CanvasRenderingContext2D, node: BoxNode, props: str
 	.filter(isDefined).forEach((subNode => renderNode(ctx, subNode)));
 
 const renderNodes = (ctx: CanvasRenderingContext2D, nodes: BoxNode[]) => nodes.forEach(node => renderNode(ctx, node));
-const renderNode = (ctx: CanvasRenderingContext2D, node: BoxNode) => {
+export const renderNode = (ctx: CanvasRenderingContext2D, node: BoxNode) => {
 
 	ctx.save();
+	
 	ctx.translate(...node.position);
+	if (node.style && node.style.color){
+		const color = node.style.color;
+		Object.assign(ctx, {
+			strokeStyle: color,
+			fillStyle: color
+		});
+	}
 
 	// renderBoundingBox(ctx, node);
 

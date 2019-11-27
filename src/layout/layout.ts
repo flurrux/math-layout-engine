@@ -123,7 +123,8 @@ export const layoutWithStyle = (style: any) : LayoutFunction => pipe(withStyle(s
 //this is the main function to call for layouting the root-node (root as in tree) of a formula
 const defaultStyle : Style = {
 	type: "D", 
-	fontSize: 40
+	fontSize: 40,
+	color: "black"
 };
 interface LayoutResult extends BoxNode {
 	width: number, 

@@ -45,14 +45,14 @@ async function main(){
 
 	const formulaData = { 
 		"type": "mathlist",
-		"style": { "fontFamily": "Main", "emphasis": "Regular" },
+		"style": { "fontFamily": "Main", "emphasis": "Regular", "color": "cyan" },
 		"items": [
 			{
 				"type": "accented",
 				"nucleus": { "type": "ord", "value": "v" },
-				"accent": { "type": "ord", "value": "dotaccent" }
+				"accent": { "type": "ord", "value": "dot-accent" }
 			},
-			{ "type": "rel", "value": "=" },
+			{ "type": "rel", "value": "=", "style": { "color": "#7212d24a" } },
 			{
 				"type": "fraction",
 				"numerator": {
@@ -76,7 +76,6 @@ async function main(){
 		height: (layoutData.dimensions.yMax - layoutData.dimensions.yMin) + padding
 	});
 	const ctx = canvas.getContext("2d");
-	Object.assign(ctx, { strokeStyle: "white", fillStyle: "white" });
 	await loadKatexFontFaces();
 	renderFormulaLayout(canvas, ctx, centerNodeOnCanvas(canvas, layoutData));
 }

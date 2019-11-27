@@ -8,7 +8,8 @@ export interface Style {
 	fontFamily?: "Math"| "Main" |
 		"Size1" | "Size2" | "Size3" | "Size4" |
 		"SansSerif" | "Caligraphic" | "AMS" | "Fraktur" | "Typewriter" | "Script"
-	cramped?: boolean
+	cramped?: boolean,
+	color?: string
 };
 
 export const styleType = {

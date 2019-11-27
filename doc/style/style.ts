@@ -27,7 +27,8 @@ ${markdownCode(`
 			"Size1" | "Size2" | "Size3" | "Size4" |
 			"SansSerif" | "Caligraphic" | "AMS" | "Fraktur" | "Typewriter" | "Script",
 
-		cramped?: boolean
+		cramped?: boolean,
+		color?: string
 	}
 `, "typescript")}
 
@@ -94,6 +95,10 @@ ${markdown(`
 	the cramped boolean means that a node should take up less vertical space,  
 	so superscripts are raised less (and that's it?).  
 	nodes that are placed under lines like denominators have a cramped-style.  
+
+	### color
+	examples: "black", "lightgray ", "#ffa500", "rgb(20, 70, 22)"  
+	see [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value) for more details.  
 `)}
 
 <style>
