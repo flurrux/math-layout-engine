@@ -58,6 +58,10 @@ const renderText = (ctx: CanvasRenderingContext2D, style: Style, text: string) =
 	ctx.save();
 	ctx.font = `${style.fontSize}px KaTeX_${style.fontFamily}-${style.emphasis}`;
 	ctx.scale(1, -1);
+	if (style.preventTextPixelSnapping){
+		//this rotation prevents vertical pixel-snapping, so animations run smoother
+		ctx.rotate(0.0005); 
+	}
 	ctx.fillText(text, 0, 0);
 	ctx.restore();
 };

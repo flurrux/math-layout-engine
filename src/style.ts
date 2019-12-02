@@ -3,13 +3,14 @@ import { FormulaNode } from "./types";
 
 export interface Style {
 	type: "D" | "T" | "S" | "SS",
+	cramped?: boolean,
 	fontSize?: number,
 	emphasis?: "Regular" | "Bold" | "Italic" | "BoldItalic",
 	fontFamily?: "Math"| "Main" |
 		"Size1" | "Size2" | "Size3" | "Size4" |
 		"SansSerif" | "Caligraphic" | "AMS" | "Fraktur" | "Typewriter" | "Script"
-	cramped?: boolean,
-	color?: string
+	color?: string,
+	preventTextPixelSnapping?: boolean
 };
 
 export const styleType = {
