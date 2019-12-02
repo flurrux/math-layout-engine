@@ -93,7 +93,7 @@ export const layoutFraction = (fraction: FormulaFractionNode) : BoxFractionNode 
 		numerator: num,
 		denominator: denom,
 		rule: {
-			type: "rule",
+			type: "rule", style,
 			position: [0, axisHeight],
 			dimensions: {
 				width: dimensions.width,
