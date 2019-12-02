@@ -26,6 +26,7 @@ export const layoutTextNode = (textNode: FormulaTextNode) : BoxTextNode => {
 	
 	const { text } = textNode;
 	const style = createNodeStyle(textNode, {
+		type: textNode.style.type,
 		fontFamily: "Main", 
 		emphasis: "Regular",
 	});

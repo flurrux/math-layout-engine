@@ -8,7 +8,6 @@ import { lookUpHorizontalSpacing } from "../horizontal-layout";
 
 import { DelimitedNode as FormulaDelimitedNode, FormulaNode, Dimensions, BoxNode, CharNode, ContoursNode } from '../../types';
 import { Style } from '../../style';
-import { BoxMathListNode } from '../mathlist-layout';
 import { lookUpGlyphByCharOrAlias } from "../../font-data/katex-font-util";
 import { validateProperties } from "../error";
 
