@@ -1,7 +1,8 @@
-import { parse } from "../../src/parsing/parser";
-import { loadKatexFontFaces, renderFormulaLayout, centerNodeOnCanvas } from '../../src/rendering/render';
-import { layout } from '../../src/layout/layout';
 import { assocPath } from "ramda";
+import { loadFontFaces } from '../../src/fonts/load-fonts';
+import { layout } from '../../src/layout/layout';
+import { parse } from "../../src/parsing/parser";
+import { centerNodeOnCanvas, renderFormulaLayout } from '../../src/rendering/render';
 
 // const expression = "\\alpha + \\frac({\\pi}{2}) \\<= ({5} * 3)";
 // const expression = "a / b";
@@ -10,7 +11,7 @@ import { assocPath } from "ramda";
 async function main(){
 	const canvas = document.querySelector("canvas");
 	const ctx = canvas.getContext("2d");
-    await loadKatexFontFaces();
+    await loadFontFaces();
     const inputEl = document.querySelector("input");
     const onInput = (text: string) => {
         try {
