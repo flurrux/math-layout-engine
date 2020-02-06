@@ -155,13 +155,16 @@ export const aliasMap : { alias: string[], fontFamily: string, unicode: number }
     { alias: ["-"], fontFamily: "Main", unicode: 8722 },
     { alias: ["+-"], fontFamily: "Main", unicode: 177 },
     { alias: ["*"], fontFamily: "Main", unicode: 8901 },
+    { alias: ["/"], fontFamily: "Main", unicode: 47 },
 	{ alias: ["division"], fontFamily: "Main", unicode: 247 },
 	{ alias: ["cross"], fontFamily: "Main", unicode: 215 },
 	{ alias: ["ring"], fontFamily: "Main", unicode: 8728 },
     { alias: ["asterisk"], fontFamily: "Main", unicode: 42 },
 
 	//relation
-	{ alias: ["equal", "="], fontFamily: "Main", unicode: 61 },
+    { alias: ["equal", "="], fontFamily: "Main", unicode: 61 },
+    { alias: ["smaller", "<"], fontFamily: "Main", unicode: 60 },
+    { alias: ["greater", ">"], fontFamily: "Main", unicode: 62 },
 	{ alias: ["<="], fontFamily: "Main", unicode: 8804 },
 	{ alias: [">="], fontFamily: "Main", unicode: 8805 },
 	{ alias: ["<<"], fontFamily: "Main", unicode: 8810 },
@@ -189,6 +192,8 @@ export const aliasMap : { alias: string[], fontFamily: string, unicode: number }
 	{ alias: ["right-ceil"], fontFamily: "Main", unicode: 8969 },
 	{ alias: ["left-floor"], fontFamily: "Main", unicode: 8970 },
 	{ alias: ["right-floor"], fontFamily: "Main", unicode: 8971 },
+    { alias: ["{", "left-brace"], fontFamily: "Main", unicode: 123 },
+    { alias: ["}", "right-brace"], fontFamily: "Main", unicode: 125 },
 
 	//misc
 	{ alias: ["implies"], fontFamily: "Main", unicode: 10233},

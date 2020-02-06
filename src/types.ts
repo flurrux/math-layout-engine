@@ -27,8 +27,8 @@ export interface BoundingBox {
 
 //formula nodes ###
 
-type TextualType = "ord" | "op" | "bin" | "rel" | "open" | "close" | "punct";
-type CompositeType = "mathlist" | "fraction" | "root" | "script" | "delimited" | "accented" | "matrix";
+export type TextualType = "ord" | "op" | "bin" | "rel" | "open" | "close" | "punct";
+export type CompositeType = "mathlist" | "fraction" | "root" | "script" | "delimited" | "accented" | "matrix";
 type FormulaNodeType = TextualType | CompositeType;
 
 export interface FormulaNode {
