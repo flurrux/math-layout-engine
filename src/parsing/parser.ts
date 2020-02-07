@@ -26,8 +26,10 @@
 
 
     todo: 
+    - better parsing of sublayers, 
+        tokenize them into objects like { type: "group", ... } instead just an array
     - unary operators
-    - accents
+    - matrix
     - maybe instead of frac({a}{b}) just use a / b,
     and if inline fractions are desired, escape the slash: a \/ b
     - better handling of text-functions, 
