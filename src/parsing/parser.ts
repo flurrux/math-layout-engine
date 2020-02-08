@@ -81,6 +81,8 @@ interface Token {
     [key: string]: any
 };
 
+type ParseNode = Token | FormulaNode;
+
 //^
 interface SuperScript extends Token { type: "superscript" };
 //_
@@ -99,22 +101,6 @@ const parseFunctionNames = [
     "frac", "root", "accent", "matrix", "text"
 ];
 
-
-
-type ParseNode = Token | FormulaNode;
-type ParseNodeLayerItem = ParseNode | ParseNodeLayerItem[];
-type ParseNodeLayer = ParseNodeLayerItem[];
-
-// interface DelimitedParseNode extends Token {
-//     type: "delimited-layer",
-//     startNode: CharNode, 
-//     endNode: CharNode,
-
-// };
-// interface GroupParseNode extends Token {
-//     type: "group-layer",
-//     value: ParseNodeLayer
-// };
 
 
 
@@ -369,8 +355,6 @@ export const tokenize = (expression: string): ParseNode[] => {
 //recursive parsing ###
 
 
-const sliceSandwich = (array: any[]): any[] => array.slice(1, array.length - 1);
-const wrapInArray = (val: any) => isArray(val) ? val : [val];
 const matchTypeAndValue = curry(
     (type: string, value: string, toMatch: ParseNode): boolean => {
         return toMatch.type === type && (toMatch as any).value === value
@@ -405,8 +389,8 @@ const getIndexOfLayerEnd = (tokens: ParseNode[], startIndex: number, isStartToke
     }
     return -1;
 };
-const createLayers = (nodes: ParseNode[]): ParseNodeLayer => {
-    const layers: ParseNodeLayer = [];
+const parseSubLayers = (nodes: ParseNode[]): ParseNode[] => {
+    const processed: ParseNode[] = [];
     for (let i = 0; i < nodes.length; i++){
         const node = nodes[i];
         if (isNodeOfAnyType(node, ["group-open", "open"])){
@@ -419,175 +403,151 @@ const createLayers = (nodes: ParseNode[]): ParseNodeLayer => {
             );
             if (endIndex < 0){
                 throw 'no corresponding closing delimiter found';
-            }
-			const subLayer = nodes.slice(i + 1, endIndex);
+			}
 			
-            layers.push([
-                nodes[i],
-                ...(createLayers(subLayer) as ParseNodeLayer),
-                nodes[endIndex]
-            ]);
+			const subLayer = nodes.slice(i + 1, endIndex);
+			const subLayerParsed = parseTokenLayer(subLayer);
+			if (node.type === "group-open"){
+				processed.push(subLayerParsed)
+			}
+			else {
+				processed.push({
+					type: "delimited",
+					delimited: subLayerParsed,
+					leftDelim: nodes[i],
+					rightDelim: nodes[endIndex]
+				} as DelimitedNode);
+			}
+            
 			i = endIndex;
 			continue;
         }
-        layers.push(node);
+		processed.push(node);
     }
-    return layers;
+	return processed;
 };
 
 
+//functions ###
 
-const parseGroup = (groupLayer: ParseNodeLayer) => parseTokenLayer(sliceSandwich(groupLayer));
-const parseNodeArgument = (arg: ParseNodeLayerItem): FormulaNode => parseGroup(arg as ParseNodeLayer);
-const parseFractionFunc = (args: ParseNodeLayer): FractionNode => {
-    if (args.length !== 2){
+const parseFractionFunc = (args: FormulaNode): FractionNode => {
+    if (args.type !== "mathlist" || (args as MathListNode).items.length !== 2){
         throw 'fractions need exactly two arguments';
-    }
+	}
+	const argItems = (args as MathListNode).items;
     return {
         type: "fraction",
-        numerator: parseNodeArgument(args[0]),
-        denominator: parseNodeArgument(args[1])
+		numerator: argItems[0],
+		denominator: argItems[1]
     } as FractionNode;
 };
-const parseRootFunc = (args: ParseNodeLayer): RootNode => {
-    if (args.length < 1){
+const parseRootFunc = (args: FormulaNode): RootNode => {
+	if (args.type !== "mathlist" || (args as MathListNode).items.length < 1) {
         throw 'roots need at least one argument';
-    }
+	}
+	const argItems = (args as MathListNode).items;
     return {
         type: "root",
-        radicand: parseNodeArgument(args[0]),
-        ...(args.length > 1 ? {
-            index: parseNodeArgument(args[1])
+		radicand: argItems[0],
+		...(argItems.length > 1 ? {
+			index: argItems[1]
         } : {})
     } as RootNode;
 };
-const parseAccentFunc = (args: ParseNodeLayer): AccentNode => {
-    if (args.length !== 2){
+const parseAccentFunc = (args: FormulaNode): AccentNode => {
+	if (args.type !== "mathlist" || (args as MathListNode).items.length !== 2) {
         throw 'accents need exactly two arguments';
-    }
+	}
+	const argItems = (args as MathListNode).items;
     return {
         type: "accented",
-        nucleus: parseNodeArgument(args[0]),
-        accent: parseNodeArgument(args[1])
+		nucleus: argItems[0],
+		accent: argItems[1]
     } as AccentNode;
 };
-const functionNameToParseMap = {
+const functionNameToParseMap: { [name: string]: (args: FormulaNode) => FormulaNode } = {
     "frac": parseFractionFunc,
     "root": parseRootFunc,
     "accent": parseAccentFunc
 };
-
-const checkParseSandwichLayer = (layer: ParseNodeLayer): FormulaNode => {
-    const firstNode = layer[0];
-    if (isArray(firstNode)) return;
-    if (isNodeOfType(firstNode as ParseNode, "open")){
-        return {
-            type: "delimited",
-            leftDelim: layer[0] as FormulaNode,
-            rightDelim: last(layer) as FormulaNode,
-            delimited: parseTokenLayer(sliceSandwich(layer))
-        } as DelimitedNode;
-    }
-    if (isNodeOfType(firstNode as ParseNode, "group-open")){
-        return pipe(sliceSandwich, parseTokenLayer)(layer) as FormulaNode;
-    }
+const isDelimitedByParenthesis = (node: ParseNode): boolean => {
+	return (node.type === "delimited" && (((node as DelimitedNode).leftDelim) as CharNode).value === "(");
 };
-
-const parseFunctionsDelimitersAndGroups = (layer: ParseNodeLayer): (FormulaNode[] | ParseNodeLayer) => {
-    //delimiters and groups
-    const firstNode = layer[0];
-    if (!isArray(firstNode)){
-        if (isNodeOfType(firstNode as ParseNode, "open")){
-            return [{
-                type: "delimited",
-                leftDelim: layer[0] as FormulaNode,
-                rightDelim: last(layer) as FormulaNode,
-                delimited: parseTokenLayer(sliceSandwich(layer))
-            } as DelimitedNode];
-        }
-        if (isNodeOfType(firstNode as ParseNode, "group-open")){
-            return pipe(sliceSandwich, parseTokenLayer, wrapInArray)(layer) as FormulaNode[];
-        }
-    }
-
-    //functions
-    const processed: ParseNodeLayer = [];
-    for (let i = 0; i < layer.length; i++){
-        const node = layer[i];
-        if (isArray(node)){
-            processed.push(parseTokenLayer(node as ParseNodeLayer));
-            continue;
-        }
-        if (isNodeOfType(node as ParseNode, "parse-function-name")){
-            const funcName = (node as ParseFunctionName).value;
-            if (i === layer.length - 1){
-                throw `function ${funcName} is missing arguments`;
-            }
-            const args = layer[i + 1];
-            if (!isArray(args)){
-                throw `function ${funcName} must have arguments in parenthesis`;
-            }
-            if (!functionNameToParseMap[funcName]){
-                throw `${funcName} is not a valid function`;
-            }
-            const funcArgs = sliceSandwich(args as ParseNodeLayer);
-            processed.push(functionNameToParseMap[funcName](funcArgs));
-            i++;
-            continue;
-        }
-        processed.push(node);
-    }
-    return processed;
+const parseFunctions = (nodes: ParseNode[]): ParseNode[] => {
+	const processed: ParseNode[] = [];
+	for (let i = 0; i < nodes.length; i++) {
+		const node = nodes[i];
+		if (isNodeOfType(node as ParseNode, "parse-function-name")) {
+			const funcName = (node as ParseFunctionName).value;
+			if (!functionNameToParseMap[funcName]) {
+				throw `${funcName} is not a valid function`;
+			}
+			if (i === nodes.length - 1) {
+				throw `function ${funcName} is missing arguments`;
+			}
+			const args = nodes[i + 1];
+			if (!isDelimitedByParenthesis(args)){
+				throw `function ${funcName} must have arguments in parenthesis`;
+			}
+			const funcArgs = (args as DelimitedNode).delimited;
+			processed.push(functionNameToParseMap[funcName](funcArgs));
+			i++;
+			continue;
+		}
+		processed.push(node);
+	}
+	return processed;
 };
 
 
-const parseScripts = (layer: ParseNode[]): FormulaNode[] => {
+const parseScripts = (nodes: ParseNode[]): FormulaNode[] => {
     const processed: FormulaNode[] = [];
-    for (let i = 0; i < layer.length; i++){
-        const node = layer[i];
-        if (i === layer.length - 1 || !["superscript", "subscript"].includes(layer[i + 1].type)){
+    for (let i = 0; i < nodes.length; i++){
+        const node = nodes[i];
+        if (i === nodes.length - 1 || !["superscript", "subscript"].includes(nodes[i + 1].type)){
             processed.push(node as FormulaNode);
             continue;
         }
         
-        const nextNode = layer[i + 1];
-        const remainingNodeCount = layer.length - i - 1;
+        const nextNode = nodes[i + 1];
+        const remainingNodeCount = nodes.length - i - 1;
         const isSuperscript = isNodeOfType(nextNode, "superscript");
         if (remainingNodeCount === 1){
             throw `${isSuperscript ? "superscript" : "subscript"} expected`;
         }
         const scriptNode = {
             type: "script",
-            nucleus: layer[i]
+            nucleus: nodes[i]
         } as ScriptNode;
-        scriptNode[isSuperscript ? "sup" : "sub"] = layer[i + 2] as FormulaNode;
+        scriptNode[isSuperscript ? "sup" : "sub"] = nodes[i + 2] as FormulaNode;
         
-        if (remainingNodeCount === 2 || !["superscript", "subscript"].includes(layer[i + 3].type)){
+        if (remainingNodeCount === 2 || !["superscript", "subscript"].includes(nodes[i + 3].type)){
             processed.push(scriptNode);
             i += 2;
             continue;
         }
 
-        if (remainingNodeCount === 3 || layer[i + 3].type === nextNode.type){
+        if (remainingNodeCount === 3 || nodes[i + 3].type === nextNode.type){
             throw `${isSuperscript ? "subscript" : "superscript"} expected`;
         }
-        scriptNode[isSuperscript ? "sub" : "sup"] = layer[i + 4] as FormulaNode;
+        scriptNode[isSuperscript ? "sub" : "sup"] = nodes[i + 4] as FormulaNode;
         processed.push(scriptNode);
         i += 4;
     }
     return processed;
 };
 
-const layerToMathlistOrSingleNode = (layer: ParseNodeLayer): (FormulaNode | MathListNode) => {
-    if (layer.length === 1) return layer[0] as FormulaNode;
+const layerToMathlistOrSingleNode = (nodes: FormulaNode[]): (FormulaNode | MathListNode) => {
+	if (nodes.length === 1) return nodes[0];
     return {
         type: "mathlist",
-        items: layer as FormulaNode[]
+		items: nodes
     };
 };
 
-const parseTokenLayer = (layer: ParseNodeLayer): FormulaNode => pipe(
-    parseFunctionsDelimitersAndGroups,
+const parseTokenLayer = (layer: ParseNode[]): FormulaNode => pipe(
+	parseSubLayers,
+    parseFunctions,
     parseScripts,
     layerToMathlistOrSingleNode
 )(layer);
@@ -598,7 +558,6 @@ const parseTokenLayer = (layer: ParseNodeLayer): FormulaNode => pipe(
 export const parse = (expression: string): FormulaNode => {
     return pipe(
         tokenize,
-        createLayers,
         parseTokenLayer
     )(expression);
 };
