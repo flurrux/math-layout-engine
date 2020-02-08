@@ -143,7 +143,7 @@ const tokenizeTextFunctions = (expression: string): (string | TextNode)[] => {
             const textStartIndex = i + 6;
             const textEndIndex = expression.indexOf(")", textStartIndex);
             if (textEndIndex < 0){
-                throw 'text was not closed by parenthesis';
+                throw 'text-function is missing a closing parenthesis';
             }
             const textVal = expression.substring(textStartIndex, textEndIndex);
             processed.push({
@@ -151,15 +151,22 @@ const tokenizeTextFunctions = (expression: string): (string | TextNode)[] => {
                 text: textVal
             } as TextNode);
             i = textEndIndex;
-            continue;
-        }
-        processed = appendOrPushChar(processed, char);
+			continue;
+		}
+		processed = appendOrPushChar(processed, char);
     }
     return processed;
 };
 
 //alias and function-names ###
-
+const getNodeTypeByUnicode = (unicode: number): TextualType => {
+	let nodeType = unicodeToTypeMap[unicode];
+	if (!nodeType) {
+		console.warn(`${String.fromCharCode(unicode)} has no corresponding type. maybe add an entry in "type-from-unicode.ts" `);
+		nodeType = "ord";
+	}
+	return nodeType;
+};
 const getMatchingAlias = (str: string): { alias: string, unicode: number } => {
     let curMatch = null;
     for (let i = 0; i < aliasMap.length; i++){
@@ -202,8 +209,8 @@ const tokenizeEscapeSequences = (expression: string): (string | ParseFunctionNam
                 let nodeType = unicodeToTypeMap[unicode];
                 if (!nodeType){
                     console.warn(`found a match for the alias ${aliasMatch.alias} but not a corresponsing type. maybe add an entry in "type-from-unicode.ts" `);
-                }
-                if (!nodeType) nodeType = "ord";
+					nodeType = "ord";
+				}
                 processed.push({
                     type: nodeType,
                     value: String.fromCharCode(unicode),
@@ -212,7 +219,7 @@ const tokenizeEscapeSequences = (expression: string): (string | ParseFunctionNam
                 continue;
             }
 
-            throw `could not find a match for ${restString}`;
+            throw `could not find a match for escaped string "${restString}"`;
         }
         processed = appendOrPushChar(processed, char);
     }
@@ -236,9 +243,7 @@ const tokenizeNumberLiterals = (expression: string): (string | CharNode | TextNo
     };
     for (let i = 0; i < expression.length; i++){
         const char = expression[i];
-        const charIsDigit = isDigit(char) || char === ".";
-
-        if (charIsDigit){
+		if (isDigit(char) || char === "."){
             if (!numberSequenceStarted){
                 numberSequenceStarted = true;
                 curNumberSequence = "";
@@ -257,6 +262,29 @@ const tokenizeNumberLiterals = (expression: string): (string | CharNode | TextNo
         pushCurrentNumber();
     }
     return processed;
+};
+
+const tokenizeBraces = (expression: string): (string | GroupOpen | GroupClose)[] => {
+	let processed: (string | GroupOpen | GroupClose)[] = [];
+	for (let i = 0; i < expression.length; i++) {
+		const char = expression[i];
+		if (char === "{") {
+			processed.push({
+				type: "group-open",
+				value: char
+			} as GroupOpen);
+			continue;
+		}
+		if (char === "}") {
+			processed.push({
+				type: "group-close",
+				value: char
+			} as GroupClose);
+			continue;
+		}
+		processed = appendOrPushChar(processed, char);
+	}
+	return processed;
 };
 
 const tokenizeScripts = (expression: string): (string | SuperScript | SubScript)[] => {
@@ -282,37 +310,19 @@ const tokenizeScripts = (expression: string): (string | SuperScript | SubScript)
     return processed;
 };
 
-const tokenizeBraces = (expression: string): (string | GroupOpen | GroupClose)[] => {
-    let processed: (string | GroupOpen | GroupClose)[] = [];
-    for (let i = 0; i < expression.length; i++){
-        const char = expression[i];
-        if (char === "{" || char === "}"){
-            if (char === "{"){
-                processed.push({
-                    type: "group-open",
-                    value: char
-                } as GroupOpen);
-            }
-            else {
-                processed.push({
-                    type: "group-close",
-                    value: char
-                } as GroupClose);
-            }
-            continue;
-        }
-        processed = appendOrPushChar(processed, char);
-    }
-    return processed;
-};
-
+const ignoredUnicodes = [
+	32 /*space*/, 
+	9 /*tab*/,
+	10, /*return*/
+];
+const isCharIgnored = (unicode: number) => ignoredUnicodes.includes(unicode);
 const tokenizeChars = (expression: string): (string | CharNode)[] => {
     const processed: (string | CharNode)[] = [];
     for (let i = 0; i < expression.length; i++){
         const char = expression[i];
-        const unicode = char.charCodeAt(0);
-        if (char === " " || unicode === 10) continue;
-        const nodeType = unicodeToTypeMap[unicode] || "ord";
+		const unicode = char.charCodeAt(0);
+		if (isCharIgnored(unicode)) continue;
+        const nodeType = getNodeTypeByUnicode(unicode);
         processed.push({
             type: nodeType,
             value: char,
@@ -408,19 +418,19 @@ const createLayers = (nodes: ParseNode[]): ParseNodeLayer => {
                 matchTypeAndValue(closingType, openToClosingCharMap[nodeValue])
             );
             if (endIndex < 0){
-                throw 'mismatch of opening and closing delimiter';
+                throw 'no corresponding closing delimiter found';
             }
-            const subLayer = nodes.slice(i + 1, endIndex);
+			const subLayer = nodes.slice(i + 1, endIndex);
+			
             layers.push([
                 nodes[i],
                 ...(createLayers(subLayer) as ParseNodeLayer),
                 nodes[endIndex]
             ]);
-            i = endIndex;
+			i = endIndex;
+			continue;
         }
-        else {
-            layers.push(node);
-        }
+        layers.push(node);
     }
     return layers;
 };
