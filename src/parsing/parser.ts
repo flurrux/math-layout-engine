@@ -62,7 +62,7 @@
 
 
 import { curry, last, pipe, range, flatten, endsWith } from 'ramda';
-import { aliasMap } from "../font-data/katex-font-util";
+import { aliasMap, getDefaultEmphasis } from "../font-data/katex-font-util";
 import { unicodeToTypeMap } from "../type-from-unicode";
 import { AccentNode, CharNode, DelimitedNode, FormulaNode, FractionNode, MathListNode, RootNode, ScriptNode, TextNode, TextualType, MatrixStyle, MatrixNode } from "../types";
 
@@ -134,20 +134,20 @@ const tokenizeTextFunctions = (expression: string): (string | TextNode)[] => {
             i = textEndIndex;
 			continue;
 		}
-		// if (restString.startsWith("\\opname(")){
-		// 	const textStartIndex = i + 8;
-		// 	const textEndIndex = expression.indexOf(")", textStartIndex);
-		// 	if (textEndIndex < 0) {
-		// 		throw 'operator-name-function is missing a closing parenthesis';
-		// 	}
-		// 	const textVal = expression.substring(textStartIndex, textEndIndex);
-		// 	processed.push({
-		// 		type: "op",
-		// 		text: textVal
-		// 	} as TextNode);
-		// 	i = textEndIndex;
-		// 	continue;
-		// }
+		if (restString.startsWith("\\opname(")){
+			const textStartIndex = i + 8;
+			const textEndIndex = expression.indexOf(")", textStartIndex);
+			if (textEndIndex < 0) {
+				throw 'operator-name-function is missing a closing parenthesis';
+			}
+			const textVal = expression.substring(textStartIndex, textEndIndex);
+			processed.push({
+				type: "op",
+				text: textVal
+			} as TextNode);
+			i = textEndIndex;
+			continue;
+		}
 		processed = appendOrPushChar(processed, char);
     }
     return processed;
@@ -162,7 +162,7 @@ const getNodeTypeByUnicode = (unicode: number): TextualType => {
 	}
 	return nodeType;
 };
-const getMatchingAlias = (str: string): { alias: string, unicode: number } => {
+const getMatchingAlias = (str: string): { alias: string, unicode: number, fontFamily: string } => {
     let curMatch = null;
     for (let i = 0; i < aliasMap.length; i++){
         const aliasEntry = aliasMap[i];
@@ -171,7 +171,11 @@ const getMatchingAlias = (str: string): { alias: string, unicode: number } => {
             if (!str.startsWith(curAlias)) continue;
 
             if (!curMatch || curAlias.length > curMatch.alias.length){
-                curMatch = { alias: curAlias, unicode: aliasEntry.unicode };
+                curMatch = { 
+					alias: curAlias, 
+					unicode: aliasEntry.unicode, 
+					fontFamily: aliasEntry.fontFamily
+				};
             }
         }
     }
@@ -208,7 +212,11 @@ const tokenizeEscapeSequences = (expression: string): (string | ParseFunctionNam
 				}
                 processed.push({
                     type: nodeType,
-                    value: String.fromCharCode(unicode),
+					value: String.fromCharCode(unicode),
+					style: {
+						fontFamily: aliasMatch.fontFamily,
+						emphasis: getDefaultEmphasis(aliasMatch.fontFamily)
+					}
                 } as CharNode);
                 i += aliasMatch.alias.length;
                 continue;
@@ -429,7 +437,9 @@ const parseSubLayers = (nodes: ParseNode[]): (FormulaNode | ParseFunctionName | 
             
 			i = endIndex;
 			continue;
-        }
+		}
+		//if there is a right-brace without a corresponding left-brace, ignore it
+		if (isNodeOfType(node, "group-close")) continue;
 		processed.push(node as (FormulaNode | ParseFunctionName | SuperScript | SubScript));
     }
 	return processed;
