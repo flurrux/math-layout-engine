@@ -90,126 +90,138 @@ class LiveMathLayoutEditor extends LitElement {
 	static get _exampleCode(){
 		return {
 			"fraction": {
-				type: "fraction",
-				numerator: {
-					type: "ord", value: "alpha"
-				},
-				denominator: {
-					type: "mathlist",
-					items: [
-						{ type: "ord", value: "1" },
-						{ type: "bin", value: "+" },
-						{
-							type: "fraction",
-							numerator: { type: "ord", value: "alpha" },
-							denominator: { type: "ord", value: "beta" }
-						}
-					]
+				rawString: '\\frac({\\alpha}{1 + \\frac({\\alpha}{\\beta})})',
+				formulaObj: {
+					type: "fraction",
+					numerator: {
+						type: "ord", value: "alpha"
+					},
+					denominator: {
+						type: "mathlist",
+						items: [
+							{ type: "ord", value: "1" },
+							{ type: "bin", value: "+" },
+							{
+								type: "fraction",
+								numerator: { type: "ord", value: "alpha" },
+								denominator: { type: "ord", value: "beta" }
+							}
+						]
+					}
 				}
 			},
 			"matrix": {
-				type: "delimited",
-				leftDelim: { type: "open", value: "[" },
-				rightDelim: { type: "close", value: "]" },
-				delimited: {
-					type: "matrix",
-					rowCount: 2,
-					colCount: 2,
-					items: [
-						{ type: "ord", value: "a" },
-						{ type: "ord", value: "b" },
-						{ type: "ord", value: "c" },
-						{ type: "ord", value: "d" },
-					],
-					style: {
-						rowSpacing: 0.4,
-						colSpacing: 0.4
-					}
-				} 
+				rawString: '[\\matrix({a}{b}, {c}{d})]',
+				formulaObj: {
+					type: "delimited",
+					leftDelim: { type: "open", value: "[" },
+					rightDelim: { type: "close", value: "]" },
+					delimited: {
+						type: "matrix",
+						rowCount: 2,
+						colCount: 2,
+						items: [
+							{ type: "ord", value: "a" },
+							{ type: "ord", value: "b" },
+							{ type: "ord", value: "c" },
+							{ type: "ord", value: "d" },
+						],
+						style: {
+							rowSpacing: 0.4,
+							colSpacing: 0.4
+						}
+					} 
+				}
 			},
 			"root": {
-				"type": "mathlist",
-				 	"items": [
-					{
-					   	"type": "script",
-					  	"nucleus": { "type": "ord", "value": "x" },
-					   	"sub": {
-						   "type": "mathlist",
-						   "style": { "fontSize": 20 },
-						   "items": [
-							   	{ "type": "ord", "value": "1" },
-							   	{ "type": "ord", "value": "," },
-							   	{ "type": "ord", "value": "2" }
-						   	] 
-					   	}
-				   	},
-					{ "type": "rel", "value": "=" },
-					{ "type": "ord", "value": "+-" },
-					{ 
-						"type": "root",
-					   	"radicand": {
-							"type": "mathlist",
-							"items": [
-								{ "type": "ord", "value": "q" },
-								{ "type": "bin", "value": "+" },
-								{
-									"type": "fraction",
-									"style": {
-										"fontSize": 25
-									},
-									"numerator": { 
-										"type": "script",
-										"nucleus": {
-											"type": "ord", "value": "p"
-										},
-										"sup": {
-											"type": "ord", "value": "2"
-										}
-									},
-									"denominator": { 
-										"type": "ord", "value": "4" 
-									}
-							   	}
-							]
-					   }
-				   	},
-					{ "type": "bin", "value": "-" },
-				   	{
-						"type": "fraction",
-						"style": {
-							"fontSize": 25
+				rawString: 'x_{1,2} = \\+- \\root({q + \\frac({p^2}{2})}{2}) - \\frac({p}{2})',
+				formulaObj: {
+					"type": "mathlist",
+					"items": [
+						{
+							"type": "script",
+							"nucleus": { "type": "ord", "value": "x" },
+							"sub": {
+								"type": "mathlist",
+								"style": { "fontSize": 20 },
+								"items": [
+									{ "type": "ord", "value": "1" },
+									{ "type": "ord", "value": "," },
+									{ "type": "ord", "value": "2" }
+								]
+							}
 						},
-					   	"numerator": { 
-						   	"type": "ord", "value": "p"
-					   	},
-					   	"denominator": { 
-							"type": "ord", "value": "2" 
-					   	}
-				   	}
-			   	]      
+						{ "type": "rel", "value": "=" },
+						{ "type": "ord", "value": "+-" },
+						{ 
+							"type": "root",
+							"radicand": {
+								"type": "mathlist",
+								"items": [
+									{ "type": "ord", "value": "q" },
+									{ "type": "bin", "value": "+" },
+									{
+										"type": "fraction",
+										"style": {
+											"fontSize": 25
+										},
+										"numerator": { 
+											"type": "script",
+											"nucleus": {
+												"type": "ord", "value": "p"
+											},
+											"sup": {
+												"type": "ord", "value": "2"
+											}
+										},
+										"denominator": { 
+											"type": "ord", "value": "4" 
+										}
+									}
+								]
+							}	
+						},
+						{ "type": "bin", "value": "-" },
+						{
+							"type": "fraction",
+							"style": {
+								"fontSize": 25
+							},
+							"numerator": { 
+								"type": "ord", "value": "p"
+							},
+							"denominator": { 
+								"type": "ord", "value": "2" 
+							}
+						}
+					]      
+				}
 			},
 			"accent": {
-				"type": "mathlist",
-				"items": [
-					{
-						"type": "accented",
-						"nucleus": { "type": "ord", "value": "L" },
-						"accent": { "type": "ord", "value": "vector" }
-					},
-					{ "type": "rel", "value": "=" },
-					{
-						"type": "accented",
-						"nucleus": { "type": "ord", "value": "I" },
-						"accent": { "type": "ord", "value": "~" }
-					},
-					{ "type": "bin", "value": "*" },
-					{
-						"type": "accented",
-						"nucleus": { "type": "ord", "value": "w" },
-						"accent": { "type": "ord", "value": "vector" }
-					},
-				]
-			}   
+				rawString: '\\accent({L}{\\vector}) = \\accent({I}{~}) * \\accent({w}{\\dot-accent})',
+				formulaObj: {
+					"type": "mathlist",
+					"items": [
+						{
+							"type": "accented",
+							"nucleus": { "type": "ord", "value": "L" },
+							"accent": { "type": "ord", "value": "vector" }
+						},
+						{ "type": "rel", "value": "=" },
+						{
+							"type": "accented",
+							"nucleus": { "type": "ord", "value": "I" },
+							"accent": { "type": "ord", "value": "~" }
+						},
+						{ "type": "bin", "value": "*" },
+						{
+							"type": "accented",
+							"nucleus": { "type": "ord", "value": "w" },
+							"accent": { "type": "ord", "value": "vector" }
+						},
+					]
+				}
+			}
 		}
 	}
 	constructor(){
@@ -233,9 +245,12 @@ class LiveMathLayoutEditor extends LitElement {
 		if (!this._editor) return;
 		this._editor.setValue(newText);
 	}
+	_setEditorTextByCurrentState(){
+		this._setEditorText(this.inputMode === "json" ? this.text : this.parseText);
+	}
 	updated(changedProps){
 		if (changedProps.has("inputMode")){
-			this._setEditorText(this.inputMode === "json" ? this.text : this.parseText);
+			this._setEditorTextByCurrentState();
 			this._renderLayoutedNode();
 		}
 		if (changedProps.has("text") && this.inputMode === "json"){
@@ -316,7 +331,10 @@ class LiveMathLayoutEditor extends LitElement {
 	}
 	_showExample(optionIndex){
 		const keys = Reflect.ownKeys(LiveMathLayoutEditor._exampleCode);
-		this._setText(JSON.stringify(LiveMathLayoutEditor._exampleCode[keys[optionIndex]], null, 4));
+		const exampleObj = LiveMathLayoutEditor._exampleCode[keys[optionIndex]];
+		this.text = JSON.stringify(exampleObj.formulaObj, null, 4);
+		this.parseText = exampleObj.rawString;
+		this._setEditorTextByCurrentState();
 	}
 	_onEditorChanged(e){
 		const text = e.detail.text;

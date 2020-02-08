@@ -61,7 +61,7 @@
 */
 
 
-import { curry, last, pipe, range, flatten } from 'ramda';
+import { curry, last, pipe, range, flatten, endsWith } from 'ramda';
 import { aliasMap } from "../font-data/katex-font-util";
 import { unicodeToTypeMap } from "../type-from-unicode";
 import { AccentNode, CharNode, DelimitedNode, FormulaNode, FractionNode, MathListNode, RootNode, ScriptNode, TextNode, TextualType, MatrixStyle, MatrixNode } from "../types";
@@ -438,56 +438,54 @@ const parseSubLayers = (nodes: ParseNode[]): (FormulaNode | ParseFunctionName | 
 
 //functions ###
 
-const parseFractionFunc = (args: FormulaNode): FractionNode => {
-    if (args.type !== "mathlist" || (args as MathListNode).items.length !== 2){
+const parseFractionFunc = (args: FormulaNode[]): FractionNode => {
+    if (args.length !== 2){
         throw 'fractions need exactly two arguments';
 	}
-	const argItems = (args as MathListNode).items;
     return {
         type: "fraction",
-		numerator: argItems[0],
-		denominator: argItems[1]
+		numerator: args[0],
+		denominator: args[1]
     } as FractionNode;
 };
-const parseRootFunc = (args: FormulaNode): RootNode => {
-	if (args.type !== "mathlist"){
+const parseRootFunc = (args: FormulaNode[]): RootNode => {
+	if (args.length === 0 || args.length > 2) {
+		throw 'roots take either one or two arguments';
+	}
+	
+	if (args.length === 1){
 		return {
 			type: "root",
-			radicand: args
+			radicand: args[0]
 		} as RootNode;
 	}
-
-	if ((args as MathListNode).items.length !== 2) {
-        throw 'roots take either one or two arguments';
-	}
-	const argItems = (args as MathListNode).items;
-    return {
-        type: "root",
-		radicand: argItems[0],
-		index: argItems[1]
-    } as RootNode;
+	else {
+		return {
+			type: "root",
+			radicand: args[0],
+			index: args[1]
+    	} as RootNode;
+	}	
 };
-const parseAccentFunc = (args: FormulaNode): AccentNode => {
-	if (args.type !== "mathlist" || (args as MathListNode).items.length !== 2) {
+const parseAccentFunc = (args: FormulaNode[]): AccentNode => {
+	if (args.length !== 2) {
         throw 'accents need exactly two arguments';
 	}
-	const argItems = (args as MathListNode).items;
     return {
         type: "accented",
-		nucleus: argItems[0],
-		accent: argItems[1]
+		nucleus: args[0],
+		accent: args[1]
     } as AccentNode;
 };
-const parseMatrixFunc = (args: FormulaNode): MatrixNode => {
-	if (args.type !== "mathlist" || (args as MathListNode).items.length < 1){
+const parseMatrixFunc = (args: FormulaNode[]): MatrixNode => {
+	if (args.length < 1){
 		throw 'matrix must have more than 1 argument';
 	}
-	const items = (args as MathListNode).items;
 	let rows: FormulaNode[][] = [[]];
 	let maxRowSize: number = 0;
-	for (let i = 0; i < items.length; i++){
-		const node = items[i];
-		if (node.type === "punct" && (node as CharNode).value === ","){
+	for (let i = 0; i < args.length; i++){
+		const node = args[i];
+		if (matchTypeAndValue("punct", ",", node)){
 			rows.push([]);
 			continue;
 		}
@@ -512,7 +510,7 @@ const parseMatrixFunc = (args: FormulaNode): MatrixNode => {
 		items: flatten(rows)
 	} as MatrixNode;
 };
-const functionNameToParseMap: { [name: string]: (args: FormulaNode) => FormulaNode } = {
+const functionNameToParseMap: { [name: string]: (args: FormulaNode[]) => FormulaNode } = {
     "frac": parseFractionFunc,
     "root": parseRootFunc,
 	"accent": parseAccentFunc,
@@ -521,8 +519,34 @@ const functionNameToParseMap: { [name: string]: (args: FormulaNode) => FormulaNo
 const isDelimitedByParenthesis = (node: ParseNode): boolean => {
 	return (node.type === "delimited" && (((node as DelimitedNode).leftDelim) as CharNode).value === "(");
 };
-const parseFunctions = (nodes: (FormulaNode | ParseFunctionName | SuperScript | SubScript)[]): (FormulaNode | SuperScript | SubScript)[] => {
-	const processed: (FormulaNode | SuperScript | SubScript)[] = [];
+const isOpenParenthesis = (node: ParseNode): boolean => matchTypeAndValue("open", "(", node);
+const parseFunctionArgs = (nodes: ParseNode[]): FormulaNode[] => {
+	const processed = [];
+	for (let i = 0; i < nodes.length; i++){
+		const node = nodes[i];
+		if (isNodeOfType(node, "group-open")){
+			const groupCloseIndex = getIndexOfLayerEnd(
+				nodes, i, 
+				matchTypeAndValue("group-open", "{"),
+				matchTypeAndValue("group-close", "}")
+			);
+			if (groupCloseIndex < 0){
+				throw 'brace-group was not closed';
+			}
+			const group = nodes.slice(i + 1, groupCloseIndex);
+			processed.push(parseTokenLayer(group));
+			i = groupCloseIndex;
+			continue;
+		}
+		if (!matchTypeAndValue("punct", ",", node)){
+			throw `node of type "${node.type}" is not allowed in an argument-list`;
+		}
+		processed.push(node);
+	}
+	return processed;
+};
+const parseFunctions = (nodes: ParseNode[]): (FormulaNode | SuperScript | SubScript | GroupOpen | GroupClose)[] => {
+	const processed: (FormulaNode | SuperScript | SubScript | GroupOpen | GroupClose)[] = [];
 	for (let i = 0; i < nodes.length; i++) {
 		const node = nodes[i];
 		if (isNodeOfType(node as ParseNode, "parse-function-name")) {
@@ -530,19 +554,24 @@ const parseFunctions = (nodes: (FormulaNode | ParseFunctionName | SuperScript | 
 			if (!functionNameToParseMap[funcName]) {
 				throw `${funcName} is not a valid function`;
 			}
-			if (i === nodes.length - 1) {
+			if (i === nodes.length - 1 || !isOpenParenthesis(nodes[i + 1])) {
 				throw `function ${funcName} is missing arguments`;
 			}
-			const args = nodes[i + 1];
-			if (!isDelimitedByParenthesis(args)){
-				throw `function ${funcName} must have arguments in parenthesis`;
+			const endIndex = getIndexOfLayerEnd(
+				nodes, i + 1,
+				matchTypeAndValue("open", "("),
+				matchTypeAndValue("close", ")")
+			);
+			if (endIndex < 0) {
+				throw 'parenthesis are not closed';
 			}
-			const funcArgs = (args as DelimitedNode).delimited;
+
+			const funcArgs = parseFunctionArgs(nodes.slice(i + 2, endIndex));
 			processed.push(functionNameToParseMap[funcName](funcArgs));
-			i++;
+			i = endIndex;
 			continue;
 		}
-		processed.push(node as (FormulaNode | SuperScript | SubScript));
+		processed.push(node as (FormulaNode | SuperScript | SubScript | GroupOpen | GroupClose));
 	}
 	return processed;
 };
@@ -642,8 +671,8 @@ const handleUnaryOperators = (nodes: FormulaNode[]): FormulaNode[] => {
 };
 
 const parseTokenLayer = (layer: ParseNode[]): FormulaNode => pipe(
-	parseSubLayers,
     parseFunctions,
+	parseSubLayers,
     parseScripts,
 	handleUnaryOperators,
 	layerToMathlistOrSingleNode
