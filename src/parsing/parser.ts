@@ -30,7 +30,8 @@
     - text
 
 
-    todo: 
+	todo: 
+	- functions like sin, ln, ...
     - maybe instead of frac({a}{b}) just use a / b,
     and if inline fractions are desired, escape the slash: a \/ b
     - better handling of text-functions, 
@@ -38,7 +39,6 @@
         looking at the corresponding closing parenthesis. 
         however the text could be like: func(t), so: \text(func(t))
         which would we interpreted as \text(func(t) -> func(t.     
-    - functions like sin, ln, ...
     - complete error handling with position of error in the text     
 
 
@@ -134,6 +134,20 @@ const tokenizeTextFunctions = (expression: string): (string | TextNode)[] => {
             i = textEndIndex;
 			continue;
 		}
+		// if (restString.startsWith("\\opname(")){
+		// 	const textStartIndex = i + 8;
+		// 	const textEndIndex = expression.indexOf(")", textStartIndex);
+		// 	if (textEndIndex < 0) {
+		// 		throw 'operator-name-function is missing a closing parenthesis';
+		// 	}
+		// 	const textVal = expression.substring(textStartIndex, textEndIndex);
+		// 	processed.push({
+		// 		type: "op",
+		// 		text: textVal
+		// 	} as TextNode);
+		// 	i = textEndIndex;
+		// 	continue;
+		// }
 		processed = appendOrPushChar(processed, char);
     }
     return processed;
