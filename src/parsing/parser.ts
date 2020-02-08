@@ -24,12 +24,13 @@
         root({2}) is the square-root of 2
 		root({2}{3}) is the cube-root of 2
 	- fractions, \fraction({1}{2})	
-	- accents, example: \accent({v}{\vector})	
+	- accents, example: \accent({v}{\vector})
+	- matrix, example: \matrix({1}{0}, {0}{1}), 
+		the size of the matrix is infered from the colons
     - text
 
 
     todo: 
-    - matrix
     - maybe instead of frac({a}{b}) just use a / b,
     and if inline fractions are desired, escape the slash: a \/ b
     - better handling of text-functions, 
@@ -60,10 +61,10 @@
 */
 
 
-import { curry, last, pipe } from 'ramda';
+import { curry, last, pipe, range, flatten } from 'ramda';
 import { aliasMap } from "../font-data/katex-font-util";
 import { unicodeToTypeMap } from "../type-from-unicode";
-import { AccentNode, CharNode, DelimitedNode, FormulaNode, FractionNode, MathListNode, RootNode, ScriptNode, TextNode, TextualType } from "../types";
+import { AccentNode, CharNode, DelimitedNode, FormulaNode, FractionNode, MathListNode, RootNode, ScriptNode, TextNode, TextualType, MatrixStyle, MatrixNode } from "../types";
 
 
 
@@ -463,10 +464,45 @@ const parseAccentFunc = (args: FormulaNode): AccentNode => {
 		accent: argItems[1]
     } as AccentNode;
 };
+const parseMatrixFunc = (args: FormulaNode): MatrixNode => {
+	if (args.type !== "mathlist" || (args as MathListNode).items.length < 1){
+		throw 'matrix must have more than 1 argument';
+	}
+	const items = (args as MathListNode).items;
+	let rows: FormulaNode[][] = [[]];
+	let maxRowSize: number = 0;
+	for (let i = 0; i < items.length; i++){
+		const node = items[i];
+		if (node.type === "punct" && (node as CharNode).value === ","){
+			rows.push([]);
+			continue;
+		}
+		rows[rows.length - 1].push(node);
+		maxRowSize = Math.max(maxRowSize, last(rows).length);
+	}
+	const emptyNode = {
+		type: "mathlist",
+		items: []
+	} as MathListNode;
+
+	//fill the rows so the matrix is uniform
+	rows = rows.map(row => [
+		...row, 
+		...range(0, maxRowSize - row.length).map(() => emptyNode)
+	]);
+
+	return {
+		type: "matrix",
+		rowCount: rows.length, 
+		colCount: maxRowSize,
+		items: flatten(rows)
+	} as MatrixNode;
+};
 const functionNameToParseMap: { [name: string]: (args: FormulaNode) => FormulaNode } = {
     "frac": parseFractionFunc,
     "root": parseRootFunc,
-    "accent": parseAccentFunc
+	"accent": parseAccentFunc,
+	"matrix": parseMatrixFunc
 };
 const isDelimitedByParenthesis = (node: ParseNode): boolean => {
 	return (node.type === "delimited" && (((node as DelimitedNode).leftDelim) as CharNode).value === "(");
