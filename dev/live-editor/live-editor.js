@@ -12,7 +12,7 @@ import '@polymer/paper-listbox/paper-listbox.js';
 
 import { layoutNode } from '../../src/layout/layout';
 import { centerNodeOnCanvas, renderFormulaLayout, loadKatexFontFaces } from '../../src/rendering/render';
-
+import { parse } from '../../src/parsing/parser';
 
 
 
@@ -58,9 +58,13 @@ class LiveMathLayoutEditor extends LitElement {
 			}
 			.examples-picker {
 				display: flex;
+				margin-left: 20px;
 			}
-			
+			paper-tabs {
+				flex: 1;
+			}
 			.top-bar {
+				display: flex;
 				height: 54px;
 				padding: 10px;
 			}
@@ -75,9 +79,11 @@ class LiveMathLayoutEditor extends LitElement {
 	static get properties(){
 		return {
 			text: { type: String },
+			parseText: { type: String },
 			currentError: { type: String },
 			outputText: { type: String },
 			codeExampleIndex: { type: Number },
+			inputMode: { type: String },
 			outputMode: { type: String }
 		}
 	}
@@ -210,20 +216,33 @@ class LiveMathLayoutEditor extends LitElement {
 		super();
 		Object.assign(this, {
 			text: "",
+			parseText: "",
 			currentError: "",
 			outputText: "",
 			codeExampleIndex: -1,
+			inputMode: "json",
 			outputMode: "rendered"
 		});
 		loadKatexFontFaces();
 	}
 	_setText(newText){
 		this.text = newText;
-		this._editor.setValue(this.text);
+		this._setEditorText(newText);
+	}
+	_setEditorText(newText){
+		if (!this._editor) return;
+		this._editor.setValue(newText);
 	}
 	updated(changedProps){
-		if (changedProps.has("text")){
+		if (changedProps.has("inputMode")){
+			this._setEditorText(this.inputMode === "json" ? this.text : this.parseText);
+			this._renderLayoutedNode();
+		}
+		if (changedProps.has("text") && this.inputMode === "json"){
 			this._tryProcessingText();
+		}
+		if (changedProps.has("parseText") && this.inputMode === "text") {
+			this._tryProcessingParseText();
 		}
 		if (changedProps.has("codeExampleIndex")){
 			if (this.codeExampleIndex >= 0){
@@ -234,35 +253,50 @@ class LiveMathLayoutEditor extends LitElement {
 			this._outputEditor.refresh();
 		}
 	}
+	_setFormulaNode(node){
+		const defaultStyle = {
+			type: "D",
+			fontSize: 40,
+			...(node.style || {})
+		};
+		const style = {
+			...defaultStyle,
+			...(node.style || {})
+		};
+		const nodeLayouted = layoutNode({ ...node, style });
+		this._layoutedNode = nodeLayouted;
+		this.outputText = JSON.stringify(nodeLayouted, null, 4);
+		this._outputEditor.setValue(this.outputText);
+
+		const resizableCanvas = this.shadowRoot.querySelector("resizable-canvas");
+		const padding = 32;
+		Object.assign(resizableCanvas.style, {
+			width: `${(nodeLayouted.dimensions.width + padding)}px`,
+			height: `${(nodeLayouted.dimensions.yMax - nodeLayouted.dimensions.yMin + padding)}px`,
+		});
+		this._renderLayoutedNode();
+	}
 	_tryProcessingText(){
 		this.currentError = "";
 		try {
 			const node = JSON.parse(this.text);
-			const defaultStyle = {
-				type: "D", 
-				fontSize: 40,
-				...(node.style || {})
-			};
-			const style = {
-				...defaultStyle,
-				...(node.style || {})
-			};
-			const nodeLayouted = layoutNode({ ...node, style});
-			this._layoutedNode = nodeLayouted;
-			this.outputText = JSON.stringify(nodeLayouted, null, 4);
-			this._outputEditor.setValue(this.outputText);
-			
-			const resizableCanvas = this.shadowRoot.querySelector("resizable-canvas");
-			const padding = 32;
-			Object.assign(resizableCanvas.style, {
-				width: `${(nodeLayouted.dimensions.width + padding)}px`,
-				height: `${(nodeLayouted.dimensions.yMax - nodeLayouted.dimensions.yMin + padding)}px`,
-			});
-			this._renderLayoutedNode();
+			this._setFormulaNode(node);
 		}
 		catch (e){
 			console.log(e);
 			this.currentError = e.message;
+		}
+	}
+	_tryProcessingParseText() {
+		this.currentError = "";
+		try {
+			const parsed = parse(this.parseText);
+			console.log(parsed);
+			this.text = JSON.stringify(parsed, null, 4);
+			this._setFormulaNode(parsed);
+		}
+		catch (e) {
+			this.currentError = e;
 		}
 	}
 	_initCanvas(canvas){
@@ -270,7 +304,7 @@ class LiveMathLayoutEditor extends LitElement {
 		this._ctx = canvas.getContext("2d");
 	}
 	_renderLayoutedNode(){
-		if (!this._canvas){
+		if (!this._canvas || !this._layoutedNode){
 			return;
 		}
 		const canvas = this._canvas;
@@ -284,12 +318,24 @@ class LiveMathLayoutEditor extends LitElement {
 		const keys = Reflect.ownKeys(LiveMathLayoutEditor._exampleCode);
 		this._setText(JSON.stringify(LiveMathLayoutEditor._exampleCode[keys[optionIndex]], null, 4));
 	}
+	_onEditorChanged(e){
+		const text = e.detail.text;
+		if (this.inputMode === "json") this.text = text;
+		else if (this.inputMode === "text") this.parseText = text;
+	}
 	render(){
 		const hasError = this.currentError !== "";
 		return html`
 			<div class="pane-container">
 				<div class="code-input">
 					<div class="top-bar">
+						<paper-tabs
+								selected=${["text", "json"].indexOf(this.inputMode)}
+								@iron-select=${e => this.inputMode = e.detail.item.innerText}
+							>
+							<paper-tab>text</paper-tab>
+							<paper-tab>json</paper-tab>
+						</paper-tabs>
 						<div class="examples-picker">
 							<custom-style>
 								<style is="custom-style">
@@ -322,7 +368,7 @@ class LiveMathLayoutEditor extends LitElement {
 					</div>
 					<code-mirror-element 
 						@first-updated=${e => this._editor = e.detail.editor}
-						@editor-changed=${e => this.text = e.detail.text}
+						@editor-changed=${e => this._onEditorChanged(e)}
 					></code-mirror-element>
 					<div class="bottom-bar current-error" style="color: ${hasError ? "#d44040" : "#70ae70"};">
 						${hasError ? this.currentError : "✓"}
@@ -339,12 +385,6 @@ class LiveMathLayoutEditor extends LitElement {
 							<paper-tab>json</paper-tab>
 							<paper-tab>rendered</paper-tab>
 						</paper-tabs>
-						  
-						<switch-button-group
-							.values=${["json", "rendered"]}
-							.activeValue=${this.outputMode}
-							@value-changed=${e => this.outputMode = e.detail.activeValue}
-						></switch-button-group>
 					</div>
 					<code-mirror-element 
 						class="output-editor"
