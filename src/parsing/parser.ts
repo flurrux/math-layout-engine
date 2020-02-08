@@ -11,7 +11,8 @@
     (\frac({1}{2 + (\frac({1}{3 + (\frac({1}{4 + \...}))}))}))
 
     features: 
-    - binary operators, relations, punctuation 
+	- binary operators, relations, punctuation 
+	- unary operators
     - numbers, 24, 0.01, 3.1457
     - sub- and superscripts, a^b, a_c, a^b_c, a_c^b,
         a^b_c and a_c^b are equivalent, order does not matter
@@ -21,14 +22,13 @@
         curly braces must be escaped to act as delimiters: \{ and \}
     - roots, 
         root({2}) is the square-root of 2
-        root({2}{3}) is the cube-root of 2
-    - text, text
+		root({2}{3}) is the cube-root of 2
+	- fractions, \fraction({1}{2})	
+	- accents, example: \accent({v}{\vector})	
+    - text
 
 
     todo: 
-    - better parsing of sublayers, 
-        tokenize them into objects like { type: "group", ... } instead just an array
-    - unary operators
     - matrix
     - maybe instead of frac({a}{b}) just use a / b,
     and if inline fractions are desired, escape the slash: a \/ b
@@ -41,35 +41,29 @@
     - complete error handling with position of error in the text     
 
 
-    algorithm: 
-    - process text-functions, converts text-functions into FormulaNodes
-    - process escape-sequences, example: \pi, \frac
-        escape sequences are either function-names or aliases. 
-        aliases are converted directly into FormulaNodes.
-        function-names are converted into FunctionNameTokens
-    - convert number-literals into either ord- or text-nodes 
-    - tokenize unescaped braces 
-    - convert chars to FormulaNodes, + - ; f p and so on 
-    - create layers, by wrapping groups or delimited parts into own arrays. 
-        layers denote parts which can be recursively parsed. 
-        arguments of functions do not evaluate to FormuaNodes, 
-        so those have to be dealt with before.
-    - recursively parse layers: 
-        - functions, groups, delimited in one go:
-            - case: function, parse arguments recursively, create FormulaNode
-            - case: group, remove ends and parse inner part as layer, create FormulaNode
-            - case: delimited, parse inner part as layer and create DelimitedNode
+	algorithm: 
+	- first tokenize the entire expression:
+		- process text-functions, converts text-functions into FormulaNodes
+		- process escape-sequences, example: \pi, \frac
+			escape sequences are either function-names or aliases. 
+			aliases are converted directly into FormulaNodes.
+			function-names are converted into FunctionNameTokens
+		- convert number-literals into either ord- or text-nodes 
+		- tokenize unescaped braces 
+		- convert chars to FormulaNodes, + - ; f p and so on 
+	- recursively parse the tokens:
+		- detect groups by delimiters and parse them recursively
+        - parse functions by supplying them with their arguments
         - parse scripts 
         - if the result is an array, pack it into a mathlist, if not, return the node    
-                
 
 */
 
 
-import { FormulaNode, DelimitedNode, MathListNode, FractionNode, RootNode, AccentNode, MatrixNode, CharNode, TextNode, ScriptNode, TextualType, TextualNode } from "../types";
-import { pipe, curry, last } from 'ramda';
+import { curry, last, pipe } from 'ramda';
 import { aliasMap } from "../font-data/katex-font-util";
 import { unicodeToTypeMap } from "../type-from-unicode";
+import { AccentNode, CharNode, DelimitedNode, FormulaNode, FractionNode, MathListNode, RootNode, ScriptNode, TextNode, TextualType } from "../types";
 
 
 
@@ -311,12 +305,11 @@ const tokenizeChars = (expression: string): (string | CharNode)[] => {
         const nodeType = getNodeTypeByUnicode(unicode);
         processed.push({
             type: nodeType,
-            value: char,
+            value: String.fromCharCode(unicode),
         } as CharNode);
     }
     return processed;
 };
-
 
 const tokenizeStringParts = curry(
     (tokenizeFunc: TokenizationFunction, partialExpression: PartiallyProcessedExpression): PartiallyProcessedExpression => {
@@ -342,11 +335,11 @@ const tokenizeFuncs: TokenizationFunction[] = [
     tokenizeScripts,
     tokenizeChars
 ];
-export const tokenize = (expression: string): ParseNode[] => {
+const tokenize = (expression: string): ParseNode[] => {
     let result: PartiallyProcessedExpression = [expression];
     for (const tokenizeFunc of tokenizeFuncs){
         result = tokenizeStringParts(tokenizeFunc, result);
-    }
+	}
     return result as ParseNode[];
 };
 
@@ -389,8 +382,8 @@ const getIndexOfLayerEnd = (tokens: ParseNode[], startIndex: number, isStartToke
     }
     return -1;
 };
-const parseSubLayers = (nodes: ParseNode[]): ParseNode[] => {
-    const processed: ParseNode[] = [];
+const parseSubLayers = (nodes: ParseNode[]): (FormulaNode | ParseFunctionName | SuperScript | SubScript)[] => {
+	const processed: (FormulaNode | ParseFunctionName | SuperScript | SubScript)[] = [];
     for (let i = 0; i < nodes.length; i++){
         const node = nodes[i];
         if (isNodeOfAnyType(node, ["group-open", "open"])){
@@ -422,7 +415,7 @@ const parseSubLayers = (nodes: ParseNode[]): ParseNode[] => {
 			i = endIndex;
 			continue;
         }
-		processed.push(node);
+		processed.push(node as (FormulaNode | ParseFunctionName | SuperScript | SubScript));
     }
 	return processed;
 };
@@ -442,16 +435,21 @@ const parseFractionFunc = (args: FormulaNode): FractionNode => {
     } as FractionNode;
 };
 const parseRootFunc = (args: FormulaNode): RootNode => {
-	if (args.type !== "mathlist" || (args as MathListNode).items.length < 1) {
-        throw 'roots need at least one argument';
+	if (args.type !== "mathlist"){
+		return {
+			type: "root",
+			radicand: args
+		} as RootNode;
+	}
+
+	if ((args as MathListNode).items.length !== 2) {
+        throw 'roots take either one or two arguments';
 	}
 	const argItems = (args as MathListNode).items;
     return {
         type: "root",
 		radicand: argItems[0],
-		...(argItems.length > 1 ? {
-			index: argItems[1]
-        } : {})
+		index: argItems[1]
     } as RootNode;
 };
 const parseAccentFunc = (args: FormulaNode): AccentNode => {
@@ -473,8 +471,8 @@ const functionNameToParseMap: { [name: string]: (args: FormulaNode) => FormulaNo
 const isDelimitedByParenthesis = (node: ParseNode): boolean => {
 	return (node.type === "delimited" && (((node as DelimitedNode).leftDelim) as CharNode).value === "(");
 };
-const parseFunctions = (nodes: ParseNode[]): ParseNode[] => {
-	const processed: ParseNode[] = [];
+const parseFunctions = (nodes: (FormulaNode | ParseFunctionName | SuperScript | SubScript)[]): (FormulaNode | SuperScript | SubScript)[] => {
+	const processed: (FormulaNode | SuperScript | SubScript)[] = [];
 	for (let i = 0; i < nodes.length; i++) {
 		const node = nodes[i];
 		if (isNodeOfType(node as ParseNode, "parse-function-name")) {
@@ -494,26 +492,34 @@ const parseFunctions = (nodes: ParseNode[]): ParseNode[] => {
 			i++;
 			continue;
 		}
-		processed.push(node);
+		processed.push(node as (FormulaNode | SuperScript | SubScript));
 	}
 	return processed;
 };
 
 
-const parseScripts = (nodes: ParseNode[]): FormulaNode[] => {
+const isSubOrSuperscript = (node: (FormulaNode | SuperScript | SubScript)): boolean => {
+	return isNodeOfAnyType(node, ["subscript", "superscript"])
+};
+const parseScripts = (nodes: (FormulaNode | SuperScript | SubScript)[]): FormulaNode[] => {
     const processed: FormulaNode[] = [];
     for (let i = 0; i < nodes.length; i++){
-        const node = nodes[i];
-        if (i === nodes.length - 1 || !["superscript", "subscript"].includes(nodes[i + 1].type)){
+		const node = nodes[i];
+		if (isSubOrSuperscript(node)){
+			throw 'a sub- or super-script must be preceded by a node';
+		}
+        if (i === nodes.length - 1 || !isSubOrSuperscript(nodes[i + 1])){
             processed.push(node as FormulaNode);
             continue;
         }
         
         const nextNode = nodes[i + 1];
         const remainingNodeCount = nodes.length - i - 1;
-        const isSuperscript = isNodeOfType(nextNode, "superscript");
-        if (remainingNodeCount === 1){
-            throw `${isSuperscript ? "superscript" : "subscript"} expected`;
+		const isSuperscript = isNodeOfType(nextNode, "superscript");
+		const curScriptType = nextNode.type;
+		const nextScriptType = isSuperscript ? "subscript" : "superscript";
+        if (remainingNodeCount === 1 || isSubOrSuperscript(nodes[i + 2])){
+			throw `${curScriptType} expected`;
         }
         const scriptNode = {
             type: "script",
@@ -521,14 +527,14 @@ const parseScripts = (nodes: ParseNode[]): FormulaNode[] => {
         } as ScriptNode;
         scriptNode[isSuperscript ? "sup" : "sub"] = nodes[i + 2] as FormulaNode;
         
-        if (remainingNodeCount === 2 || !["superscript", "subscript"].includes(nodes[i + 3].type)){
+        if (remainingNodeCount === 2 || !isNodeOfType(nodes[i + 3], nextScriptType)){
             processed.push(scriptNode);
             i += 2;
             continue;
         }
 
-        if (remainingNodeCount === 3 || nodes[i + 3].type === nextNode.type){
-            throw `${isSuperscript ? "subscript" : "superscript"} expected`;
+        if (remainingNodeCount === 3){
+			throw `${nextScriptType} expected`;
         }
         scriptNode[isSuperscript ? "sub" : "sup"] = nodes[i + 4] as FormulaNode;
         processed.push(scriptNode);
@@ -545,12 +551,54 @@ const layerToMathlistOrSingleNode = (nodes: FormulaNode[]): (FormulaNode | MathL
     };
 };
 
+const isPotentialUnaryOperator = (node: FormulaNode): boolean => {
+	if (node.type !== "bin") return false;
+	const char = (node as CharNode).value;
+	return ["+", "-", "−"].includes(char);
+};
+const isOperand = (node: FormulaNode): boolean => {
+	return !["bin", "rel", "punct"].includes(node.type);
+};
+const handleUnaryOperators = (nodes: FormulaNode[]): FormulaNode[] => {
+	if (nodes.length === 1) return nodes;
+	const processed = [];
+	for (let i = 0; i < nodes.length; i++){
+		const node = nodes[i];
+		if (!isPotentialUnaryOperator(node)){
+			processed.push(node);
+			continue;
+		}
+		if (i === 0 || i === nodes.length - 1){
+			processed.push({
+				...node,
+				type: "ord"
+			});
+			continue;
+		}
+		
+		const leftOperand = processed[i - 1];
+		const rightOperand = nodes[i + 1];
+		if (!isOperand(leftOperand) || !isOperand(rightOperand)){
+			processed.push({
+				...node,
+				type: "ord"
+			});
+			continue;
+		}
+		
+		processed.push(node);
+	}
+	return processed;
+};
+
 const parseTokenLayer = (layer: ParseNode[]): FormulaNode => pipe(
 	parseSubLayers,
     parseFunctions,
     parseScripts,
-    layerToMathlistOrSingleNode
+	handleUnaryOperators,
+	layerToMathlistOrSingleNode
 )(layer);
+
 
 
 
@@ -558,6 +606,6 @@ const parseTokenLayer = (layer: ParseNode[]): FormulaNode => pipe(
 export const parse = (expression: string): FormulaNode => {
     return pipe(
         tokenize,
-        parseTokenLayer
+		parseTokenLayer
     )(expression);
 };

@@ -8,7 +8,8 @@ export const unicodeToTypeMap: { [key: number]: TextualType } = {
     8899: "op",
 
     43: "bin",
-    8722: "bin",
+	8722: "bin",
+	45: "bin",
     177: "bin",
     8901: "bin",
     247: "bin",
