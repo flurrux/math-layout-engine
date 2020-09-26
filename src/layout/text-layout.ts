@@ -4,9 +4,11 @@ import { createNodeStyle } from '../style';
 import { BoxNode, TextNode as FormulaTextNode } from '../types';
 import { Style } from '../style';
 import { validateProperties, validateCharInFont } from './error';
+import { nodeType } from '../node-types';
 
 export interface BoxTextNode extends BoxNode {
 	type: "text",
+	srcType: "ord" | "op",
 	text: string,
 	style: Style
 };
@@ -38,7 +40,8 @@ export const layoutTextNode = (textNode: FormulaTextNode) : BoxTextNode => {
 		yMin: maxTextualDepth,
 	});
 	return {
-		type: "text", text,
-		dimensions, style
+		type: "text", 
+		srcType: textNode.type,
+		text, dimensions, style
 	};
 };

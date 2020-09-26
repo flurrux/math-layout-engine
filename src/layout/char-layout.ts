@@ -6,12 +6,13 @@ import { map, multiply, assoc, pipe } from 'ramda';
 import { createNodeStyle } from "../style";
 
 import { Metrics } from '../font-data/katex-font-util';
-import { Dimensions, BoundingBox, CharNode as FormulaCharNode, BoxNode } from '../types';
+import { Dimensions, BoundingBox, CharNode as FormulaCharNode, BoxNode, TextualType } from '../types';
 import { Style } from '../style';
 import { validateProperties } from "./error";
 
 export interface BoxCharNode extends BoxNode {
 	type: "char",
+	srcType: TextualType,
 	char: string,
 	unicode: number,
 	style: Style,
@@ -53,9 +54,13 @@ export const layoutCharNode = (node: FormulaCharNode) : BoxCharNode => {
 		throw `font ${style.fontFamily}-${style.emphasis} does not contain char '${char}'`;
 	}
 	return {
-		type: "char", unicode, style,
+		type: "char", 
+		srcType: node.type,
+		unicode, style,
 		char: String.fromCharCode(unicode), 
 		dimensions: getDimensionsOfCharNode(style, node, unicode),
-		bbox: map(multiply(style.fontSize))(lookUpBoundingBox(style.fontFamily, unicode, style.emphasis))
+		bbox: map(
+			multiply(style.fontSize)
+		)(lookUpBoundingBox(style.fontFamily, unicode, style.emphasis))
 	};
 };

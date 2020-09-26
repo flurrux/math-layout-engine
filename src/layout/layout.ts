@@ -114,10 +114,12 @@ export const layoutByMap = (layoutMap: { [key: string]: LayoutFunction }) => ((i
 });
 
 
-
-
-export const layoutNode : LayoutFunction = (node: FormulaNode) : BoxNode => getLayoutFuncByNode(node)(node);
-export const layoutWithStyle = (style: any) : LayoutFunction => pipe(withStyle(style), layoutNode) as LayoutFunction;
+export const layoutNode : LayoutFunction = (node: FormulaNode) : BoxNode => {
+	return getLayoutFuncByNode(node)(node);
+};
+export const layoutWithStyle = (style: any) : LayoutFunction => {
+	return pipe(withStyle(style), layoutNode) as LayoutFunction;
+};
 
 
 //this is the main function to call for layouting the root-node (root as in tree) of a formula
@@ -126,7 +128,7 @@ const defaultStyle : Style = {
 	fontSize: 40,
 	color: "black"
 };
-interface LayoutResult extends BoxNode {
+export interface LayoutResult extends BoxNode {
 	width: number, 
 	height: number
 };
