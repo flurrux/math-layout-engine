@@ -29,7 +29,7 @@ export interface BoundingBox {
 
 export type TextualType = "ord" | "op" | "bin" | "rel" | "open" | "close" | "punct";
 export type CompositeType = "mathlist" | "fraction" | "root" | "script" | "delimited" | "accented" | "matrix";
-type FormulaNodeType = TextualType | CompositeType;
+export type FormulaNodeType = TextualType | CompositeType;
 
 export interface FormulaNode {
 	type: FormulaNodeType,
@@ -101,8 +101,8 @@ export interface AccentNode extends FormulaNode {
 
 //box types #####
 
-type BoxTextualType = "char" | "text";
-type BoxNodeType = BoxTextualType | CompositeType | "contours" | "rule";
+export type BoxTextualType = "char" | "text";
+export type BoxNodeType = BoxTextualType | CompositeType | "contours" | "rule";
 
 export interface BoxNode {
 	type: BoxNodeType,
