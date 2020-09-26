@@ -64,7 +64,7 @@ async function main(){
 			}
 		]
 	};
-	
+
 	const layoutData = layout(formulaData);
 	console.log(layoutData);
 

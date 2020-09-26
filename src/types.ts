@@ -67,7 +67,8 @@ export interface FractionNode extends FormulaNode {
 
 export interface MatrixStyle extends Style {
 	rowSpacing: number,
-	colSpacing: number
+	colSpacing: number,
+	horizontalAlignment: "left" | "right" | "center"
 };
 export interface MatrixNode extends FormulaNode {
 	type: "matrix",
