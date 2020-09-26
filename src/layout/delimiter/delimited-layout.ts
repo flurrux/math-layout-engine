@@ -61,11 +61,29 @@ export const layoutDelimited = (delimNode: FormulaDelimitedNode) : BoxDelimitedN
 	validateDelimiterNode(rightDelim, "rightDelim", false);
 
 	const delimiterHeight = calculateDelimiterHeight(delimited, delimitedLayouted.dimensions, style);
-	const [leftDelimBox, rightDelimBox] = [leftDelim, rightDelim]
-		.map(delimNode => createDelimiter((delimNode as CharNode).value.charCodeAt(0), delimiterHeight))
-		.map(delim => identity({ 
-			...delim, dimensions: map(multiply(style.fontSize), delim.dimensions), style 
-		})) as [ContoursNode, ContoursNode];
+	const [leftDelimBox, rightDelimBox] = pipe(
+		map(
+			(delimNode: FormulaNode) => {
+				const srcValue = (delimNode as CharNode).value;
+				const delimiterContours = createDelimiter(srcValue.charCodeAt(0), delimiterHeight);
+				return {
+					...delimiterContours,
+					srcType: delimNode.type,
+					srcValue
+				}
+			},
+		),
+		map(
+			(contoursNode: ContoursNode) => ({
+				...contoursNode,
+				dimensions: map(
+					multiply(style.fontSize), 
+					contoursNode.dimensions
+				),
+				style
+			})
+		)
+	)([leftDelim, rightDelim]);
 
 	const itemXs = accumSum([
 		leftDelimBox.dimensions.width + lookUpHorizontalSpacing(leftDelim, delimited),

@@ -114,6 +114,8 @@ export interface BoxNode {
 
 export interface ContoursNode extends BoxNode {
 	type: "contours",
+	srcType?: TextualType,
+	srcValue?: string,
 	contours: Contour[]
 };
 
