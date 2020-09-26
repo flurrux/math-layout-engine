@@ -15,7 +15,8 @@ ${markdown(`
 ${typeView(`
 	interface MatrixStyle extends Style {
 		rowSpacing: number,
-		colSpacing: number
+		colSpacing: number,
+		horizontalAlignment: "left" | "right" | "center"
 	}
 	interface MatrixNode extends FormulaNode {
 		type: "matrix",
