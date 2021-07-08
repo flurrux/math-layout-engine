@@ -18,7 +18,7 @@ ${markdown(`
 
 ${markdown(`
     you can play around in the live-editor here:  
-    <https://tender-brattain-a839fc.netlify.com/>
+    <https://flurrux-math-layout-live.netlify.app/>
 
     this documentation uses [typescript](https://www.typescriptlang.org/docs/handbook/basic-types.html) to describe the structure of data.  
 `)}

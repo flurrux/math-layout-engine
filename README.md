@@ -3,7 +3,7 @@
 this is a small engine for calculating the layout of math-formulae.  
 unlike [katex](https://katex.org/) it produces a fixed layout in pojo format which can then be rendered to canvas.  
 
-[try it live!](https://tender-brattain-a839fc.netlify.com/)
+[try it live!](https://flurrux-math-layout-live.netlify.app)
 
 
 ## installation  
@@ -25,7 +25,7 @@ or add it to the dependencies
 
 ### documentation 
 
-<https://lucid-panini-eb3886.netlify.com/>
+<https://flurrux-math-layout-docs.netlify.app/>
 
 ## usage  
 
