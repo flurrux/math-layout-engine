@@ -1,4 +1,4 @@
-import fonts from './*.ttf';
+// import fonts from './*.ttf';
 import { addFontFaces } from '../util/util';
 
-export const loadFontFaces = () => addFontFaces(fonts);
+export const loadFontFaces = () => addFontFaces({});

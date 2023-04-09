@@ -1,4 +1,12 @@
-export { layout as layoutFormula } from './layout/layout';
-export { centerNodeOnCanvas, renderFormulaLayout } from './rendering/render';
-export { loadFontFaces } from './fonts/load-fonts';
-export { parse as stringToFormula } from './parsing/parser';
+import { layout } from './layout/layout';
+import { parse } from './parsing/parser';
+import { renderFormulaLayout } from './rendering/render-formula';
+import { centerBoxNodeOnCanvas } from './rendering/centering';
+import { loadKatexFontFacesFromCDN } from './font-data/load-fonts-from-cdn';
+
+export default {
+	layout: { layoutFormula: layout },
+	parsing: { parseFormula: parse }, 
+	rendering: { centerNodeOnCanvas: centerBoxNodeOnCanvas, renderFormulaLayout },
+	fonts: { loadKatexFontFacesFromCDN }
+}
