@@ -1,4 +1,3 @@
-import pipe from "ramda/src/pipe";
 import { setPosition } from "../layout/layout-util";
 import { BoxNode } from "../types";
 
